@@ -30,6 +30,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dev.grabline.app.R
+import dev.grabline.app.data.AppSettings
+import dev.grabline.app.ui.settings.SettingsRoute
+import dev.grabline.app.ui.welcome.WelcomeScreen
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 
 object Routes {
     const val DOWNLOADS = "downloads"
@@ -48,7 +56,23 @@ private val tabs = listOf(
 private val WideBreakpoint = 600.dp
 
 @Composable
-fun GrabLineAppShell(onAddClick: () -> Unit, modifier: Modifier = Modifier) {
+fun GrabLineAppShell(
+    onAddClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    settings: AppSettings = AppSettings(LocalContext.current),
+) {
+    // Welcome shows on first run; null means the flag has not loaded yet.
+    val welcomeDone by remember(settings) { settings.observe(AppSettings.WELCOME_DONE) }
+        .collectAsState(initial = null)
+    var startRoute by remember { mutableStateOf(Routes.DOWNLOADS) }
+    if (welcomeDone == null) {
+        Box(modifier.fillMaxSize())
+        return
+    }
+    if (welcomeDone == false) {
+        WelcomeScreen(settings, onPairPc = { startRoute = Routes.DEVICES }, modifier = modifier)
+        return
+    }
     val navController = rememberNavController()
     val backStack by navController.currentBackStackEntryAsState()
     val destination = backStack?.destination
@@ -112,12 +136,12 @@ fun GrabLineAppShell(onAddClick: () -> Unit, modifier: Modifier = Modifier) {
                 }
                 NavHost(
                     navController = navController,
-                    startDestination = Routes.DOWNLOADS,
+                    startDestination = startRoute,
                     modifier = Modifier.weight(1f).fillMaxSize(),
                 ) {
                     composable(Routes.DOWNLOADS) { PlaceholderScreen(R.string.tab_downloads) }
                     composable(Routes.DEVICES) { PlaceholderScreen(R.string.tab_devices) }
-                    composable(Routes.SETTINGS) { PlaceholderScreen(R.string.tab_settings) }
+                    composable(Routes.SETTINGS) { SettingsRoute(settings, onPairPc = { select(Routes.DEVICES) }) }
                 }
             }
         }

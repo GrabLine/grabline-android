@@ -32,6 +32,8 @@ class AppSettings(private val store: DataStore<Preferences>) {
     }
 
     companion object {
+        /** Set once the first-run Welcome screen has been dismissed. Not exported. */
+        val WELCOME_DONE = Setting(booleanPreferencesKey("welcome_done"), false)
         /** "ask", "phone", or a PC id. */
         val DEFAULT_DEVICE = Setting(stringPreferencesKey("default_device"), "ask")
         /** Per-type routing rules as JSON (type to "phone" or a PC id); empty means none. */
@@ -64,5 +66,15 @@ class AppSettings(private val store: DataStore<Preferences>) {
         val OFFER_COPIED_LINKS = Setting(booleanPreferencesKey("offer_copied_links"), true)
         /** "forever", "30d", "7d". */
         val KEEP_HISTORY = Setting(stringPreferencesKey("keep_history"), "forever")
+
+        /** Every user-facing setting, for export and import. */
+        val ALL: List<Setting<*>> by lazy {
+            listOf(
+                DEFAULT_DEVICE, RULES, SAVE_FOLDER, CONNECTIONS_PER_FILE, DOWNLOADS_AT_ONCE,
+                SPEED_LIMIT_KBPS, ONLY_WIFI, ONLY_CHARGING, AUTO_RETRY, VIDEO_QUALITY, AUDIO_FORMAT,
+                UPDATE_YTDLP, SEED_AFTER_DOWNLOAD, TORRENTS_ON_MOBILE_DATA, NOTIFY_PC_DOWNLOADS,
+                THEME, COLOURS, LANGUAGE, OFFER_COPIED_LINKS, KEEP_HISTORY,
+            )
+        }
     }
 }

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_btn_cancel">Cancel</string>
+    <string name="settings_btn_back">Back</string>
+    <string name="settings_btn_reset">Reset</string>
+    <string name="coming_later">Coming in a later update</string>
+
+    <string name="lang_en">English</string>
+    <string name="lang_ar">العربية</string>
+    <string name="lang_zh">中文</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_hi">हिन्दी</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_ja">日本語</string>
+    <string name="lang_ko">한국어</string>
+    <string name="lang_pt">Português</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_tr">Türkçe</string>
+    <string name="lang_ur">اردو</string>
+
+    <string name="group_where">Where to download</string>
+    <string name="setting_default_device">Default device</string>
+    <string name="device_ask">Ask every time</string>
+    <string name="device_phone">This phone</string>
+    <string name="device_unknown">A PC that is no longer paired</string>
+    <string name="setting_rules">Rules</string>
+    <string name="rules_none">None</string>
+    <plurals name="rules_count">
+        <item quantity="one">%d rule</item>
+        <item quantity="other">%d rules</item>
+    </plurals>
+    <string name="rules_explain">Send each kind of link to the phone or a PC. Anything without a rule uses the default device.</string>
+    <string name="rule_default">Use the default device</string>
+    <string name="rule_video">Videos</string>
+    <string name="rule_music">Music</string>
+    <string name="rule_torrent">Torrents</string>
+    <string name="rule_other">Other files</string>
+
+    <string name="group_phone_downloads">Phone downloads</string>
+    <string name="setting_save_folder">Save folder</string>
+    <string name="setting_connections">Connections per file</string>
+    <string name="setting_at_once">Downloads at once</string>
+    <string name="setting_speed_limit">Speed limit</string>
+    <string name="speed_off">Off</string>
+    <string name="setting_only_wifi">Only on Wi-Fi</string>
+    <string name="setting_only_charging">Only while charging</string>
+    <string name="setting_auto_retry">Auto-retry failed downloads</string>
+    <string name="retry_off">Off</string>
+    <string name="retry_3">3 times</string>
+    <string name="retry_10">10 times</string>
+    <string name="retry_forever">Forever</string>
+
+    <string name="group_video">Video</string>
+    <string name="setting_video_quality">Default quality</string>
+    <string name="quality_ask">Ask</string>
+    <string name="quality_best">Best</string>
+    <string name="quality_audio">Audio only (MP3)</string>
+    <string name="setting_audio_format">Audio format</string>
+    <string name="setting_update_ytdlp">Update yt-dlp</string>
+    <string name="ytdlp_ask">Ask before updating</string>
+    <string name="ytdlp_manual">Manual</string>
+
+    <string name="group_torrents">Torrents</string>
+    <string name="setting_seed">Seed after download</string>
+    <string name="seed_off">Off</string>
+    <string name="seed_ratio">Until ratio 1.0</string>
+    <string name="seed_hour">For 1 hour</string>
+    <string name="setting_torrent_data">Torrents on mobile data</string>
+
+    <string name="group_pcs">PCs</string>
+    <string name="setting_paired_pcs">Paired PCs</string>
+    <string name="pcs_none">None yet. Tap to pair a PC.</string>
+    <string name="setting_notify_pc">Notify me about PC downloads</string>
+
+    <string name="group_appearance">Appearance</string>
+    <string name="setting_theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="setting_colours">Colours</string>
+    <string name="colours_grabline">GrabLine</string>
+    <string name="colours_wallpaper">Wallpaper</string>
+    <string name="setting_language">Language</string>
+
+    <string name="group_privacy">Privacy</string>
+    <string name="setting_offer_copied">Offer to send copied links</string>
+    <string name="setting_keep_history">Keep download history</string>
+    <string name="history_forever">Forever</string>
+    <string name="history_30">30 days</string>
+    <string name="history_7">7 days</string>
+
+    <string name="group_advanced">Advanced</string>
+    <string name="setting_battery">Battery optimisation</string>
+    <string name="battery_explain">Android may stop GrabLine in the background to save power. Allow GrabLine to run freely so downloads and PC updates are not cut off.</string>
+    <string name="setting_export">Export settings</string>
+    <string name="export_explain">Save your settings to a file you choose.</string>
+    <string name="setting_import">Import settings</string>
+    <string name="settings_exported">Settings saved.</string>
+    <string name="settings_export_failed">Could not save the settings file.</string>
+    <plurals name="settings_imported">
+        <item quantity="one">Imported %d setting.</item>
+        <item quantity="other">Imported %d settings.</item>
+    </plurals>
+    <string name="settings_import_failed">That file is not a GrabLine settings file.</string>
+    <string name="setting_crash_log">Share a crash log</string>
+    <string name="crash_none">No crash logs</string>
+    <string name="crash_share">Share with any app</string>
+    <string name="setting_reset">Reset all settings</string>
+    <string name="reset_confirm">Every setting goes back to its default. Your paired PCs and downloads are not changed.</string>
+
+    <string name="group_about">About</string>
+    <string name="about_title">About GrabLine</string>
+    <string name="about_version">App version</string>
+    <string name="about_ytdlp">yt-dlp version</string>
+    <string name="about_ytdlp_none">Not installed</string>
+    <string name="about_links">Links</string>
+    <string name="about_licences">Licences</string>
+    <string name="about_source">Source code</string>
+    <string name="about_support">Support and bug reports</string>
+    <string name="lic_grabline">GrabLine</string>
+    <string name="lic_okhttp">OkHttp</string>
+    <string name="lic_zxing">ZXing</string>
+    <string name="lic_androidx">AndroidX</string>
+    <string name="lic_plex">IBM Plex</string>
+    <string name="lic_agpl">GNU AGPL-3.0</string>
+    <string name="lic_apache">Apache License 2.0</string>
+    <string name="lic_ofl">SIL Open Font License 1.1</string>
+
+    <string name="welcome_title">Welcome to GrabLine</string>
+    <string name="welcome_card1_title">Download right here</string>
+    <string name="welcome_card1_body">Share a link to GrabLine and it downloads to this phone.</string>
+    <string name="welcome_card2_title">Control your PC</string>
+    <string name="welcome_card2_body">Pair a PC to send links to it and watch its downloads from your phone.</string>
+    <string name="welcome_card3_title">No accounts</string>
+    <string name="welcome_card3_body">No sign-up, no ads and no tracking.</string>
+    <string name="welcome_notify_reason">Notifications tell you when a download finishes or fails.</string>
+    <string name="welcome_notify_on">Notifications are on.</string>
+    <string name="welcome_allow_notifications">Allow notifications</string>
+    <string name="welcome_notify_denied">Without notifications you will not hear when a download finishes or fails. You can still check the Downloads tab.</string>
+    <string name="welcome_open_settings">Open settings</string>
+    <string name="welcome_pick_folder">Pick the default folder</string>
+    <string name="welcome_folder_current">Saving to: %1$s</string>
+    <string name="welcome_pair_pc">Pair a PC</string>
+    <string name="welcome_skip">Skip</string>
+</resources>
