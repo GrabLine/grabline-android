@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notify_group_phone">Phone downloads</string>
+    <string name="notify_group_pc">PC</string>
+
+    <string name="notify_channel_active_name">Active downloads</string>
+    <string name="notify_channel_active_desc">Shows progress while downloads run on this phone.</string>
+    <string name="notify_channel_finished_name">Finished</string>
+    <string name="notify_channel_finished_desc">A phone download has completed.</string>
+    <string name="notify_channel_failed_name">Failed</string>
+    <string name="notify_channel_failed_desc">A phone download failed and will not be retried.</string>
+    <string name="notify_channel_pc_name">PC activity</string>
+    <string name="notify_channel_pc_desc">A download finished or failed on a connected PC.</string>
+    <string name="notify_channel_transfers_name">Transfers</string>
+    <string name="notify_channel_transfers_desc">Shows progress while a file copies from your PC.</string>
+
+    <string name="notify_pc_finished_title">%1$s finished a download</string>
+    <string name="notify_pc_finished_text">%1$s is done.</string>
+    <string name="notify_pc_failed_title">%1$s could not finish a download</string>
+    <string name="notify_pc_failed_text">%1$s: %2$s</string>
+    <string name="notify_action_open_app">Open app</string>
+
+    <string name="announce_percent">%1$d percent</string>
+    <string name="announce_waiting">Waiting</string>
+    <string name="announce_downloaded">%1$s downloaded</string>
+    <plurals name="announce_percent_hours_left">
+        <item quantity="one">%1$d percent, %2$d hour left</item>
+        <item quantity="other">%1$d percent, %2$d hours left</item>
+    </plurals>
+    <plurals name="announce_percent_minutes_left">
+        <item quantity="one">%1$d percent, %2$d minute left</item>
+        <item quantity="other">%1$d percent, %2$d minutes left</item>
+    </plurals>
+    <plurals name="announce_percent_seconds_left">
+        <item quantity="one">%1$d percent, %2$d second left</item>
+        <item quantity="other">%1$d percent, %2$d seconds left</item>
+    </plurals>
+</resources>
