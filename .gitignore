@@ -1,0 +1,30 @@
+# Gradle / Android
+.gradle/
+build/
+*/build/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+output-metadata.json
+# Kotlin
+.kotlin/
+# IDE
+.idea/
+*.iml
+.vscode/
+.fleet/
+# OS
+.DS_Store
+Thumbs.db
+# Signing
+*.jks
+*.keystore
+keystore.properties
+# Local machine facts
+CLAUDE.local.md
+.claude/settings.local.json
