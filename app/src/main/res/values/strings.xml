@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">GrabLine</string>
+    <string name="tab_downloads">Downloads</string>
+    <string name="tab_devices">Devices</string>
+    <string name="tab_settings">Settings</string>
+    <string name="add_a_link">Add a link</string>
+    <string name="share_label">GrabLine</string>
+    <string name="paste_a_link">Paste a link</string>
+    <string name="paste_button">Paste</string>
+    <string name="paste_button_description">Paste a link from the clipboard</string>
+    <string name="go_button">Go</string>
+    <string name="go_button_description">Add the pasted links</string>
+    <string name="paste_no_link_found">No web or magnet link found in this text</string>
+    <string name="kind_file">File</string>
+    <string name="kind_video">Video</string>
+    <string name="kind_torrent">Torrent</string>
+    <string name="kind_page">Web page</string>
 </resources>
