@@ -93,6 +93,23 @@ interface OutboxDao {
     @Query("UPDATE outbox SET state = 'pending' WHERE state = 'sending'")
     suspend fun resetSendingToPending()
 
+    /** A transient failure: back to pending for another try with the same requestId. */
+    @Query("UPDATE outbox SET state = 'pending', attempts = attempts + 1, lastError = :error WHERE id = :id")
+    suspend fun markRetry(id: Long, error: String?)
+
+    /** Items the PC refused for good, for the "couldn't send" notice. */
+    @Query("SELECT * FROM outbox WHERE state = 'failed' ORDER BY id")
+    fun observeFailed(): Flow<List<OutboxItem>>
+
+    @Query("SELECT * FROM outbox WHERE pcId = :pcId AND url = :url AND state IN ('pending','sending') AND createdAt >= :since LIMIT 1")
+    suspend fun recentSame(pcId: String, url: String, since: Long): OutboxItem?
+
+    @Query("SELECT DISTINCT pcId FROM outbox WHERE state = 'pending'")
+    fun observePendingPcs(): Flow<List<String>>
+
+    @Query("DELETE FROM outbox WHERE id = :id")
+    suspend fun delete(id: Long)
+
     @Query("SELECT * FROM outbox WHERE id = :id")
     suspend fun get(id: Long): OutboxItem?
 }
