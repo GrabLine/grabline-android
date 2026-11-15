@@ -15,7 +15,7 @@ One Android app that downloads on the phone and remotely controls GrabLine on a 
 - ZXing (`zxing-android-embedded`) for QR, never ML Kit (F-Droid). OkHttp WebSocket with certificate pinning. Room for jobs and the outbox. Android Keystore for the device key. Phone video: `youtubedl-android` (yt-dlp + FFmpeg). Torrents: `libtorrent4j`.
 - No mDNS: the QR code carries every local PC address; the phone remembers the last one that worked.
 - The phone never listens on a port. It never sends cookies or browser headers to the PC.
-- Desktop: listener in `app/remote/` (Qt QWebSocketServer, secure mode), off by default, private and link-local binds only, loopback test mode for the emulator (10.0.2.2). Phone links enter the `handoffs` table with source `phone` and take an unattended add path (never a modal dialog; default quality `best`). PROTOCOL_VERSION 6.
+- Desktop: listener in `app/remote/` (Qt TCP sockets on its own thread + Python `ssl` TLS; Qt TLS can't serve the P-256 key on Windows), off by default, private and link-local binds only, loopback test mode for the emulator (10.0.2.2). Phone links enter the `handoffs` table with source `phone` and take an unattended add path (never a modal dialog; default quality `best`). PROTOCOL_VERSION 6.
 - Phase 6 (cloud servers) waits for demand; do not start it.
 
 ## Model division
