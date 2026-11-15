@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_title">Add to GrabLine</string>
+    <string name="add_links_count">%1$d links</string>
+    <string name="add_links_show">Show links</string>
+    <string name="add_links_hide">Hide links</string>
+    <string name="add_links_toggle_description">Show or hide the list of links</string>
+    <string name="add_kind_description">Kind: %1$s</string>
+    <string name="add_download_on">Download on</string>
+    <string name="add_this_phone">This phone</string>
+    <string name="add_phone_later">Coming in a later update</string>
+    <string name="add_pc_online">Online</string>
+    <string name="add_pc_offline">Offline</string>
+    <string name="add_pc_description">%1$s, %2$s</string>
+    <string name="add_phone_description">This phone, coming in a later update, not available</string>
+    <string name="add_pair_first">Pair a PC first</string>
+    <string name="add_pair_button">Pair a PC</string>
+    <string name="add_offline_hint">Will send when your PC is back</string>
+    <string name="add_quality">Quality</string>
+    <string name="add_quality_best">Best</string>
+    <string name="add_quality_description">Quality %1$s</string>
+    <string name="add_quality_description_size">Quality %1$s, about %2$s</string>
+    <string name="add_analysing">Analysing…</string>
+    <string name="add_analyse_retry">Retry</string>
+    <string name="add_analyse_failed_best">You can still download the best quality.</string>
+    <string name="add_queue">Queue</string>
+    <string name="add_queue_default">Default</string>
+    <string name="add_folder">Folder</string>
+    <string name="add_menu_description">%1$s: %2$s. Opens a list</string>
+    <string name="add_not_downloadable">This is a web page, not a file</string>
+    <string name="add_open_in_browser">Open in browser</string>
+    <string name="add_open_in_browser_description">Open this link in your browser</string>
+    <string name="add_start_now">Start now</string>
+    <string name="add_start_now_description">Send the link to the chosen PC now</string>
+    <string name="add_sending">Sending…</string>
+    <string name="add_already_sent">Already sent</string>
+    <string name="add_send_failed">Couldn\'t send that. Try again</string>
+    <string name="add_sent_to">Sent to %1$s</string>
+    <string name="add_will_send_later">Will send when your PC is back</string>
+</resources>
