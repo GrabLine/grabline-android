@@ -46,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -59,12 +60,16 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import dev.grabline.app.R
 import dev.grabline.app.data.AppSettings
+import dev.grabline.app.engine.PhoneEngine
+import dev.grabline.app.ui.settings.folderLabel
+import dev.grabline.app.ui.settings.rememberFolderPicker
 import dev.grabline.app.remote.PcRemote
+import dev.grabline.app.ui.downloads.PHONE_ID
 import dev.grabline.app.ui.entry.LinkKind
 import androidx.lifecycle.createSavedStateHandle
 
 /**
- * The Add sheet. Phase 1: PCs are the only targets ("This phone" is shown disabled).
+ * The Add sheet: the targets are this phone (when [phone] is given) and each paired PC.
  * [onSent] gets the snackbar text; [onDismiss] is called after it.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,21 +82,31 @@ fun AddSheetRoute(
     onDismiss: () -> Unit,
     onSent: (String) -> Unit = {},
     onPairClick: () -> Unit = {},
+    phone: PhoneEngine? = null,
 ) {
     val vm: AddViewModel = viewModel(
         key = "add:" + initialLinks.joinToString("\n"),
         factory = viewModelFactory {
-            initializer { AddViewModel(remote, settings, createSavedStateHandle()) }
+            initializer { AddViewModel(remote, settings, createSavedStateHandle(), phone) }
         },
     )
     LaunchedEffect(initialLinks, sourceTitle) { vm.init(initialLinks, sourceTitle) }
     val state by vm.state.collectAsState()
 
+    val context = LocalContext.current
     val sentTo = stringResource(R.string.add_sent_to, state.sent?.pcName ?: "")
     val later = stringResource(R.string.add_will_send_later)
+    val pickFolder = rememberFolderPicker { vm.selectPhoneFolder(it) }
     LaunchedEffect(state.sent) {
         val sent = state.sent ?: return@LaunchedEffect
-        onSent(if (sent.outcome == SendOutcome.SENT) sentTo else later)
+        onSent(
+            when (sent.outcome) {
+                SendOutcome.SENT -> sentTo
+                SendOutcome.WILL_SEND_LATER -> later
+                SendOutcome.ADDED_ON_PHONE ->
+                    context.resources.getQuantityString(R.plurals.add_added_on_phone, sent.count, sent.count)
+            },
+        )
         vm.consumeSent()
         onDismiss()
     }
@@ -103,6 +118,9 @@ fun AddSheetRoute(
         AddSheetContent(
             state = state,
             onSelectPc = vm::selectPc,
+            onSelectPhone = vm::selectPhone,
+            onChangeFolder = pickFolder,
+            onSendToPc = vm::sendToPcInstead,
             onSelectQuality = vm::selectQuality,
             onSelectQueue = vm::selectQueue,
             onSelectFolder = vm::selectFolder,
@@ -126,6 +144,9 @@ fun AddSheetContent(
     onRetry: () -> Unit,
     onStart: () -> Unit,
     onPairClick: () -> Unit,
+    onSelectPhone: () -> Unit = {},
+    onChangeFolder: () -> Unit = {},
+    onSendToPc: () -> Unit = {},
 ) {
     val context = LocalContext.current
     Column(
@@ -157,7 +178,7 @@ fun AddSheetContent(
             return@Column
         }
 
-        if (state.pcs.isEmpty()) {
+        if (state.pcs.isEmpty() && !state.phoneAvailable) {
             Text(stringResource(R.string.add_pair_first), style = MaterialTheme.typography.bodyLarge)
             Button(onClick = onPairClick, modifier = Modifier.heightIn(min = 48.dp)) {
                 Text(stringResource(R.string.add_pair_button))
@@ -166,14 +187,18 @@ fun AddSheetContent(
         }
 
         Section(stringResource(R.string.add_download_on)) {
-            DeviceChoice(state, onSelectPc)
-            if (!state.pcOnline) {
+            DeviceChoice(state, onSelectPc, onSelectPhone)
+            if (!state.deviceIsPhone && !state.pcOnline) {
                 Text(
                     stringResource(R.string.add_offline_hint),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+        }
+
+        if (state.deviceIsPhone) {
+            PhoneOptions(state, onChangeFolder, onSendToPc)
         }
 
         if (state.showQuality) {
@@ -222,7 +247,7 @@ fun AddSheetContent(
             }
         }
 
-        val startDesc = stringResource(R.string.add_start_now_description)
+        val startDesc = stringResource(if (state.deviceIsPhone) R.string.add_start_phone_description else R.string.add_start_now_description)
         Button(
             onClick = onStart,
             enabled = state.canStart && !state.sending,
@@ -280,65 +305,91 @@ private fun kindLabel(kind: LinkKind): Int = when (kind) {
     LinkKind.PAGE -> R.string.kind_page
 }
 
+private data class DeviceOption(val id: String, val name: String, val status: String?, val desc: String, val selected: Boolean, val pick: () -> Unit)
+
 @Composable
-private fun DeviceChoice(state: AddUiState, onSelect: (String) -> Unit) {
+private fun PhoneOptions(state: AddUiState, onChangeFolder: () -> Unit, onSendToPc: () -> Unit) {
+    Section(stringResource(R.string.add_phone_folder)) {
+        val label = folderLabel(state.phoneFolder)
+        val changeDesc = stringResource(R.string.add_phone_folder_change_description, label)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f), maxLines = 2, overflow = TextOverflow.Ellipsis)
+            TextButton(onClick = onChangeFolder, modifier = Modifier.heightIn(min = 48.dp).semantics { contentDescription = changeDesc }) {
+                Text(stringResource(R.string.add_phone_folder_change))
+            }
+        }
+    }
+    if (state.phoneVideoCount > 0) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(stringResource(R.string.add_phone_video_later), style = MaterialTheme.typography.bodyLarge)
+            if (state.phoneAddCount > 0) {
+                Text(
+                    pluralStringResource(R.plurals.add_phone_video_skipped, state.phoneVideoCount, state.phoneVideoCount),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            if (state.pcs.isNotEmpty()) {
+                OutlinedButton(onClick = onSendToPc, modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.add_phone_video_to_pc))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DeviceChoice(state: AddUiState, onSelect: (String) -> Unit, onSelectPhone: () -> Unit) {
     val online = stringResource(R.string.add_pc_online)
     val offline = stringResource(R.string.add_pc_offline)
     val phone = stringResource(R.string.add_this_phone)
-    val phoneLater = stringResource(R.string.add_phone_later)
     val phoneDesc = stringResource(R.string.add_phone_description)
+    val options = buildList {
+        if (state.phoneAvailable) add(DeviceOption(PHONE_ID, phone, null, phoneDesc, state.deviceIsPhone, onSelectPhone))
+        state.pcs.forEach { pc ->
+            val status = if (pc.online) online else offline
+            add(
+                DeviceOption(
+                    pc.id, pc.name, status, stringResource(R.string.add_pc_description, pc.name, status),
+                    !state.deviceIsPhone && pc.id == state.selectedPcId,
+                ) { onSelect(pc.id) },
+            )
+        }
+    }
     val big = LocalDensity.current.fontScale > 1.3f
-    if (state.pcs.size <= 1 && !big) {
+    if (options.size <= 3 && !big) {
         SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-            val count = state.pcs.size + 1
-            state.pcs.forEachIndexed { index, pc ->
-                val status = if (pc.online) online else offline
-                val desc = stringResource(R.string.add_pc_description, pc.name, status)
+            options.forEachIndexed { index, o ->
                 SegmentedButton(
-                    selected = pc.id == state.selectedPcId,
-                    onClick = { onSelect(pc.id) },
-                    shape = SegmentedButtonDefaults.itemShape(index, count),
-                    modifier = Modifier.heightIn(min = 48.dp).semantics { contentDescription = desc },
-                    label = { Column { Text(pc.name, maxLines = 2); Text(status, style = MaterialTheme.typography.labelSmall) } },
+                    selected = o.selected,
+                    onClick = o.pick,
+                    shape = SegmentedButtonDefaults.itemShape(index, options.size),
+                    modifier = Modifier.heightIn(min = 48.dp).semantics { contentDescription = o.desc },
+                    label = {
+                        Column {
+                            Text(o.name, maxLines = 2)
+                            o.status?.let { Text(it, style = MaterialTheme.typography.labelSmall) }
+                        }
+                    },
                 )
             }
-            SegmentedButton(
-                selected = false,
-                onClick = {},
-                enabled = false,
-                shape = SegmentedButtonDefaults.itemShape(count - 1, count),
-                modifier = Modifier.heightIn(min = 48.dp).semantics { contentDescription = phoneDesc },
-                label = { Column { Text(phone, maxLines = 2); Text(phoneLater, style = MaterialTheme.typography.labelSmall) } },
-            )
         }
     } else {
         Column(Modifier.selectableGroup()) {
-            state.pcs.forEach { pc ->
-                val status = if (pc.online) online else offline
-                val desc = stringResource(R.string.add_pc_description, pc.name, status)
+            options.forEach { o ->
                 Row(
                     Modifier
                         .fillMaxWidth()
                         .heightIn(min = 48.dp)
-                        .selectable(pc.id == state.selectedPcId, onClick = { onSelect(pc.id) }, role = Role.RadioButton)
-                        .semantics { contentDescription = desc },
+                        .selectable(o.selected, onClick = o.pick, role = Role.RadioButton)
+                        .semantics { contentDescription = o.desc },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    RadioButton(selected = pc.id == state.selectedPcId, onClick = null)
+                    RadioButton(selected = o.selected, onClick = null)
                     Column(Modifier.padding(start = 12.dp)) {
-                        Text(pc.name, style = MaterialTheme.typography.bodyLarge)
-                        Text(status, style = MaterialTheme.typography.bodySmall)
+                        Text(o.name, style = MaterialTheme.typography.bodyLarge)
+                        o.status?.let { Text(it, style = MaterialTheme.typography.bodySmall) }
                     }
-                }
-            }
-            Row(
-                Modifier.fillMaxWidth().heightIn(min = 48.dp).semantics { contentDescription = phoneDesc },
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                RadioButton(selected = false, onClick = null, enabled = false)
-                Column(Modifier.padding(start = 12.dp)) {
-                    Text(phone, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(phoneLater, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }

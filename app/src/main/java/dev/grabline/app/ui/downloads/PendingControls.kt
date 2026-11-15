@@ -1,5 +1,6 @@
 package dev.grabline.app.ui.downloads
 
+import dev.grabline.app.engine.PhoneEngine
 import dev.grabline.app.remote.PcRemote
 import dev.grabline.app.remote.RemoteFailure
 import dev.grabline.app.remote.protocol.ErrorCode
@@ -13,7 +14,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-data class Target(val pcId: String, val jobId: Long, val name: String)
+/** [pcId] is null for a phone job. */
+data class Target(val pcId: String?, val jobId: Long, val name: String) {
+    val key: String get() = if (pcId == null) phoneRowKey(jobId) else rowKey(pcId, jobId)
+}
 
 /** An undoable action that has been shown as done but not yet sent. */
 data class PendingAction(val id: Long, val action: RowAction, val targets: List<Target>)
@@ -29,6 +33,7 @@ class PendingControls(
     private val remote: PcRemote,
     private val scope: CoroutineScope,
     private val undoMillis: Long = UNDO_MILLIS,
+    private val phone: PhoneEngine? = null,
     private val onFailure: (String) -> Unit,
 ) {
     private val _pending = MutableStateFlow<List<PendingAction>>(emptyList())
@@ -74,9 +79,28 @@ class PendingControls(
     }
 
     private suspend fun send(t: Target, action: RowAction) {
+        if (t.pcId == null) return sendPhone(t, action)
         val result = remote.control(t.pcId, t.jobId, action.wire)
         result.exceptionOrNull()?.let { e ->
             onFailure((e as? RemoteFailure)?.userMessage ?: ErrorMessages.forCode(ErrorCode.INTERNAL))
+        }
+    }
+
+    private suspend fun sendPhone(t: Target, action: RowAction) {
+        val engine = phone ?: return
+        try {
+            when (action) {
+                RowAction.Pause -> engine.pause(t.jobId)
+                RowAction.Resume -> engine.resume(t.jobId)
+                RowAction.Cancel -> engine.cancel(t.jobId)
+                RowAction.Retry -> engine.retry(t.jobId)
+                RowAction.Remove -> engine.remove(t.jobId)
+                RowAction.AllowMobileData -> engine.allowMobileData(t.jobId)
+            }
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            onFailure(ErrorMessages.forCode(ErrorCode.INTERNAL))
         }
     }
 }

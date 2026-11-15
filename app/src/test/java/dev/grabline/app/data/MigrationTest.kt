@@ -40,7 +40,7 @@ class MigrationTest {
         raw.close()
 
         val db = Room.databaseBuilder(ctx, AppDatabase::class.java, "migration-test.db")
-            .addMigrations(MIGRATION_1_2).allowMainThreadQueries().build()
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3).allowMainThreadQueries().build()
         try {
             val pc = db.pcs().get("pc1")!!
             assertEquals("Desk", pc.name)

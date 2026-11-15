@@ -37,6 +37,9 @@ class AndroidStatusStrings(private val context: Context) : StatusStrings {
     override fun queued() = s(R.string.status_queued)
     override fun downloading() = s(R.string.status_downloading)
     override fun paused() = s(R.string.status_paused)
+    override fun waitingNetwork() = s(R.string.status_waiting_network)
+    override fun waitingWifi() = s(R.string.status_waiting_wifi)
+    override fun waitingCharging() = s(R.string.status_waiting_charging)
     override fun done() = s(R.string.status_done)
     override fun failed(error: String?) =
         if (error == null) s(R.string.status_failed_plain) else context.getString(R.string.status_failed, error)
@@ -75,6 +78,7 @@ fun rowDescription(context: Context, row: DownloadRow): String = buildList {
     add(context.getString(R.string.badge_on_device, deviceName(context, row.device)))
     add(statusText(row, AndroidStatusStrings(context)))
     progressSpeech(context, row)?.let { add(it) }
+    row.notice?.let { add(it) }
     if (row.offline) add(lastSeenText(context, row))
 }.joinToString(", ")
 
@@ -86,6 +90,7 @@ fun actionLabel(action: RowAction): String = stringResource(
         RowAction.Cancel -> R.string.action_cancel
         RowAction.Retry -> R.string.action_retry
         RowAction.Remove -> R.string.action_remove
+        RowAction.AllowMobileData -> R.string.action_download_anyway
     },
 )
 
@@ -95,6 +100,7 @@ fun actionIcon(action: RowAction): ImageVector = when (action) {
     RowAction.Cancel -> DownloadIcons.Close
     RowAction.Retry -> DownloadIcons.Retry
     RowAction.Remove -> DownloadIcons.Delete
+    RowAction.AllowMobileData -> DownloadIcons.Download
 }
 
 /**

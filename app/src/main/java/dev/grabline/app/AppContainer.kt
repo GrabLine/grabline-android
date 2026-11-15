@@ -8,6 +8,9 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import dev.grabline.app.data.AppDatabase
 import dev.grabline.app.data.AppSettings
 import dev.grabline.app.data.PairedPc
+import dev.grabline.app.engine.AndroidPhoneStorage
+import dev.grabline.app.engine.AppEngineSettings
+import dev.grabline.app.engine.DownloadEngine
 import dev.grabline.app.notify.PcActivityNotifier
 import dev.grabline.app.remote.DefaultPcRemote
 import dev.grabline.app.remote.PcRemote
@@ -55,6 +58,7 @@ class AppContainer(context: Context) {
     private val keyStore = AndroidDeviceKeyStore(preferStrongBox = true)
     private val baseClient = OkHttpClient.Builder().build()
     private val appVersion = BuildConfig.VERSION_NAME
+    val phone: DownloadEngine = DownloadEngine(db.phoneJobs(), baseClient, AndroidPhoneStorage(app), AppEngineSettings(settings), scope)
 
     val connections = ConnectionManager(
         scope = scope,

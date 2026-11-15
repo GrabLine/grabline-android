@@ -65,6 +65,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import dev.grabline.app.R
 import dev.grabline.app.data.OutboxItem
+import dev.grabline.app.engine.PhoneEngine
 import dev.grabline.app.remote.PcRemote
 import dev.grabline.app.ui.entry.PasteBox
 import dev.grabline.app.ui.theme.MonoNumbers
@@ -79,21 +80,22 @@ import kotlinx.coroutines.withTimeoutOrNull
 @Composable
 fun DownloadsRoute(
     remote: PcRemote,
-    onOpenDetails: (pcId: String, jobId: Long) -> Unit,
+    onOpenDetails: (deviceId: String, jobId: Long) -> Unit,
     onAddClick: () -> Unit,
     modifier: Modifier = Modifier,
     onLinksPasted: (List<String>) -> Unit = {},
     selectedRowKey: String? = null,
+    phone: PhoneEngine? = null,
 ) {
     val vm: DownloadsViewModel = viewModel(
-        factory = viewModelFactory { initializer { DownloadsViewModel(remote, createSavedStateHandle()) } },
+        factory = viewModelFactory { initializer { DownloadsViewModel(remote, createSavedStateHandle(), phone = phone) } },
     )
     val state by vm.state.collectAsStateWithLifecycle()
     DownloadsScreen(
         state = state,
         messages = vm.messages,
         actions = DownloadsActions(
-            onOpen = { r -> r.pcId?.let { onOpenDetails(it, r.jobId) } },
+            onOpen = { r -> onOpenDetails(r.pcId ?: PHONE_ID, r.jobId) },
             onRowAction = vm::act,
             onToggleSelect = vm::toggleSelected,
             onSelectionAction = vm::actOnSelection,
@@ -415,7 +417,7 @@ fun DownloadRowItem(
                     }
                 },
         ) {
-            RowBody(row, selected)
+            RowBody(row, selected, if (selecting) null else onAction)
         }
     }
 }
@@ -427,11 +429,12 @@ private fun actionLabelPlain(context: android.content.Context, a: RowAction): St
         RowAction.Cancel -> R.string.action_cancel
         RowAction.Retry -> R.string.action_retry
         RowAction.Remove -> R.string.action_remove
+        RowAction.AllowMobileData -> R.string.action_download_anyway
     },
 )
 
 @Composable
-private fun RowBody(row: DownloadRow, selected: Boolean) {
+private fun RowBody(row: DownloadRow, selected: Boolean, onAction: ((RowAction) -> Unit)? = null) {
     val context = LocalContext.current
     val statusStrings = AndroidStatusStrings(context)
     Column(Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -451,7 +454,7 @@ private fun RowBody(row: DownloadRow, selected: Boolean) {
             DeviceBadge(row.device)
             Text(statusText(row, statusStrings), style = MaterialTheme.typography.labelMedium)
         }
-        if (row.status == RowStatus.Downloading || row.status == RowStatus.Paused || row.status == RowStatus.Queued) {
+        if (row.status == RowStatus.Downloading || row.status == RowStatus.Paused || row.status == RowStatus.Queued || row.waiting) {
             RowProgress(row, Modifier.fillMaxWidth())
             FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 val counted = if (row.total != null && row.total > 0) {
@@ -465,6 +468,14 @@ private fun RowBody(row: DownloadRow, selected: Boolean) {
             }
         } else if (row.status == RowStatus.Done && row.total != null && row.total > 0) {
             Text(sizeText(context, row.total), style = MonoNumbers)
+        }
+        row.notice?.let {
+            Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        if (row.status == RowStatus.WaitingWifi && onAction != null) {
+            TextButton(onClick = { onAction(RowAction.AllowMobileData) }, modifier = Modifier.heightIn(min = 48.dp)) {
+                Text(stringResource(R.string.action_download_anyway))
+            }
         }
         if (row.offline) {
             Text(lastSeenText(context, row), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

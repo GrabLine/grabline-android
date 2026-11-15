@@ -1,6 +1,8 @@
 package dev.grabline.app.ui.downloads
 
 import dev.grabline.app.data.PcJobWithPc
+import dev.grabline.app.engine.PhoneJob
+import dev.grabline.app.engine.PhoneJobStatus
 import dev.grabline.app.remote.connection.PcLinkState
 import dev.grabline.app.remote.protocol.JobStatus
 
@@ -10,11 +12,14 @@ sealed interface Device {
     data class Pc(val pcId: String, val name: String) : Device
 }
 
-enum class RowStatus { Queued, Downloading, Paused, Done, Failed, Cancelled, Unknown }
+enum class RowStatus { Queued, Downloading, Paused, WaitingNetwork, WaitingWifi, WaitingCharging, Done, Failed, Cancelled, Unknown }
 
 /** What a user can ask for; [wire] is the `control` action. */
 enum class RowAction(val wire: String) {
-    Pause("pause"), Resume("resume"), Cancel("cancel"), Retry("retry"), Remove("remove");
+    Pause("pause"), Resume("resume"), Cancel("cancel"), Retry("retry"), Remove("remove"),
+
+    /** Phone only: "Download now anyway" for a job held back by Wi-Fi only. */
+    AllowMobileData("allowMobileData");
 
     /** Cancel and remove act at once with a 5-second Undo. */
     val undoable: Boolean get() = this == Cancel || this == Remove
@@ -36,7 +41,17 @@ data class DownloadRow(
     /** The PC this row lives on cannot be reached right now: row greyed. */
     val offline: Boolean = false,
     val lastSeenAt: Long? = null,
+    /** Plain-words notice shown under a phone row. */
+    val notice: String? = null,
+    /** Connections in use (phone jobs). */
+    val connections: Int = 0,
+    /** content:// URI of a finished phone file, for Open and Share. */
+    val fileUri: String? = null,
 ) {
+    val isPhone: Boolean get() = device is Device.Phone
+    val waiting: Boolean
+        get() = status == RowStatus.WaitingNetwork || status == RowStatus.WaitingWifi || status == RowStatus.WaitingCharging
+
     /** Null when the size is unknown (indeterminate bar). */
     val progress: Float?
         get() = if (status == RowStatus.Done) 1f
@@ -55,7 +70,9 @@ data class DownloadRow(
     /** Actions the PC accepts from this status (PROTOCOL.md `control`); none while the PC is unreachable. */
     val actions: List<RowAction>
         get() = if (offline) emptyList() else when (status) {
-            RowStatus.Queued, RowStatus.Downloading -> listOf(RowAction.Pause, RowAction.Cancel, RowAction.Remove)
+            RowStatus.WaitingWifi -> listOf(RowAction.AllowMobileData, RowAction.Pause, RowAction.Cancel, RowAction.Remove)
+            RowStatus.Queued, RowStatus.Downloading, RowStatus.WaitingNetwork, RowStatus.WaitingCharging ->
+                listOf(RowAction.Pause, RowAction.Cancel, RowAction.Remove)
             RowStatus.Paused -> listOf(RowAction.Resume, RowAction.Cancel, RowAction.Remove)
             RowStatus.Failed, RowStatus.Cancelled -> listOf(RowAction.Retry, RowAction.Remove)
             RowStatus.Done -> listOf(RowAction.Remove)
@@ -71,6 +88,43 @@ data class DownloadRow(
 }
 
 fun rowKey(pcId: String, jobId: Long) = "pc:$pcId:$jobId"
+
+/** Stand-in "PC id" that routes and saved selections use for the phone itself. */
+const val PHONE_ID = "phone"
+
+fun phoneRowKey(jobId: Long) = "phone:$jobId"
+
+/** The list row key for a (device id, job id) pair as used by details routes and the two-pane selection. */
+fun detailsRowKey(deviceId: String, jobId: Long) = if (deviceId == PHONE_ID) phoneRowKey(jobId) else rowKey(deviceId, jobId)
+
+fun phoneStatusOf(s: PhoneJobStatus): RowStatus = when (s) {
+    PhoneJobStatus.QUEUED -> RowStatus.Queued
+    PhoneJobStatus.DOWNLOADING -> RowStatus.Downloading
+    PhoneJobStatus.PAUSED -> RowStatus.Paused
+    PhoneJobStatus.WAITING_NETWORK -> RowStatus.WaitingNetwork
+    PhoneJobStatus.WAITING_WIFI -> RowStatus.WaitingWifi
+    PhoneJobStatus.WAITING_CHARGING -> RowStatus.WaitingCharging
+    PhoneJobStatus.COMPLETED -> RowStatus.Done
+    PhoneJobStatus.FAILED -> RowStatus.Failed
+    PhoneJobStatus.CANCELLED -> RowStatus.Cancelled
+}
+
+fun phoneRow(j: PhoneJob) = DownloadRow(
+    key = phoneRowKey(j.id),
+    device = Device.Phone,
+    jobId = j.id,
+    name = j.name.ifBlank { j.url },
+    url = j.url,
+    status = phoneStatusOf(j.status),
+    downloaded = j.downloaded,
+    total = j.total,
+    speed = j.speed,
+    etaSeconds = j.etaSeconds,
+    error = j.error,
+    notice = j.notice?.takeIf { it.isNotBlank() },
+    connections = j.connections,
+    fileUri = j.fileUri,
+)
 
 fun statusOf(wire: String): RowStatus = when (JobStatus.fromWire(wire)) {
     JobStatus.QUEUED -> RowStatus.Queued
@@ -126,7 +180,8 @@ enum class StateFilter {
     Active, Done, Failed;
 
     fun matches(status: RowStatus): Boolean = when (this) {
-        Active -> status == RowStatus.Queued || status == RowStatus.Downloading || status == RowStatus.Paused
+        Active -> status == RowStatus.Queued || status == RowStatus.Downloading || status == RowStatus.Paused ||
+            status == RowStatus.WaitingNetwork || status == RowStatus.WaitingWifi || status == RowStatus.WaitingCharging
         Done -> status == RowStatus.Done
         Failed -> status == RowStatus.Failed
     }
@@ -148,6 +203,9 @@ interface StatusStrings {
     fun queued(): String
     fun downloading(): String
     fun paused(): String
+    fun waitingNetwork(): String = "Waiting for network"
+    fun waitingWifi(): String = "Waiting for Wi-Fi"
+    fun waitingCharging(): String = "Waiting to charge"
     fun done(): String
     fun failed(error: String?): String
     fun cancelled(): String
@@ -158,6 +216,9 @@ fun statusText(row: DownloadRow, s: StatusStrings): String = when (row.status) {
     RowStatus.Queued -> s.queued()
     RowStatus.Downloading -> s.downloading()
     RowStatus.Paused -> s.paused()
+    RowStatus.WaitingNetwork -> s.waitingNetwork()
+    RowStatus.WaitingWifi -> s.waitingWifi()
+    RowStatus.WaitingCharging -> s.waitingCharging()
     RowStatus.Done -> s.done()
     RowStatus.Failed -> s.failed(row.error?.takeIf { it.isNotBlank() })
     RowStatus.Cancelled -> s.cancelled()

@@ -46,12 +46,15 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dev.grabline.app.R
 import dev.grabline.app.data.AppSettings
+import dev.grabline.app.engine.PhoneEngine
 import dev.grabline.app.remote.PcRemote
 import dev.grabline.app.ui.add.AddSheetRoute
 import dev.grabline.app.ui.details.DownloadDetailsRoute
 import dev.grabline.app.ui.devices.DevicesRoute
 import dev.grabline.app.ui.devices.PairingController
 import dev.grabline.app.ui.downloads.DownloadsRoute
+import dev.grabline.app.ui.downloads.PHONE_ID
+import dev.grabline.app.ui.downloads.detailsRowKey
 import dev.grabline.app.ui.entry.IncomingRequest
 import dev.grabline.app.ui.pc.PcRoute
 import dev.grabline.app.ui.settings.SettingsRoute
@@ -98,6 +101,7 @@ fun GrabLineAppShell(
     clipboardOffer: StateFlow<String?>,
     onClipboardHandled: (accepted: Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    phone: PhoneEngine? = null,
 ) {
     val welcomeDone by remember(settings) { settings.observe(AppSettings.WELCOME_DONE) }
         .collectAsState(initial = null)
@@ -225,7 +229,11 @@ fun GrabLineAppShell(
                                     onOpenDetails = { pcId, jobId -> selectedJob = "$pcId:$jobId" },
                                     onAddClick = { openAdd(emptyList(), null) },
                                     onLinksPasted = { openAdd(it, null) },
-                                    selectedRowKey = selectedJob,
+                                    selectedRowKey = selectedJob?.let { sel ->
+                                        val parts = sel.split(':', limit = 2)
+                                        parts.getOrNull(1)?.toLongOrNull()?.let { detailsRowKey(parts[0], it) }
+                                    },
+                                    phone = phone,
                                     modifier = Modifier.weight(1f).fillMaxHeight(),
                                 )
                                 VerticalDivider()
@@ -233,7 +241,7 @@ fun GrabLineAppShell(
                                     val key = selectedJob?.split(':', limit = 2)
                                     val jobId = key?.getOrNull(1)?.toLongOrNull()
                                     if (key != null && jobId != null) {
-                                        DownloadDetailsRoute(remote, key[0], jobId, onBack = { selectedJob = null })
+                                        DownloadDetailsRoute(remote, key[0], jobId, onBack = { selectedJob = null }, phone = phone)
                                     } else {
                                         Text(stringResource(R.string.shell_pick_a_download))
                                     }
@@ -245,6 +253,7 @@ fun GrabLineAppShell(
                                 onOpenDetails = { pcId, jobId -> navController.navigate(Routes.details(pcId, jobId)) },
                                 onAddClick = { openAdd(emptyList(), null) },
                                 onLinksPasted = { openAdd(it, null) },
+                                phone = phone,
                             )
                         }
                     }
@@ -257,7 +266,7 @@ fun GrabLineAppShell(
                     ) { entry ->
                         val pcId = entry.arguments?.getString("pcId").orEmpty()
                         val jobId = entry.arguments?.getLong("jobId") ?: 0L
-                        DownloadDetailsRoute(remote, pcId, jobId, onBack = { navController.popBackStack() })
+                        DownloadDetailsRoute(remote, pcId, jobId, onBack = { navController.popBackStack() }, phone = phone)
                     }
                     composable(Routes.DEVICES) {
                         DevicesRoute(remote, pairing, onOpenPc = { navController.navigate(Routes.pc(it)) })
@@ -275,6 +284,7 @@ fun GrabLineAppShell(
                 settings = settings,
                 initialLinks = addLinks,
                 sourceTitle = addTitle,
+                phone = phone,
                 onDismiss = { addOpen = false },
                 onSent = { message -> scope.launch { snackbar.showSnackbar(message) } },
                 onPairClick = {

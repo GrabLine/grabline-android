@@ -30,9 +30,28 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
     }
 }
 
+/** v2 -> v3: phone download jobs and their segments (Phase 2 engine). */
+val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `phone_jobs` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `url` TEXT NOT NULL, " +
+                "`name` TEXT NOT NULL, `folderUri` TEXT, `status` TEXT NOT NULL, `downloaded` INTEGER NOT NULL, `total` INTEGER, " +
+                "`connections` INTEGER NOT NULL, `connectionCap` INTEGER, `notice` TEXT, `error` TEXT, `fileUri` TEXT, `etag` TEXT, " +
+                "`lastModified` TEXT, `acceptRanges` INTEGER NOT NULL, `mobileOverride` INTEGER NOT NULL, `quality` TEXT, " +
+                "`createdAt` INTEGER NOT NULL, `finishedAt` INTEGER)",
+        )
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `phone_segments` (`jobId` INTEGER NOT NULL, `idx` INTEGER NOT NULL, `start` INTEGER NOT NULL, " +
+                "`end` INTEGER NOT NULL, `done` INTEGER NOT NULL, PRIMARY KEY(`jobId`, `idx`), " +
+                "FOREIGN KEY(`jobId`) REFERENCES `phone_jobs`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE)",
+        )
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_phone_segments_jobId` ON `phone_segments` (`jobId`)")
+    }
+}
+
 @Database(
-    entities = [PairedPc::class, PcJob::class, OutboxItem::class],
-    version = 2,
+    entities = [PairedPc::class, PcJob::class, OutboxItem::class, PhoneJobRow::class, PhoneSegmentRow::class],
+    version = 3,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -40,6 +59,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun pcs(): PairedPcDao
     abstract fun jobs(): PcJobDao
     abstract fun outbox(): OutboxDao
+    abstract fun phoneJobs(): PhoneJobDao
 
     companion object {
         @Volatile private var instance: AppDatabase? = null
@@ -50,7 +70,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "grabline.db",
-                ).addMigrations(MIGRATION_1_2).build().also { instance = it }
+                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3).build().also { instance = it }
             }
     }
 }

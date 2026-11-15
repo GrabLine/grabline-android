@@ -3,6 +3,7 @@ package dev.grabline.app.ui.details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.grabline.app.engine.PhoneEngine
 import dev.grabline.app.remote.PcRemote
 import dev.grabline.app.remote.protocol.QueueInfo
 import dev.grabline.app.ui.downloads.DownloadMessage
@@ -11,7 +12,9 @@ import dev.grabline.app.ui.downloads.PendingControls
 import dev.grabline.app.ui.downloads.RowAction
 import dev.grabline.app.ui.downloads.RowStatus
 import dev.grabline.app.ui.downloads.Target
+import dev.grabline.app.ui.downloads.PHONE_ID
 import dev.grabline.app.ui.downloads.UNDO_MILLIS
+import dev.grabline.app.ui.downloads.phoneRow
 import dev.grabline.app.ui.downloads.toRow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -47,12 +51,16 @@ class DownloadDetailsViewModel(
     saved: SavedStateHandle = SavedStateHandle(),
     undoMillis: Long = UNDO_MILLIS,
     private val flushScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+    private val phone: PhoneEngine? = null,
 ) : ViewModel() {
+
+    /** [pcId] is [PHONE_ID] for a job on this phone. */
+    private val onPhone = phone != null && pcId == PHONE_ID
 
     private val messageChannel = Channel<DownloadMessage>(Channel.UNLIMITED)
     val messages: Flow<DownloadMessage> = messageChannel.receiveAsFlow()
 
-    private val controls = PendingControls(remote, viewModelScope, undoMillis) {
+    private val controls = PendingControls(remote, viewModelScope, undoMillis, phone) {
         messageChannel.trySend(DownloadMessage.Error(it))
     }
 
@@ -60,11 +68,21 @@ class DownloadDetailsViewModel(
     private var lastRow: DownloadRow? = null
     private var removeAsked = false
 
+    private val source: Flow<DownloadRow?> =
+        if (onPhone) {
+            phone!!.jobs.map { list -> list.firstOrNull { it.id == jobId }?.let(::phoneRow) }
+        } else {
+            combine(remote.jobs, remote.linkStates) { jobs, links ->
+                jobs.firstOrNull { it.job.pcId == pcId && it.job.jobId == jobId }?.let { toRow(it, links[pcId]) }
+            }
+        }
+
+    private val targetPcId: String? = if (onPhone) null else pcId
+
     val state: StateFlow<DetailsUiState> = combine(
-        remote.jobs, remote.linkStates, controls.pending, queues,
-    ) { jobs, links, pending, queueList ->
-        val found = jobs.firstOrNull { it.job.pcId == pcId && it.job.jobId == jobId }?.let { toRow(it, links[pcId]) }
-        val mine = pending.filter { p -> p.targets.any { it.pcId == pcId && it.jobId == jobId } }
+        source, controls.pending, queues,
+    ) { found, pending, queueList ->
+        val mine = pending.filter { p -> p.targets.any { it.pcId == targetPcId && it.jobId == jobId } }
         val removing = mine.any { it.action == RowAction.Remove }
         var row = found ?: if (removing) lastRow else null
         if (row != null && mine.any { it.action == RowAction.Cancel }) {
@@ -81,7 +99,7 @@ class DownloadDetailsViewModel(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), DetailsUiState())
 
     init {
-        viewModelScope.launch {
+        if (!onPhone) viewModelScope.launch {
             remote.queues(pcId).getOrNull()?.let { reply ->
                 queues.value = reply.queues
             }
@@ -92,7 +110,7 @@ class DownloadDetailsViewModel(
         val row = state.value.row ?: return
         if (action !in row.actions) return
         if (action == RowAction.Remove) removeAsked = true
-        val id = controls.request(action, listOf(Target(pcId, jobId, row.name))) ?: return
+        val id = controls.request(action, listOf(Target(targetPcId, jobId, row.name))) ?: return
         messageChannel.trySend(DownloadMessage.UndoOffer(id, action, 1, row.name))
     }
 

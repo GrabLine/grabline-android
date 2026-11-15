@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.grabline.app.data.AppSettings
 import dev.grabline.app.data.Setting
+import dev.grabline.app.engine.PhoneAddRequest
+import dev.grabline.app.engine.PhoneEngine
 import dev.grabline.app.remote.PcRemote
 import dev.grabline.app.remote.RemoteFailure
 import dev.grabline.app.remote.connection.PcLinkState
@@ -15,7 +17,9 @@ import dev.grabline.app.remote.protocol.ErrorCode
 import dev.grabline.app.remote.protocol.ErrorMessages
 import dev.grabline.app.remote.protocol.FolderInfo
 import dev.grabline.app.remote.protocol.QueueInfo
+import dev.grabline.app.ui.downloads.PHONE_ID
 import dev.grabline.app.ui.entry.LinkKind
+import dev.grabline.app.ui.settings.RulesCodec
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,8 +44,8 @@ sealed interface AnalysisUi {
     data class Failed(val message: String, val reason: FailureReason) : AnalysisUi
 }
 
-enum class SendOutcome { SENT, WILL_SEND_LATER }
-data class SentResult(val outcome: SendOutcome, val pcName: String)
+enum class SendOutcome { SENT, WILL_SEND_LATER, ADDED_ON_PHONE }
+data class SentResult(val outcome: SendOutcome, val pcName: String, val count: Int = 1)
 enum class Notice { ALREADY_SENT, SEND_FAILED }
 data class AnalyzeTarget(val pcId: String, val url: String, val retry: Int)
 
@@ -71,6 +75,15 @@ data class AddUiState(
     val sent: SentResult? = null,
     val analyzeTarget: AnalyzeTarget? = null,
     val queuesPcId: String? = null,
+    /** The phone engine exists, so "This phone" can be chosen. */
+    val phoneAvailable: Boolean = false,
+    val deviceIsPhone: Boolean = false,
+    /** The Save folder for this add: "Downloads/GrabLine" or a picked tree URI. */
+    val phoneFolder: String = "Downloads/GrabLine",
+    /** Video links that cannot go to the phone yet (Phase 2). */
+    val phoneVideoCount: Int = 0,
+    /** Links the phone will add. */
+    val phoneAddCount: Int = 0,
 ) {
     val selectedPc: PcOption? get() = pcs.firstOrNull { it.id == selectedPcId }
 }
@@ -79,9 +92,17 @@ class AddViewModel(
     private val remote: PcRemote,
     private val settings: AppSettings,
     private val handle: SavedStateHandle,
+    private val phone: PhoneEngine? = null,
 ) : ViewModel() {
 
-    private data class Prefs(val quality: String, val audio: String, val device: String, val lastPc: String)
+    private data class Prefs(
+        val quality: String,
+        val audio: String,
+        val device: String,
+        val lastPc: String,
+        val rules: String = "",
+        val folder: String = "Downloads/GrabLine",
+    )
     private data class Env(val pcs: List<dev.grabline.app.data.PairedPc>, val links: Map<String, PcLinkState>, val prefs: Prefs)
     private data class Local(
         val links: List<String>,
@@ -91,6 +112,7 @@ class AddViewModel(
         val queue: Int,
         val folder: String?,
         val expanded: Boolean,
+        val phoneFolder: String?,
     )
     private data class Transient(
         val analysis: AnalysisUi = AnalysisUi.Idle,
@@ -105,11 +127,15 @@ class AddViewModel(
     private val transient = MutableStateFlow(Transient())
 
     private val prefs = combine(
-        settings.observe(AppSettings.VIDEO_QUALITY),
-        settings.observe(AppSettings.AUDIO_FORMAT),
-        settings.observe(AppSettings.DEFAULT_DEVICE),
-        settings.observe(LAST_PC),
-    ) { q, a, d, l -> Prefs(q, a, d, l) }
+        combine(
+            settings.observe(AppSettings.VIDEO_QUALITY),
+            settings.observe(AppSettings.AUDIO_FORMAT),
+            settings.observe(AppSettings.DEFAULT_DEVICE),
+            settings.observe(LAST_PC),
+        ) { q, a, d, l -> Prefs(q, a, d, l) },
+        settings.observe(AppSettings.RULES),
+        settings.observe(AppSettings.SAVE_FOLDER),
+    ) { p, rules, folder -> p.copy(rules = rules, folder = folder) }
 
     private val env = combine(remote.pcs, remote.linkStates, prefs) { pcs, links, p -> Env(pcs, links, p) }
 
@@ -122,8 +148,11 @@ class AddViewModel(
             handle.getStateFlow(QUEUE, -1),
             handle.getStateFlow<String?>(FOLDER, null),
             handle.getStateFlow(EXPANDED, false),
-        ) { q, f, e -> Triple(q, f, e) },
-    ) { links, title, pc, quality, t -> Local(links, title, pc, quality, t.first, t.second, t.third) }
+            handle.getStateFlow<String?>(PHONE_FOLDER, null),
+        ) { q, f, e, pf -> listOf(q, f, e, pf) },
+    ) { links, title, pc, quality, t ->
+        Local(links, title, pc, quality, t[0] as Int, t[1] as String?, t[2] as Boolean, t[3] as String?)
+    }
 
     val state: StateFlow<AddUiState> = combine(env, local, transient) { e, l, t -> build(e, l, t) }
         .stateIn(viewModelScope, SharingStarted.Eagerly, AddUiState())
@@ -183,6 +212,19 @@ class AddViewModel(
         handle[FOLDER] = null
     }
 
+    fun selectPhone() {
+        if (phone != null) handle[PC] = PHONE_ID
+    }
+
+    /** A picked folder (SAF tree URI string) for this add only. */
+    fun selectPhoneFolder(uri: String) { handle[PHONE_FOLDER] = uri }
+
+    /** "Send to a PC instead" for video links, which the phone cannot download yet. */
+    fun sendToPcInstead() {
+        val pc = state.value.pcs.let { l -> l.firstOrNull { it.online } ?: l.firstOrNull() } ?: return
+        selectPc(pc.id)
+    }
+
     fun selectQuality(wire: String) { handle[QUALITY] = wire }
     fun selectQueue(id: Int?) { handle[QUEUE] = id ?: -1 }
     fun selectFolder(id: String?) { handle[FOLDER] = id }
@@ -192,6 +234,7 @@ class AddViewModel(
 
     fun startNow() {
         val s = state.value
+        if (s.deviceIsPhone) return startOnPhone(s)
         val pc = s.selectedPc ?: return
         if (!s.canStart || s.sending) return
         transient.update { it.copy(sending = true, notice = null) }
@@ -242,6 +285,42 @@ class AddViewModel(
         }
     }
 
+    private fun startOnPhone(s: AddUiState) {
+        val engine = phone ?: return
+        if (!s.canStart || s.sending) return
+        transient.update { it.copy(sending = true, notice = null) }
+        viewModelScope.launch {
+            var added = 0
+            var failed = false
+            val single = s.links.size == 1
+            val title = if (single) (handle.get<String?>(TITLE) ?: (s.analysis as? AnalysisUi.Ready)?.title) else null
+            val folderUri = s.phoneFolder.takeIf { it.startsWith("content:") }
+            try {
+                for (link in s.links) {
+                    val kind = LinkKind.classify(link)
+                    if (kind == LinkKind.PAGE || kind == LinkKind.VIDEO) continue
+                    engine.add(PhoneAddRequest(url = link, title = title, folderUri = folderUri))
+                    added++
+                }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                failed = true
+            }
+            if (added > 0) runCatching { settings.set(LAST_PC, PHONE_ID) }
+            transient.update {
+                when {
+                    added > 0 -> it.copy(sending = false, sent = SentResult(SendOutcome.ADDED_ON_PHONE, "", added))
+                    else -> it.copy(sending = false, notice = Notice.SEND_FAILED)
+                }
+            }
+            if (added == 0) {
+                delay(2_500)
+                transient.update { it.copy(notice = null) }
+            }
+        }
+    }
+
     private fun analysisReady(reply: AnalysisReply): AnalysisUi {
         val sizes = reply.qualities.associate { it.label.lowercase() to it.sizeBytes }
         return AnalysisUi.Ready(reply.title, sizes)
@@ -263,11 +342,17 @@ class AddViewModel(
 
     private fun build(e: Env, l: Local, t: Transient): AddUiState {
         val pcs = e.pcs.filter { it.removedAt == null }.map { PcOption(it.pcId, it.name, e.links[it.pcId] is PcLinkState.Online) }
-        val ids = pcs.map { it.id }.toSet()
-        val pcId = l.pc?.takeIf { it in ids }
-            ?: e.prefs.device.takeIf { it in ids }
-            ?: e.prefs.lastPc.takeIf { it in ids }
+        val phoneOk = phone != null
+        val valid = pcs.map { it.id }.toSet() + listOfNotNull(PHONE_ID.takeIf { phoneOk })
+        val rule = l.links.firstOrNull()?.let { RulesCodec.decode(e.prefs.rules)[RuleRouting.typeOf(it)] }
+        val chosen = l.pc?.takeIf { it in valid }
+            ?: rule?.takeIf { it in valid }
+            ?: e.prefs.device.takeIf { it in valid }
+            ?: e.prefs.lastPc.takeIf { it in valid }
             ?: pcs.firstOrNull()?.id
+            ?: PHONE_ID.takeIf { phoneOk }
+        val isPhone = chosen == PHONE_ID
+        val pcId = chosen.takeIf { !isPhone }
         val pc = pcs.firstOrNull { it.id == pcId }
         val online = pc?.online == true
         val kinds = l.links.map { LinkKind.classify(it) }
@@ -276,6 +361,8 @@ class AddViewModel(
         val analysis = if (online) t.analysis else AnalysisUi.Idle
         val noMedia = (analysis as? AnalysisUi.Failed)?.reason == FailureReason.NO_MEDIA
         val notDownloadable = allPages || noMedia
+        val phoneVideos = if (isPhone) kinds.count { it == LinkKind.VIDEO } else 0
+        val phoneAdds = if (isPhone) kinds.count { it != LinkKind.VIDEO && it != LinkKind.PAGE } else 0
 
         val options = when (analysis) {
             is AnalysisUi.Ready -> ALL_QUALITIES.filter { it == "best" || it in analysis.sizes }
@@ -306,7 +393,7 @@ class AddViewModel(
             pcs = pcs,
             selectedPcId = pcId,
             pcOnline = online,
-            showQuality = hasVideo && !notDownloadable,
+            showQuality = hasVideo && !notDownloadable && !isPhone,
             qualityOptions = options,
             quality = quality,
             sizes = (analysis as? AnalysisUi.Ready)?.sizes.orEmpty(),
@@ -316,12 +403,17 @@ class AddViewModel(
             queueId = queueId,
             folderId = folderId,
             notDownloadable = notDownloadable,
-            canStart = pc != null && !notDownloadable && l.links.isNotEmpty(),
+            canStart = if (isPhone) phoneAdds > 0 && !notDownloadable else pc != null && !notDownloadable && l.links.isNotEmpty(),
             sending = t.sending,
             notice = t.notice,
             sent = t.sent,
             analyzeTarget = target,
             queuesPcId = if (pcId != null && online && !allPages) pcId else null,
+            phoneAvailable = phoneOk,
+            deviceIsPhone = isPhone,
+            phoneFolder = l.phoneFolder ?: e.prefs.folder,
+            phoneVideoCount = phoneVideos,
+            phoneAddCount = phoneAdds,
         )
     }
 
@@ -340,6 +432,7 @@ class AddViewModel(
         const val QUEUE = "add_queue"
         const val FOLDER = "add_folder"
         const val EXPANDED = "add_expanded"
+        const val PHONE_FOLDER = "add_phone_folder"
 
         /** The last PC a link was sent to ("" = none yet). */
         val LAST_PC = Setting(stringPreferencesKey("add_last_pc"), "")

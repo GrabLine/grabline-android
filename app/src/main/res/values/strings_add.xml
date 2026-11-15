@@ -8,11 +8,10 @@
     <string name="add_kind_description">Kind: %1$s</string>
     <string name="add_download_on">Download on</string>
     <string name="add_this_phone">This phone</string>
-    <string name="add_phone_later">Coming in a later update</string>
     <string name="add_pc_online">Online</string>
     <string name="add_pc_offline">Offline</string>
     <string name="add_pc_description">%1$s, %2$s</string>
-    <string name="add_phone_description">This phone, coming in a later update, not available</string>
+    <string name="add_phone_description">This phone</string>
     <string name="add_pair_first">Pair a PC first</string>
     <string name="add_pair_button">Pair a PC</string>
     <string name="add_offline_hint">Will send when your PC is back</string>
@@ -37,4 +36,18 @@
     <string name="add_send_failed">Couldn\'t send that. Try again</string>
     <string name="add_sent_to">Sent to %1$s</string>
     <string name="add_will_send_later">Will send when your PC is back</string>
+    <string name="add_start_phone_description">Start the download on this phone now</string>
+    <string name="add_phone_folder">Save to</string>
+    <string name="add_phone_folder_change">Change</string>
+    <string name="add_phone_folder_change_description">Save folder: %1$s. Change the folder</string>
+    <string name="add_phone_video_later">Video downloads on the phone arrive in a later update</string>
+    <string name="add_phone_video_to_pc">Send to a PC instead</string>
+    <plurals name="add_phone_video_skipped">
+        <item quantity="one">%1$d video link will be skipped</item>
+        <item quantity="other">%1$d video links will be skipped</item>
+    </plurals>
+    <plurals name="add_added_on_phone">
+        <item quantity="one">Added to this phone</item>
+        <item quantity="other">Added %1$d downloads to this phone</item>
+    </plurals>
 </resources>

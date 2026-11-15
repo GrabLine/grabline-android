@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.grabline.app.data.OutboxItem
+import dev.grabline.app.engine.PhoneEngine
 import dev.grabline.app.remote.PcRemote
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,15 +52,17 @@ class DownloadsViewModel(
     private val remote: PcRemote,
     private val saved: SavedStateHandle = SavedStateHandle(),
     undoMillis: Long = UNDO_MILLIS,
-    /** Phone jobs (Phase 2) plug in here. */
+    /** Other rows (tests, previews). */
     extraRows: Flow<List<DownloadRow>> = flowOf(emptyList()),
     private val flushScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default),
+    /** The phone's own downloads; its jobs join the list as Device.Phone rows. */
+    private val phone: PhoneEngine? = null,
 ) : ViewModel() {
 
     private val messageChannel = Channel<DownloadMessage>(Channel.UNLIMITED)
     val messages: Flow<DownloadMessage> = messageChannel.receiveAsFlow()
 
-    private val controls = PendingControls(remote, viewModelScope, undoMillis) {
+    private val controls = PendingControls(remote, viewModelScope, undoMillis, phone) {
         messageChannel.trySend(DownloadMessage.Error(it))
     }
 
@@ -68,11 +71,14 @@ class DownloadsViewModel(
     private val selection = MutableStateFlow<Set<String>>(emptySet())
     private val refreshing = MutableStateFlow(false)
 
+    private val extraAll: Flow<List<DownloadRow>> =
+        if (phone == null) extraRows else combine(extraRows, phone.jobs) { extra, jobs -> jobs.map(::phoneRow) + extra }
+
     private val allRows: Flow<List<DownloadRow>> = combine(
-        remote.jobs, remote.linkStates, extraRows, controls.pending,
+        remote.jobs, remote.linkStates, extraAll, controls.pending,
     ) { jobs, links, extra, pending ->
-        val removed = pending.filter { it.action == RowAction.Remove }.flatMap { it.targets }.map { rowKey(it.pcId, it.jobId) }.toSet()
-        val cancelled = pending.filter { it.action == RowAction.Cancel }.flatMap { it.targets }.map { rowKey(it.pcId, it.jobId) }.toSet()
+        val removed = pending.filter { it.action == RowAction.Remove }.flatMap { it.targets }.map { it.key }.toSet()
+        val cancelled = pending.filter { it.action == RowAction.Cancel }.flatMap { it.targets }.map { it.key }.toSet()
         (extra + jobs.map { toRow(it, links[it.job.pcId]) })
             .filter { it.key !in removed }
             .map { if (it.key in cancelled) it.copy(status = RowStatus.Cancelled, speed = 0, etaSeconds = null) else it }
@@ -149,7 +155,7 @@ class DownloadsViewModel(
     }
 
     private fun dispatch(action: RowAction, rows: List<DownloadRow>) {
-        val targets = rows.mapNotNull { r -> r.pcId?.let { Target(it, r.jobId, r.name) } }
+        val targets = rows.map { r -> Target(r.pcId, r.jobId, r.name) }
         val id = controls.request(action, targets) ?: return
         messageChannel.trySend(DownloadMessage.UndoOffer(id, action, targets.size, targets.first().name))
     }

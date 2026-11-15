@@ -50,6 +50,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import dev.grabline.app.R
+import dev.grabline.app.engine.PhoneEngine
 import dev.grabline.app.remote.PcRemote
 import dev.grabline.app.ui.downloads.AndroidStatusStrings
 import dev.grabline.app.ui.downloads.DeviceBadge
@@ -83,11 +84,12 @@ fun DownloadDetailsRoute(
     jobId: Long,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    phone: PhoneEngine? = null,
 ) {
     val vm: DownloadDetailsViewModel = viewModel(
         key = "details:$pcId:$jobId",
         factory = viewModelFactory {
-            initializer { DownloadDetailsViewModel(remote, pcId, jobId, createSavedStateHandle()) }
+            initializer { DownloadDetailsViewModel(remote, pcId, jobId, createSavedStateHandle(), phone = phone) }
         },
     )
     val state by vm.state.collectAsStateWithLifecycle()
@@ -163,7 +165,13 @@ fun DownloadDetailsScreen(
                     )
                 }
             } else {
-                DetailsBody(row, state, onAction) { clipboard.setText(AnnotatedString(row.url)); scope.launch { host.showSnackbar(copied) } }
+                val noApp = stringResource(R.string.file_no_app)
+                DetailsBody(
+                    row, state, onAction,
+                    onCopy = { clipboard.setText(AnnotatedString(row.url)); scope.launch { host.showSnackbar(copied) } },
+                    onOpen = { if (!FileActions.open(context, row.fileUri)) scope.launch { host.showSnackbar(noApp) } },
+                    onShare = { if (!FileActions.share(context, row.fileUri, row.name)) scope.launch { host.showSnackbar(noApp) } },
+                )
             }
         }
         SnackbarHost(host, Modifier.align(Alignment.BottomCenter).padding(8.dp))
@@ -171,7 +179,14 @@ fun DownloadDetailsScreen(
 }
 
 @Composable
-private fun DetailsBody(row: DownloadRow, state: DetailsUiState, onAction: (RowAction) -> Unit, onCopy: () -> Unit) {
+private fun DetailsBody(
+    row: DownloadRow,
+    state: DetailsUiState,
+    onAction: (RowAction) -> Unit,
+    onCopy: () -> Unit,
+    onOpen: () -> Unit,
+    onShare: () -> Unit,
+) {
     val context = LocalContext.current
     val statuses = AndroidStatusStrings(context)
     Column(
@@ -185,8 +200,11 @@ private fun DetailsBody(row: DownloadRow, state: DetailsUiState, onAction: (RowA
         if (row.status == RowStatus.Failed) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(stringResource(R.string.detail_failed_what_to_try), style = MaterialTheme.typography.titleSmall)
-                Text(stringResource(R.string.detail_failed_advice))
+                Text(stringResource(if (row.isPhone) R.string.detail_phone_failed_advice else R.string.detail_failed_advice))
             }
+        }
+        row.notice?.let { notice ->
+            Field(stringResource(R.string.detail_notice)) { Text(notice) }
         }
         if (row.offline) {
             Text(lastSeenText(context, row), color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -220,6 +238,9 @@ private fun DetailsBody(row: DownloadRow, state: DetailsUiState, onAction: (RowA
                 style = MonoNumbers,
             )
         }
+        if (row.isPhone && row.connections > 0 && (row.status == RowStatus.Downloading || row.status == RowStatus.Queued)) {
+            Field(stringResource(R.string.detail_connections)) { Text(row.connections.toString(), style = MonoNumbers) }
+        }
         if (row.status == RowStatus.Downloading) {
             Field(stringResource(R.string.detail_speed)) { Text(speedText(context, row.speed), style = MonoNumbers) }
             row.timeLeftSeconds?.let {
@@ -228,7 +249,8 @@ private fun DetailsBody(row: DownloadRow, state: DetailsUiState, onAction: (RowA
         }
         Field(stringResource(R.string.detail_source)) { SelectionContainer { Text(row.url) } }
         Field(stringResource(R.string.detail_destination)) {
-            Text(state.queueName?.let { context.getString(R.string.detail_queue_named, it) } ?: stringResource(R.string.detail_queue_default))
+            if (row.isPhone) Text(stringResource(R.string.detail_saved_on_phone))
+            else Text(state.queueName?.let { context.getString(R.string.detail_queue_named, it) } ?: stringResource(R.string.detail_queue_default))
         }
         Field(stringResource(R.string.detail_device)) { DeviceBadge(row.device) }
 
@@ -246,6 +268,10 @@ private fun DetailsBody(row: DownloadRow, state: DetailsUiState, onAction: (RowA
                 } else {
                     OutlinedButton(onClick = { onAction(a) }, enabled = enabled, modifier = Modifier.heightIn(min = 48.dp)) { content() }
                 }
+            }
+            if (row.isPhone && row.status == RowStatus.Done && row.fileUri != null) {
+                Button(onClick = onOpen, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.action_open_file)) }
+                OutlinedButton(onClick = onShare, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.action_share_file)) }
             }
             OutlinedButton(onClick = onCopy, modifier = Modifier.heightIn(min = 48.dp)) {
                 Icon(DownloadIcons.Copy, contentDescription = null, modifier = Modifier.size(18.dp))

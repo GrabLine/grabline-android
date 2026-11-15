@@ -161,6 +161,7 @@ private fun SettingsMain(
         }
     }
 
+    val pickSaveFolder = rememberFolderPicker { put(AppSettings.SAVE_FOLDER, it) }
     val defaultDevice by settings.state(AppSettings.DEFAULT_DEVICE)
     val rules by settings.state(AppSettings.RULES)
     val saveFolder by settings.state(AppSettings.SAVE_FOLDER)
@@ -212,23 +213,29 @@ private fun SettingsMain(
             )
         }
 
-        SettingsGroup(stringResource(R.string.group_phone_downloads), later) {
+        SettingsGroup(stringResource(R.string.group_phone_downloads)) {
             ActionRow(
-                stringResource(R.string.setting_save_folder), {},
-                supporting = folderLabel(saveFolder), enabled = false,
+                stringResource(R.string.setting_save_folder), pickSaveFolder,
+                supporting = folderLabel(saveFolder),
             )
-            SliderRow(stringResource(R.string.setting_connections), connections, 1..16, { put(AppSettings.CONNECTIONS_PER_FILE, it) }, enabled = false)
-            SliderRow(stringResource(R.string.setting_at_once), atOnce, 1..5, { put(AppSettings.DOWNLOADS_AT_ONCE, it) }, enabled = false)
+            if (saveFolder != AppSettings.SAVE_FOLDER.default) {
+                ActionRow(
+                    stringResource(R.string.setting_save_folder_reset),
+                    { put(AppSettings.SAVE_FOLDER, AppSettings.SAVE_FOLDER.default) },
+                )
+            }
+            SliderRow(stringResource(R.string.setting_connections), connections, 1..16, { put(AppSettings.CONNECTIONS_PER_FILE, it) })
+            SliderRow(stringResource(R.string.setting_at_once), atOnce, 1..5, { put(AppSettings.DOWNLOADS_AT_ONCE, it) })
             ChoiceRow(
                 stringResource(R.string.setting_speed_limit),
                 listOf(
                     0 to stringResource(R.string.speed_off),
                     256 to "256 KB/s", 512 to "512 KB/s", 1024 to "1 MB/s", 2048 to "2 MB/s", 5120 to "5 MB/s",
                 ),
-                speed, { put(AppSettings.SPEED_LIMIT_KBPS, it) }, enabled = false, fallbackLabel = "$speed KB/s",
+                speed, { put(AppSettings.SPEED_LIMIT_KBPS, it) }, fallbackLabel = "$speed KB/s",
             )
-            SwitchRow(stringResource(R.string.setting_only_wifi), onlyWifi, { put(AppSettings.ONLY_WIFI, it) }, enabled = false)
-            SwitchRow(stringResource(R.string.setting_only_charging), onlyCharging, { put(AppSettings.ONLY_CHARGING, it) }, enabled = false)
+            SwitchRow(stringResource(R.string.setting_only_wifi), onlyWifi, { put(AppSettings.ONLY_WIFI, it) })
+            SwitchRow(stringResource(R.string.setting_only_charging), onlyCharging, { put(AppSettings.ONLY_CHARGING, it) })
             ChoiceRow(
                 stringResource(R.string.setting_auto_retry),
                 listOf(
@@ -237,7 +244,7 @@ private fun SettingsMain(
                     10 to stringResource(R.string.retry_10),
                     -1 to stringResource(R.string.retry_forever),
                 ),
-                autoRetry, { put(AppSettings.AUTO_RETRY, it) }, enabled = false,
+                autoRetry, { put(AppSettings.AUTO_RETRY, it) },
             )
         }
 

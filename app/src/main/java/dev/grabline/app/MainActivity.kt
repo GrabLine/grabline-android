@@ -56,6 +56,7 @@ class MainActivity : ComponentActivity() {
                     settings = settings,
                     incoming = incoming,
                     onIncomingHandled = { incoming.value = null },
+                    phone = container.phone,
                     clipboardOffer = clipboardOffer,
                     onClipboardHandled = { _ ->
                         clipboardOffer.value?.let(offers::markHandled)
