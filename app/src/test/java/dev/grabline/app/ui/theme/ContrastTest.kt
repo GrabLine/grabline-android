@@ -41,7 +41,11 @@ class ContrastTest {
         check("dark onSurfaceVariant/background", s.onSurfaceVariant, s.background)
         check("dark onSurfaceVariant/surface", s.onSurfaceVariant, s.surface)
         check("dark onPrimary/primary", s.onPrimary, s.primary)
-        checkLarge("dark primary/background (UI and large text, 3:1)", s.primary, s.background)
+        // Text buttons and links use primary as small text: full 4.5:1.
+        check("dark primary/background", s.primary, s.background)
+        check("dark primary/surface", s.primary, s.surface)
+        check("dark onPrimaryContainer/primaryContainer", s.onPrimaryContainer, s.primaryContainer)
+        checkLarge("dark primaryContainer/background (UI, 3:1)", s.primaryContainer, s.background)
     }
 
     @Test
@@ -53,6 +57,10 @@ class ContrastTest {
         check("light onSurfaceVariant/background", s.onSurfaceVariant, s.background)
         check("light onSurfaceVariant/surface", s.onSurfaceVariant, s.surface)
         check("light onPrimary/primary", s.onPrimary, s.primary)
-        checkLarge("light primary/background (UI and large text, 3:1)", s.primary, s.background)
+        // Text buttons and links use primary as small text: full 4.5:1.
+        check("light primary/background", s.primary, s.background)
+        check("light primary/surface", s.primary, s.surface)
+        check("light onPrimaryContainer/primaryContainer", s.onPrimaryContainer, s.primaryContainer)
+        checkLarge("light primaryContainer/background (UI, 3:1)", s.primaryContainer, s.background)
     }
 }

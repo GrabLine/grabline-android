@@ -27,9 +27,18 @@ import androidx.compose.ui.platform.LocalContext
 
 enum class ThemeMode { System, Light, Dark }
 
+/*
+ * Dark: the brand blue #2563eb reaches only 3.8:1 as text on #07090e, and
+ * white on any blue light enough to pass as text drops below 4.5:1. So text
+ * buttons and links (M3 `primary`) use the lighter accent tint with dark text
+ * on fills, and the brand blue stays as `primaryContainer` (the + button,
+ * selected states) with white text (QA-44).
+ */
 val GrabLineDarkScheme: ColorScheme = darkColorScheme(
-    primary = GrabLineColors.DarkPrimary,
-    onPrimary = GrabLineColors.DarkOnPrimary,
+    primary = GrabLineColors.DarkAccentText,
+    onPrimary = GrabLineColors.DarkBackground,
+    primaryContainer = GrabLineColors.DarkPrimary,
+    onPrimaryContainer = GrabLineColors.DarkOnPrimary,
     background = GrabLineColors.DarkBackground,
     onBackground = GrabLineColors.DarkOnBackground,
     surface = GrabLineColors.DarkSurface,
@@ -42,9 +51,13 @@ val GrabLineDarkScheme: ColorScheme = darkColorScheme(
     outlineVariant = GrabLineColors.DarkOutline,
 )
 
+/* Light: the desktop accent is 4.3:1 as text on the light background, so text
+ * roles use the deeper accent tint; the desktop accent stays as the container. */
 val GrabLineLightScheme: ColorScheme = lightColorScheme(
-    primary = GrabLineColors.LightPrimary,
+    primary = GrabLineColors.LightAccentText,
     onPrimary = GrabLineColors.LightOnPrimary,
+    primaryContainer = GrabLineColors.LightPrimary,
+    onPrimaryContainer = GrabLineColors.LightOnPrimary,
     background = GrabLineColors.LightBackground,
     onBackground = GrabLineColors.LightOnBackground,
     surface = GrabLineColors.LightSurface,
