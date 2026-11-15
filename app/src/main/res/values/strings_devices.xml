@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="devices_title">Devices</string>
+    <string name="devices_pair_button">Pair a PC</string>
+    <string name="devices_pair_cd">Pair a PC by scanning its QR code</string>
+    <string name="devices_empty_title">No PCs yet</string>
+    <string name="devices_empty_body">Pair your phone with GrabLine on your PC. Then you can send links to it, watch downloads and pause them from anywhere on the same Wi-Fi.</string>
+    <string name="devices_scan_prompt">Point the camera at the QR code on your PC</string>
+    <string name="devices_row_cd">%1$s, %2$s. Open this PC</string>
+    <string name="devices_version">GrabLine %1$s</string>
+    <plurals name="devices_active_jobs_plural">
+        <item quantity="one">%d active download</item>
+        <item quantity="other">%d active downloads</item>
+    </plurals>
+    <string name="devices_no_active">No active downloads</string>
+
+    <string name="status_online">Online</string>
+    <string name="status_connecting">Connecting</string>
+    <string name="status_offline">Your PC is off or on another network</string>
+    <string name="status_pc_too_old">Update GrabLine on your PC</string>
+    <string name="status_phone_too_old">Update GrabLine on this phone</string>
+    <string name="status_identity_changed">Your PC\'s identity changed. If you reinstalled GrabLine, pair again</string>
+    <string name="status_pairing_removed">This PC no longer accepts this phone. Pair again to reconnect</string>
+
+    <string name="pairing_connecting">Connecting…</string>
+    <string name="pairing_confirm_on_pc">Confirm on your PC</string>
+    <string name="pairing_confirm_on_pc_body">Press Allow on the prompt that appeared on your PC.</string>
+    <string name="pairing_success">Paired with %1$s</string>
+    <string name="pairing_failed_title">Couldn\'t pair</string>
+    <string name="pairing_done">Done</string>
+    <string name="pairing_cancel">Cancel</string>
+    <string name="pairing_retry">Try again</string>
+    <string name="pairing_close">Close</string>
+
+    <string name="manual_title">Enter the code by hand</string>
+    <string name="manual_intro">The camera isn\'t available. On your PC, open GrabLine, go to the Phone page and type what it shows under \"Enter by hand\".</string>
+    <string name="manual_address">PC address</string>
+    <string name="manual_address_hint">192.168.1.20</string>
+    <string name="manual_port">Port (optional)</string>
+    <string name="manual_code">Pairing code</string>
+    <string name="manual_code_hint">12 letters and numbers</string>
+    <string name="error_bad_address">That address doesn\'t look right</string>
+    <string name="manual_port_error">That port doesn\'t look right. Use a number from 1024 to 65535</string>
+    <string name="manual_submit">Pair</string>
+    <string name="manual_back">Back</string>
+    <string name="manual_use_camera">Scan the QR code instead</string>
+
+    <string name="pc_back">Back</string>
+    <string name="pc_unknown">This PC is no longer paired</string>
+    <string name="pc_queues">Queues</string>
+    <string name="pc_queues_none">No queues to show</string>
+    <string name="pc_queue_paused">paused</string>
+    <string name="pc_queue_running">running</string>
+    <string name="pc_queue_row">%1$s, %2$s</string>
+    <string name="pc_speed_now">Speed now</string>
+    <string name="pc_today">Downloaded today</string>
+    <string name="pc_speed_unit_mbs">%1$s MB/s</string>
+    <string name="pc_speed_unit_kbs">%1$s KB/s</string>
+    <string name="pc_speed_unit_bs">%1$d B/s</string>
+    <string name="pc_size_gb">%1$s GB</string>
+    <string name="pc_size_mb">%1$s MB</string>
+    <string name="pc_size_kb">%1$s KB</string>
+    <string name="pc_size_b">%1$d B</string>
+    <string name="pc_pause_all">Pause all</string>
+    <string name="pc_resume_all">Resume all</string>
+    <string name="pc_speed_cap">Speed cap</string>
+    <string name="pc_speed_cap_off">Off</string>
+    <string name="pc_speed_cap_dialog_title">Speed cap</string>
+    <string name="pc_speed_cap_value">Limit</string>
+    <string name="pc_speed_cap_unit_kb">KB/s</string>
+    <string name="pc_speed_cap_unit_mb">MB/s</string>
+    <string name="pc_speed_cap_off_switch">No limit</string>
+    <string name="pc_speed_cap_error">Enter a number greater than zero</string>
+    <string name="pc_speed_cap_save">Save</string>
+    <string name="pc_default_queue">Default queue</string>
+    <string name="pc_default_queue_none">PC decides</string>
+    <string name="pc_default_queue_dialog_title">Default queue for links from this phone</string>
+    <string name="pc_remove">Remove pairing</string>
+    <string name="pc_remove_title">Remove this pairing?</string>
+    <string name="pc_remove_body">Unpairing can\'t be undone from the phone. To use %1$s again you will need to pair again with a new code.</string>
+    <string name="pc_remove_confirm">Remove</string>
+    <string name="pc_cancel">Cancel</string>
+    <string name="pc_offline_tips_title">Things to check</string>
+    <string name="pc_tip_wifi">Your phone and PC are on the same Wi-Fi.</string>
+    <string name="pc_tip_awake">Your PC is awake.</string>
+    <string name="pc_tip_running">GrabLine is running on your PC.</string>
+    <string name="pc_tip_listener">The Phone page in GrabLine on your PC shows the listener is on.</string>
+    <string name="pc_retry">Try again</string>
+    <string name="pc_action_failed">Your PC didn\'t answer. Try again</string>
+</resources>
