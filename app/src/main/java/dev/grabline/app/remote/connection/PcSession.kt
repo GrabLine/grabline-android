@@ -69,7 +69,7 @@ class PcSession(
     private val authSent = AtomicBoolean(false)
     @Volatile private var socket: WireSocket? = null
     @Volatile private var authId: String? = null
-    @Volatile private var helloDeferred = CompletableDeferred<ServerHello>()
+    @Volatile private var helloDeferred = CompletableDeferred<ServerHello?>()
 
     private val _events = MutableSharedFlow<ServerEvent>(
         extraBufferCapacity = 256,
@@ -153,7 +153,7 @@ class PcSession(
     private fun finish(end: SessionEnd) {
         if (!ended.complete(end)) return
         if (!opened.isCompleted) opened.complete(Result.failure(EndException(end)))
-        helloDeferred.cancel()
+        helloDeferred.complete(null)
         val error = RemoteException(ErrorCode.INTERNAL, message = "connection lost")
         pending.values.forEach { it.completeExceptionally(error) }
         pending.clear()
