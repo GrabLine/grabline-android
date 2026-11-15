@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shell_torrent_file_later">Отправка .torrent-файлов на компьютер появится в одном из следующих обновлений. Magnet-ссылки уже работают.</string>
+    <string name="shell_offer_copied">Отправить скопированную ссылку?</string>
+    <string name="shell_offer_send">Отправить</string>
+    <string name="shell_pick_a_download">Выберите загрузку, чтобы увидеть сведения</string>
+    <string name="shell_battery_tip">Телефон приостановил загрузки, чтобы сэкономить заряд. Разрешить GrabLine работать в фоне?</string>
+    <string name="shell_battery_tip_action">Настройки</string>
+</resources>

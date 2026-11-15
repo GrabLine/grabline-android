@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shell_torrent_file_later">L\'envoi de fichiers .torrent vers un PC arrivera dans une prochaine mise à jour. Les liens magnet fonctionnent déjà.</string>
+    <string name="shell_offer_copied">Envoyer le lien copié ?</string>
+    <string name="shell_offer_send">Envoyer</string>
+    <string name="shell_pick_a_download">Choisissez un téléchargement pour voir ses détails</string>
+    <string name="shell_battery_tip">Votre téléphone a mis les téléchargements en pause pour économiser la batterie. Laisser GrabLine fonctionner en arrière-plan ?</string>
+    <string name="shell_battery_tip_action">Paramètres</string>
+</resources>

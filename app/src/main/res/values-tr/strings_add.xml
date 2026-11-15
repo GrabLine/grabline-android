@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_title">GrabLine\'a ekle</string>
+    <string name="add_links_count">%1$d bağlantı</string>
+    <string name="add_links_show">Bağlantıları göster</string>
+    <string name="add_links_hide">Bağlantıları gizle</string>
+    <string name="add_links_toggle_description">Bağlantı listesini göster veya gizle</string>
+    <string name="add_kind_description">Tür: %1$s</string>
+    <string name="add_download_on">İndirilecek yer</string>
+    <string name="add_this_phone">Bu telefon</string>
+    <string name="add_pc_online">Çevrimiçi</string>
+    <string name="add_pc_offline">Çevrimdışı</string>
+    <string name="add_pc_description">%1$s, %2$s</string>
+    <string name="add_phone_description">Bu telefon</string>
+    <string name="add_pair_first">Önce bir bilgisayar eşle</string>
+    <string name="add_pair_button">Bilgisayar eşle</string>
+    <string name="add_offline_hint">Bilgisayarın geri geldiğinde gönderilecek</string>
+    <string name="add_quality">Kalite</string>
+    <string name="add_quality_best">En iyi</string>
+    <string name="add_quality_description">Kalite %1$s</string>
+    <string name="add_quality_description_size">Kalite %1$s, yaklaşık %2$s</string>
+    <string name="add_analysing">Analiz ediliyor…</string>
+    <string name="add_analyse_retry">Yeniden dene</string>
+    <string name="add_analyse_failed_best">En iyi kalitede yine de indirebilirsin.</string>
+    <string name="add_queue">Kuyruk</string>
+    <string name="add_queue_default">Varsayılan</string>
+    <string name="add_folder">Klasör</string>
+    <string name="add_menu_description">%1$s: %2$s. Bir liste açar</string>
+    <string name="add_not_downloadable">Bu bir web sayfası, dosya değil</string>
+    <string name="add_open_in_browser">Tarayıcıda aç</string>
+    <string name="add_open_in_browser_description">Bu bağlantıyı tarayıcında aç</string>
+    <string name="add_start_now">Şimdi başlat</string>
+    <string name="add_start_now_description">Bağlantıyı şimdi seçilen bilgisayara gönder</string>
+    <string name="add_sending">Gönderiliyor…</string>
+    <string name="add_already_sent">Zaten gönderildi</string>
+    <string name="add_send_failed">Gönderilemedi. Tekrar dene</string>
+    <string name="add_sent_to">%1$s cihazına gönderildi</string>
+    <string name="add_will_send_later">Bilgisayarın geri geldiğinde gönderilecek</string>
+    <string name="add_start_phone_description">İndirmeyi bu telefonda şimdi başlat</string>
+    <string name="add_phone_folder">Şuraya kaydet</string>
+    <string name="add_phone_folder_change">Değiştir</string>
+    <string name="add_phone_folder_change_description">Kayıt klasörü: %1$s. Klasörü değiştir</string>
+    <string name="add_phone_video_later">Telefonda video indirme sonraki bir güncellemede geliyor</string>
+    <string name="add_phone_video_to_pc">Bunun yerine bilgisayara gönder</string>
+    <plurals name="add_phone_video_skipped">
+        <item quantity="one">%1$d video bağlantısı atlanacak</item>
+        <item quantity="other">%1$d video bağlantısı atlanacak</item>
+    </plurals>
+    <plurals name="add_added_on_phone">
+        <item quantity="one">Bu telefona eklendi</item>
+        <item quantity="other">Bu telefona %1$d indirme eklendi</item>
+    </plurals>
+</resources>

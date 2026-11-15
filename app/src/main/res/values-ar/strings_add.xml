@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_title">إضافة إلى GrabLine</string>
+    <string name="add_links_count">%1$d روابط</string>
+    <string name="add_links_show">عرض الروابط</string>
+    <string name="add_links_hide">إخفاء الروابط</string>
+    <string name="add_links_toggle_description">عرض قائمة الروابط أو إخفاؤها</string>
+    <string name="add_kind_description">النوع: %1$s</string>
+    <string name="add_download_on">التنزيل على</string>
+    <string name="add_this_phone">هذا الهاتف</string>
+    <string name="add_pc_online">متصل</string>
+    <string name="add_pc_offline">غير متصل</string>
+    <string name="add_pc_description">%1$s, %2$s</string>
+    <string name="add_phone_description">هذا الهاتف</string>
+    <string name="add_pair_first">اقرن حاسوبًا أولًا</string>
+    <string name="add_pair_button">اقتران حاسوب</string>
+    <string name="add_offline_hint">سيُرسل عند عودة حاسوبك</string>
+    <string name="add_quality">الجودة</string>
+    <string name="add_quality_best">الأفضل</string>
+    <string name="add_quality_description">الجودة %1$s</string>
+    <string name="add_quality_description_size">الجودة %1$s، حوالي %2$s</string>
+    <string name="add_analysing">جارٍ التحليل…</string>
+    <string name="add_analyse_retry">إعادة المحاولة</string>
+    <string name="add_analyse_failed_best">لا يزال بإمكانك التنزيل بأفضل جودة.</string>
+    <string name="add_queue">قائمة الانتظار</string>
+    <string name="add_queue_default">افتراضي</string>
+    <string name="add_folder">المجلد</string>
+    <string name="add_menu_description">%1$s: %2$s. يفتح قائمة</string>
+    <string name="add_not_downloadable">هذه صفحة ويب وليست ملفًا</string>
+    <string name="add_open_in_browser">فتح في المتصفح</string>
+    <string name="add_open_in_browser_description">افتح هذا الرابط في متصفحك</string>
+    <string name="add_start_now">ابدأ الآن</string>
+    <string name="add_start_now_description">أرسل الرابط إلى الحاسوب المختار الآن</string>
+    <string name="add_sending">جارٍ الإرسال…</string>
+    <string name="add_already_sent">أُرسل مسبقًا</string>
+    <string name="add_send_failed">تعذّر الإرسال. حاول مرة أخرى</string>
+    <string name="add_sent_to">أُرسل إلى %1$s</string>
+    <string name="add_will_send_later">سيُرسل عند عودة حاسوبك</string>
+    <string name="add_start_phone_description">ابدأ التنزيل على هذا الهاتف الآن</string>
+    <string name="add_phone_folder">الحفظ في</string>
+    <string name="add_phone_folder_change">تغيير</string>
+    <string name="add_phone_folder_change_description">مجلد الحفظ: %1$s. تغيير المجلد</string>
+    <string name="add_phone_video_later">ستصل تنزيلات الفيديو على الهاتف في تحديث لاحق</string>
+    <string name="add_phone_video_to_pc">أرسل إلى حاسوب بدلًا من ذلك</string>
+    <plurals name="add_phone_video_skipped">
+        <item quantity="zero">سيُتخطى %1$d رابط فيديو</item>
+        <item quantity="one">سيُتخطى رابط فيديو واحد</item>
+        <item quantity="two">سيُتخطى رابطا فيديو</item>
+        <item quantity="few">ستُتخطى %1$d روابط فيديو</item>
+        <item quantity="many">سيُتخطى %1$d رابط فيديو</item>
+        <item quantity="other">سيُتخطى %1$d رابط فيديو</item>
+    </plurals>
+    <plurals name="add_added_on_phone">
+        <item quantity="zero">أُضيف %1$d تنزيل إلى هذا الهاتف</item>
+        <item quantity="one">أُضيف إلى هذا الهاتف</item>
+        <item quantity="two">أُضيف تنزيلان إلى هذا الهاتف</item>
+        <item quantity="few">أُضيفت %1$d تنزيلات إلى هذا الهاتف</item>
+        <item quantity="many">أُضيف %1$d تنزيلًا إلى هذا الهاتف</item>
+        <item quantity="other">أُضيف %1$d تنزيل إلى هذا الهاتف</item>
+    </plurals>
+</resources>

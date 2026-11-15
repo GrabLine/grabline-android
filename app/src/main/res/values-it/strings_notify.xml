@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notify_group_phone">Download del telefono</string>
+    <string name="notify_group_pc">PC</string>
+    <string name="notify_channel_active_name">Download attivi</string>
+    <string name="notify_channel_active_desc">Mostra l\'avanzamento mentre i download sono in corso su questo telefono.</string>
+    <string name="notify_channel_finished_name">Completato</string>
+    <string name="notify_channel_finished_desc">Un download del telefono è stato completato.</string>
+    <string name="notify_channel_failed_name">Non riusciti</string>
+    <string name="notify_channel_failed_desc">Un download del telefono non è riuscito e non verrà ritentato.</string>
+    <string name="notify_channel_pc_name">Attività del PC</string>
+    <string name="notify_channel_pc_desc">Un download è terminato o non è riuscito su un PC connesso.</string>
+    <string name="notify_channel_transfers_name">Trasferimenti</string>
+    <string name="notify_channel_transfers_desc">Mostra l\'avanzamento mentre un file viene copiato dal PC.</string>
+    <string name="notify_pc_finished_title">%1$s ha completato un download</string>
+    <string name="notify_pc_finished_text">%1$s è terminato.</string>
+    <string name="notify_pc_failed_title">%1$s non è riuscito a completare un download</string>
+    <string name="notify_pc_failed_text">%1$s: %2$s</string>
+    <string name="notify_action_open_app">Apri l\'app</string>
+    <string name="announce_percent">%1$d per cento</string>
+    <string name="announce_waiting">In attesa</string>
+    <string name="announce_downloaded">%1$s scaricati</string>
+    <plurals name="announce_percent_hours_left">
+        <item quantity="one">%1$d per cento, manca %2$d ora</item>
+        <item quantity="many">%1$d per cento, mancano %2$d ore</item>
+        <item quantity="other">%1$d per cento, mancano %2$d ore</item>
+    </plurals>
+    <plurals name="announce_percent_minutes_left">
+        <item quantity="one">%1$d per cento, manca %2$d minuto</item>
+        <item quantity="many">%1$d per cento, mancano %2$d minuti</item>
+        <item quantity="other">%1$d per cento, mancano %2$d minuti</item>
+    </plurals>
+    <plurals name="announce_percent_seconds_left">
+        <item quantity="one">%1$d per cento, manca %2$d secondo</item>
+        <item quantity="many">%1$d per cento, mancano %2$d secondi</item>
+        <item quantity="other">%1$d per cento, mancano %2$d secondi</item>
+    </plurals>
+</resources>

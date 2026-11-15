@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notify_active_starting">Avvio dei download</string>
+    <plurals name="notify_active_downloading">
+        <item quantity="one">Download di %d file</item>
+        <item quantity="many">Download di %d file</item>
+        <item quantity="other">Download di %d file</item>
+    </plurals>
+    <string name="notify_active_waiting_network">%d in attesa della rete</string>
+    <string name="notify_active_waiting_wifi">%d in attesa del Wi-Fi</string>
+    <string name="notify_active_waiting_charging">%d in attesa del caricabatterie</string>
+    <string name="notify_active_queued">%d in attesa</string>
+    <string name="notify_action_pause_all">Metti tutto in pausa</string>
+    <string name="notify_action_cancel">Annulla</string>
+    <string name="notify_action_open">Apri</string>
+    <string name="notify_action_share">Condividi</string>
+    <string name="notify_action_retry">Riprova</string>
+    <string name="notify_action_details">Dettagli</string>
+    <string name="notify_finished_title">Download completato</string>
+    <string name="notify_failed_title">Download non riuscito</string>
+    <string name="notify_failed_text">%1$s: %2$s</string>
+    <string name="notify_failed_default">Impossibile scaricare. Riprova</string>
+    <string name="battery_tip_text">Il telefono potrebbe mettere in pausa i download per risparmiare batteria. Lascia che GrabLine resti in esecuzione.</string>
+    <string name="battery_tip_action">Impostazioni batteria</string>
+    <string name="battery_tip_dismiss">Non ora</string>
+</resources>

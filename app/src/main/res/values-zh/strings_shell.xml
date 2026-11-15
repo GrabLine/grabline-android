@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shell_torrent_file_later">向电脑发送 .torrent 文件将在后续更新中推出。磁力链接现已可用。</string>
+    <string name="shell_offer_copied">发送你复制的链接？</string>
+    <string name="shell_offer_send">发送</string>
+    <string name="shell_pick_a_download">选择一个下载以查看详情</string>
+    <string name="shell_battery_tip">手机为节省电量暂停了下载。允许 GrabLine 在后台运行吗？</string>
+    <string name="shell_battery_tip_action">设置</string>
+</resources>

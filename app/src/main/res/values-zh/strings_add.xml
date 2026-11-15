@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_title">添加到 GrabLine</string>
+    <string name="add_links_count">%1$d 个链接</string>
+    <string name="add_links_show">显示链接</string>
+    <string name="add_links_hide">隐藏链接</string>
+    <string name="add_links_toggle_description">显示或隐藏链接列表</string>
+    <string name="add_kind_description">类型：%1$s</string>
+    <string name="add_download_on">下载到</string>
+    <string name="add_this_phone">此手机</string>
+    <string name="add_pc_online">在线</string>
+    <string name="add_pc_offline">离线</string>
+    <string name="add_pc_description">%1$s, %2$s</string>
+    <string name="add_phone_description">此手机</string>
+    <string name="add_pair_first">请先配对一台电脑</string>
+    <string name="add_pair_button">配对电脑</string>
+    <string name="add_offline_hint">电脑恢复在线后将发送</string>
+    <string name="add_quality">画质</string>
+    <string name="add_quality_best">最佳</string>
+    <string name="add_quality_description">质量 %1$s</string>
+    <string name="add_quality_description_size">质量 %1$s，约 %2$s</string>
+    <string name="add_analysing">正在分析…</string>
+    <string name="add_analyse_retry">重试</string>
+    <string name="add_analyse_failed_best">你仍可以下载最佳质量。</string>
+    <string name="add_queue">队列</string>
+    <string name="add_queue_default">默认</string>
+    <string name="add_folder">文件夹</string>
+    <string name="add_menu_description">%1$s：%2$s。打开列表</string>
+    <string name="add_not_downloadable">这是网页，不是文件</string>
+    <string name="add_open_in_browser">在浏览器中打开</string>
+    <string name="add_open_in_browser_description">在浏览器中打开此链接</string>
+    <string name="add_start_now">立即开始</string>
+    <string name="add_start_now_description">立即将链接发送到所选电脑</string>
+    <string name="add_sending">正在发送…</string>
+    <string name="add_already_sent">已发送</string>
+    <string name="add_send_failed">发送失败。请重试</string>
+    <string name="add_sent_to">已发送到 %1$s</string>
+    <string name="add_will_send_later">电脑恢复在线后将发送</string>
+    <string name="add_start_phone_description">立即在此手机上开始下载</string>
+    <string name="add_phone_folder">保存到</string>
+    <string name="add_phone_folder_change">更改</string>
+    <string name="add_phone_folder_change_description">保存文件夹：%1$s。更改文件夹</string>
+    <string name="add_phone_video_later">手机上的视频下载将在后续更新中推出</string>
+    <string name="add_phone_video_to_pc">改为发送到电脑</string>
+    <plurals name="add_phone_video_skipped">
+        <item quantity="other">将跳过 %1$d 个视频链接</item>
+    </plurals>
+    <plurals name="add_added_on_phone">
+        <item quantity="other">已有 %1$d 个下载添加到此手机</item>
+    </plurals>
+</resources>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_title">GrabLine में जोड़ें</string>
+    <string name="add_links_count">%1$d लिंक</string>
+    <string name="add_links_show">लिंक दिखाएँ</string>
+    <string name="add_links_hide">लिंक छिपाएँ</string>
+    <string name="add_links_toggle_description">लिंक की सूची दिखाएँ या छिपाएँ</string>
+    <string name="add_kind_description">प्रकार: %1$s</string>
+    <string name="add_download_on">इस पर डाउनलोड करें</string>
+    <string name="add_this_phone">यह फ़ोन</string>
+    <string name="add_pc_online">ऑनलाइन</string>
+    <string name="add_pc_offline">ऑफ़लाइन</string>
+    <string name="add_pc_description">%1$s, %2$s</string>
+    <string name="add_phone_description">यह फ़ोन</string>
+    <string name="add_pair_first">पहले एक पीसी पेयर करें</string>
+    <string name="add_pair_button">पीसी पेयर करें</string>
+    <string name="add_offline_hint">आपका पीसी वापस आने पर भेजा जाएगा</string>
+    <string name="add_quality">गुणवत्ता</string>
+    <string name="add_quality_best">सर्वोत्तम</string>
+    <string name="add_quality_description">क्वालिटी %1$s</string>
+    <string name="add_quality_description_size">क्वालिटी %1$s, लगभग %2$s</string>
+    <string name="add_analysing">जाँच हो रही है…</string>
+    <string name="add_analyse_retry">फिर कोशिश करें</string>
+    <string name="add_analyse_failed_best">आप फिर भी सबसे अच्छी क्वालिटी में डाउनलोड कर सकते हैं।</string>
+    <string name="add_queue">कतार</string>
+    <string name="add_queue_default">डिफ़ॉल्ट</string>
+    <string name="add_folder">फ़ोल्डर</string>
+    <string name="add_menu_description">%1$s: %2$s। एक सूची खुलती है</string>
+    <string name="add_not_downloadable">यह एक वेब पेज है, फ़ाइल नहीं</string>
+    <string name="add_open_in_browser">ब्राउज़र में खोलें</string>
+    <string name="add_open_in_browser_description">इस लिंक को अपने ब्राउज़र में खोलें</string>
+    <string name="add_start_now">अभी शुरू करें</string>
+    <string name="add_start_now_description">लिंक को चुने हुए पीसी पर अभी भेजें</string>
+    <string name="add_sending">भेजा जा रहा है…</string>
+    <string name="add_already_sent">पहले ही भेजा जा चुका है</string>
+    <string name="add_send_failed">भेजा नहीं जा सका। फिर कोशिश करें</string>
+    <string name="add_sent_to">%1$s को भेजा गया</string>
+    <string name="add_will_send_later">आपका पीसी वापस आने पर भेजा जाएगा</string>
+    <string name="add_start_phone_description">इस फ़ोन पर अभी डाउनलोड शुरू करें</string>
+    <string name="add_phone_folder">यहाँ सहेजें</string>
+    <string name="add_phone_folder_change">बदलें</string>
+    <string name="add_phone_folder_change_description">सेव फ़ोल्डर: %1$s। फ़ोल्डर बदलें</string>
+    <string name="add_phone_video_later">फ़ोन पर वीडियो डाउनलोड बाद के अपडेट में आएँगे</string>
+    <string name="add_phone_video_to_pc">इसकी जगह पीसी पर भेजें</string>
+    <plurals name="add_phone_video_skipped">
+        <item quantity="one">%1$d वीडियो लिंक छोड़ दिया जाएगा</item>
+        <item quantity="other">%1$d वीडियो लिंक छोड़ दिए जाएँगे</item>
+    </plurals>
+    <plurals name="add_added_on_phone">
+        <item quantity="one">इस फ़ोन में %1$d डाउनलोड जोड़ा गया</item>
+        <item quantity="other">इस फ़ोन में %1$d डाउनलोड जोड़े गए</item>
+    </plurals>
+</resources>

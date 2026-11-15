@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notify_group_phone">تنزيلات الهاتف</string>
+    <string name="notify_group_pc">الحاسوب</string>
+    <string name="notify_channel_active_name">التنزيلات النشطة</string>
+    <string name="notify_channel_active_desc">يعرض التقدم أثناء تشغيل التنزيلات على هذا الهاتف.</string>
+    <string name="notify_channel_finished_name">انتهى</string>
+    <string name="notify_channel_finished_desc">اكتمل تنزيل على الهاتف.</string>
+    <string name="notify_channel_failed_name">الفاشلة</string>
+    <string name="notify_channel_failed_desc">فشل تنزيل على الهاتف ولن تتم إعادة محاولته.</string>
+    <string name="notify_channel_pc_name">نشاط الحاسوب</string>
+    <string name="notify_channel_pc_desc">اكتمل تنزيل أو فشل على حاسوب متصل.</string>
+    <string name="notify_channel_transfers_name">عمليات النقل</string>
+    <string name="notify_channel_transfers_desc">يعرض التقدم أثناء نسخ ملف من حاسوبك.</string>
+    <string name="notify_pc_finished_title">أكمل %1$s تنزيلًا</string>
+    <string name="notify_pc_finished_text">اكتمل %1$s.</string>
+    <string name="notify_pc_failed_title">تعذّر على %1$s إكمال تنزيل</string>
+    <string name="notify_pc_failed_text">%1$s: %2$s</string>
+    <string name="notify_action_open_app">فتح التطبيق</string>
+    <string name="announce_percent">%1$d في المئة</string>
+    <string name="announce_waiting">في الانتظار</string>
+    <string name="announce_downloaded">تم تنزيل %1$s</string>
+    <plurals name="announce_percent_hours_left">
+        <item quantity="zero">%1$d في المئة، متبقية %2$d ساعة</item>
+        <item quantity="one">%1$d في المئة، متبقية ساعة واحدة</item>
+        <item quantity="two">%1$d في المئة، متبقية ساعتان</item>
+        <item quantity="few">%1$d في المئة، متبقية %2$d ساعات</item>
+        <item quantity="many">%1$d في المئة، متبقية %2$d ساعة</item>
+        <item quantity="other">%1$d في المئة، متبقية %2$d ساعة</item>
+    </plurals>
+    <plurals name="announce_percent_minutes_left">
+        <item quantity="zero">%1$d في المئة، متبقية %2$d دقيقة</item>
+        <item quantity="one">%1$d في المئة، متبقية دقيقة واحدة</item>
+        <item quantity="two">%1$d في المئة، متبقية دقيقتان</item>
+        <item quantity="few">%1$d في المئة، متبقية %2$d دقائق</item>
+        <item quantity="many">%1$d في المئة، متبقية %2$d دقيقة</item>
+        <item quantity="other">%1$d في المئة، متبقية %2$d دقيقة</item>
+    </plurals>
+    <plurals name="announce_percent_seconds_left">
+        <item quantity="zero">%1$d في المئة، متبقية %2$d ثانية</item>
+        <item quantity="one">%1$d في المئة، متبقية ثانية واحدة</item>
+        <item quantity="two">%1$d في المئة، متبقية ثانيتان</item>
+        <item quantity="few">%1$d في المئة، متبقية %2$d ثوانٍ</item>
+        <item quantity="many">%1$d في المئة، متبقية %2$d ثانية</item>
+        <item quantity="other">%1$d في المئة، متبقية %2$d ثانية</item>
+    </plurals>
+</resources>

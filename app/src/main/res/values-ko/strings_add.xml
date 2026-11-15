@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_title">GrabLine에 추가</string>
+    <string name="add_links_count">링크 %1$d개</string>
+    <string name="add_links_show">링크 표시</string>
+    <string name="add_links_hide">링크 숨기기</string>
+    <string name="add_links_toggle_description">링크 목록을 표시하거나 숨깁니다</string>
+    <string name="add_kind_description">종류: %1$s</string>
+    <string name="add_download_on">다운로드할 곳</string>
+    <string name="add_this_phone">이 휴대전화</string>
+    <string name="add_pc_online">온라인</string>
+    <string name="add_pc_offline">오프라인</string>
+    <string name="add_pc_description">%1$s, %2$s</string>
+    <string name="add_phone_description">이 휴대전화</string>
+    <string name="add_pair_first">먼저 PC를 페어링하세요</string>
+    <string name="add_pair_button">PC 페어링</string>
+    <string name="add_offline_hint">PC가 다시 연결되면 전송됩니다</string>
+    <string name="add_quality">화질</string>
+    <string name="add_quality_best">최고</string>
+    <string name="add_quality_description">화질 %1$s</string>
+    <string name="add_quality_description_size">화질 %1$s, 약 %2$s</string>
+    <string name="add_analysing">분석 중…</string>
+    <string name="add_analyse_retry">다시 시도</string>
+    <string name="add_analyse_failed_best">최고 화질로 다운로드할 수는 있습니다.</string>
+    <string name="add_queue">대기열</string>
+    <string name="add_queue_default">기본</string>
+    <string name="add_folder">폴더</string>
+    <string name="add_menu_description">%1$s: %2$s. 목록을 엽니다</string>
+    <string name="add_not_downloadable">이것은 웹 페이지이며 파일이 아닙니다</string>
+    <string name="add_open_in_browser">브라우저에서 열기</string>
+    <string name="add_open_in_browser_description">이 링크를 브라우저에서 엽니다</string>
+    <string name="add_start_now">지금 시작</string>
+    <string name="add_start_now_description">선택한 PC로 링크를 지금 보냅니다</string>
+    <string name="add_sending">전송 중…</string>
+    <string name="add_already_sent">이미 전송됨</string>
+    <string name="add_send_failed">전송하지 못했습니다. 다시 시도하세요</string>
+    <string name="add_sent_to">%1$s(으)로 전송됨</string>
+    <string name="add_will_send_later">PC가 다시 연결되면 전송됩니다</string>
+    <string name="add_start_phone_description">이 휴대전화에서 지금 다운로드를 시작합니다</string>
+    <string name="add_phone_folder">저장 위치</string>
+    <string name="add_phone_folder_change">변경</string>
+    <string name="add_phone_folder_change_description">저장 폴더: %1$s. 폴더를 변경합니다</string>
+    <string name="add_phone_video_later">휴대전화에서의 동영상 다운로드는 이후 업데이트에서 제공됩니다</string>
+    <string name="add_phone_video_to_pc">대신 PC로 보내기</string>
+    <plurals name="add_phone_video_skipped">
+        <item quantity="other">동영상 링크 %1$d개를 건너뜁니다</item>
+    </plurals>
+    <plurals name="add_added_on_phone">
+        <item quantity="other">이 휴대전화에 다운로드 %1$d개를 추가했습니다</item>
+    </plurals>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shell_torrent_file_later">PC로 .torrent 파일을 보내는 기능은 이후 업데이트에서 제공됩니다. 마그넷 링크는 지금 사용할 수 있습니다.</string>
+    <string name="shell_offer_copied">복사한 링크를 보낼까요?</string>
+    <string name="shell_offer_send">보내기</string>
+    <string name="shell_pick_a_download">다운로드를 선택하면 세부정보를 볼 수 있습니다</string>
+    <string name="shell_battery_tip">배터리를 아끼기 위해 휴대전화가 다운로드를 일시중지했습니다. GrabLine이 백그라운드에서 실행되게 할까요?</string>
+    <string name="shell_battery_tip_action">설정</string>
+</resources>

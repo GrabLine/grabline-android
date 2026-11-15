@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shell_torrent_file_later">O envio de arquivos .torrent para um PC chega em uma atualização futura. Links magnet já funcionam.</string>
+    <string name="shell_offer_copied">Enviar o link que você copiou?</string>
+    <string name="shell_offer_send">Enviar</string>
+    <string name="shell_pick_a_download">Escolha um download para ver os detalhes</string>
+    <string name="shell_battery_tip">Seu telefone pausou os downloads para economizar bateria. Deixar o GrabLine executar em segundo plano?</string>
+    <string name="shell_battery_tip_action">Configurações</string>
+</resources>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_title">Aggiungi a GrabLine</string>
+    <string name="add_links_count">%1$d link</string>
+    <string name="add_links_show">Mostra i link</string>
+    <string name="add_links_hide">Nascondi i link</string>
+    <string name="add_links_toggle_description">Mostra o nascondi l\'elenco dei link</string>
+    <string name="add_kind_description">Tipo: %1$s</string>
+    <string name="add_download_on">Scarica su</string>
+    <string name="add_this_phone">Questo telefono</string>
+    <string name="add_pc_online">Online</string>
+    <string name="add_pc_offline">Offline</string>
+    <string name="add_pc_description">%1$s, %2$s</string>
+    <string name="add_phone_description">Questo telefono</string>
+    <string name="add_pair_first">Prima abbina un PC</string>
+    <string name="add_pair_button">Abbina un PC</string>
+    <string name="add_offline_hint">Verrà inviato quando il PC sarà di nuovo raggiungibile</string>
+    <string name="add_quality">Qualità</string>
+    <string name="add_quality_best">Migliore</string>
+    <string name="add_quality_description">Qualità %1$s</string>
+    <string name="add_quality_description_size">Qualità %1$s, circa %2$s</string>
+    <string name="add_analysing">Analisi in corso…</string>
+    <string name="add_analyse_retry">Riprova</string>
+    <string name="add_analyse_failed_best">Puoi comunque scaricare alla qualità migliore.</string>
+    <string name="add_queue">Coda</string>
+    <string name="add_queue_default">Predefinita</string>
+    <string name="add_folder">Cartella</string>
+    <string name="add_menu_description">%1$s: %2$s. Apre un elenco</string>
+    <string name="add_not_downloadable">Questa è una pagina web, non un file</string>
+    <string name="add_open_in_browser">Apri nel browser</string>
+    <string name="add_open_in_browser_description">Apri questo link nel browser</string>
+    <string name="add_start_now">Avvia ora</string>
+    <string name="add_start_now_description">Invia subito il link al PC scelto</string>
+    <string name="add_sending">Invio in corso…</string>
+    <string name="add_already_sent">Già inviato</string>
+    <string name="add_send_failed">Invio non riuscito. Riprova</string>
+    <string name="add_sent_to">Inviato a %1$s</string>
+    <string name="add_will_send_later">Verrà inviato quando il PC sarà di nuovo raggiungibile</string>
+    <string name="add_start_phone_description">Avvia subito il download su questo telefono</string>
+    <string name="add_phone_folder">Salva in</string>
+    <string name="add_phone_folder_change">Cambia</string>
+    <string name="add_phone_folder_change_description">Cartella di salvataggio: %1$s. Cambia cartella</string>
+    <string name="add_phone_video_later">I download di video sul telefono arriveranno in un aggiornamento futuro</string>
+    <string name="add_phone_video_to_pc">Invia invece a un PC</string>
+    <plurals name="add_phone_video_skipped">
+        <item quantity="one">%1$d link video verrà saltato</item>
+        <item quantity="many">%1$d link video verranno saltati</item>
+        <item quantity="other">%1$d link video verranno saltati</item>
+    </plurals>
+    <plurals name="add_added_on_phone">
+        <item quantity="one">Aggiunto a questo telefono</item>
+        <item quantity="many">Aggiunti %1$d download a questo telefono</item>
+        <item quantity="other">Aggiunti %1$d download a questo telefono</item>
+    </plurals>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GrabLine</string>
+    <string name="tab_downloads">डाउनलोड</string>
+    <string name="tab_devices">डिवाइस</string>
+    <string name="tab_settings">सेटिंग्स</string>
+    <string name="add_a_link">लिंक जोड़ें</string>
+    <string name="share_label">GrabLine</string>
+    <string name="paste_a_link">लिंक पेस्ट करें</string>
+    <string name="paste_button">पेस्ट करें</string>
+    <string name="paste_button_description">क्लिपबोर्ड से लिंक पेस्ट करें</string>
+    <string name="go_button">जाएँ</string>
+    <string name="go_button_description">पेस्ट किए गए लिंक जोड़ें</string>
+    <string name="paste_no_link_found">इस टेक्स्ट में कोई वेब या मैग्नेट लिंक नहीं मिला</string>
+    <string name="kind_file">फ़ाइल</string>
+    <string name="kind_video">वीडियो</string>
+    <string name="kind_torrent">टोरेंट</string>
+    <string name="kind_page">वेब पेज</string>
+</resources>

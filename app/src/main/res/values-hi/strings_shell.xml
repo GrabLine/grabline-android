@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shell_torrent_file_later">पीसी पर .torrent फ़ाइलें भेजना बाद के अपडेट में आएगा। मैग्नेट लिंक अभी काम करते हैं।</string>
+    <string name="shell_offer_copied">कॉपी किया गया लिंक भेजें?</string>
+    <string name="shell_offer_send">भेजें</string>
+    <string name="shell_pick_a_download">विवरण देखने के लिए कोई डाउनलोड चुनें</string>
+    <string name="shell_battery_tip">बैटरी बचाने के लिए आपके फ़ोन ने डाउनलोड रोक दिए। GrabLine को बैकग्राउंड में चलने दें?</string>
+    <string name="shell_battery_tip_action">सेटिंग्स</string>
+</resources>

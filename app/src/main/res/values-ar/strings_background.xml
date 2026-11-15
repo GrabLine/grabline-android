@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notify_active_starting">جارٍ بدء التنزيلات</string>
+    <plurals name="notify_active_downloading">
+        <item quantity="zero">جارٍ تنزيل %d ملف</item>
+        <item quantity="one">جارٍ تنزيل ملف واحد</item>
+        <item quantity="two">جارٍ تنزيل ملفين</item>
+        <item quantity="few">جارٍ تنزيل %d ملفات</item>
+        <item quantity="many">جارٍ تنزيل %d ملفًا</item>
+        <item quantity="other">جارٍ تنزيل %d ملف</item>
+    </plurals>
+    <string name="notify_active_waiting_network">%d في انتظار الشبكة</string>
+    <string name="notify_active_waiting_wifi">%d في انتظار Wi-Fi</string>
+    <string name="notify_active_waiting_charging">%d في انتظار الشاحن</string>
+    <string name="notify_active_queued">%d في الانتظار</string>
+    <string name="notify_action_pause_all">إيقاف الكل مؤقتًا</string>
+    <string name="notify_action_cancel">إلغاء</string>
+    <string name="notify_action_open">فتح</string>
+    <string name="notify_action_share">مشاركة</string>
+    <string name="notify_action_retry">إعادة المحاولة</string>
+    <string name="notify_action_details">التفاصيل</string>
+    <string name="notify_finished_title">اكتمل التنزيل</string>
+    <string name="notify_failed_title">فشل التنزيل</string>
+    <string name="notify_failed_text">%1$s: %2$s</string>
+    <string name="notify_failed_default">تعذّر التنزيل. حاول مرة أخرى</string>
+    <string name="battery_tip_text">قد يوقف هاتفك التنزيلات مؤقتًا لتوفير البطارية. اترك GrabLine يعمل.</string>
+    <string name="battery_tip_action">إعدادات البطارية</string>
+    <string name="battery_tip_dismiss">ليس الآن</string>
+</resources>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notify_group_phone">Загрузки телефона</string>
+    <string name="notify_group_pc">Компьютер</string>
+    <string name="notify_channel_active_name">Активные загрузки</string>
+    <string name="notify_channel_active_desc">Показывает ход выполнения, пока идут загрузки на этом телефоне.</string>
+    <string name="notify_channel_finished_name">Завершено</string>
+    <string name="notify_channel_finished_desc">Загрузка на телефоне завершена.</string>
+    <string name="notify_channel_failed_name">Ошибки</string>
+    <string name="notify_channel_failed_desc">Загрузка на телефоне не удалась и не будет повторена.</string>
+    <string name="notify_channel_pc_name">Активность компьютера</string>
+    <string name="notify_channel_pc_desc">Загрузка на подключённом компьютере завершилась или не удалась.</string>
+    <string name="notify_channel_transfers_name">Передачи</string>
+    <string name="notify_channel_transfers_desc">Показывает ход выполнения, пока файл копируется с компьютера.</string>
+    <string name="notify_pc_finished_title">%1$s завершил загрузку</string>
+    <string name="notify_pc_finished_text">%1$s: готово.</string>
+    <string name="notify_pc_failed_title">%1$s не удалось завершить загрузку</string>
+    <string name="notify_pc_failed_text">%1$s: %2$s</string>
+    <string name="notify_action_open_app">Открыть приложение</string>
+    <string name="announce_percent">%1$d процентов</string>
+    <string name="announce_waiting">Ожидание</string>
+    <string name="announce_downloaded">Скачано %1$s</string>
+    <plurals name="announce_percent_hours_left">
+        <item quantity="one">%1$d процент, остался %2$d час</item>
+        <item quantity="few">%1$d процента, осталось %2$d часа</item>
+        <item quantity="many">%1$d процентов, осталось %2$d часов</item>
+        <item quantity="other">%1$d процента, осталось %2$d часа</item>
+    </plurals>
+    <plurals name="announce_percent_minutes_left">
+        <item quantity="one">%1$d процент, осталась %2$d минута</item>
+        <item quantity="few">%1$d процента, осталось %2$d минуты</item>
+        <item quantity="many">%1$d процентов, осталось %2$d минут</item>
+        <item quantity="other">%1$d процента, осталось %2$d минуты</item>
+    </plurals>
+    <plurals name="announce_percent_seconds_left">
+        <item quantity="one">%1$d процент, осталась %2$d секунда</item>
+        <item quantity="few">%1$d процента, осталось %2$d секунды</item>
+        <item quantity="many">%1$d процентов, осталось %2$d секунд</item>
+        <item quantity="other">%1$d процента, осталось %2$d секунды</item>
+    </plurals>
+</resources>

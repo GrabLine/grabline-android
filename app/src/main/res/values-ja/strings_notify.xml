@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notify_group_phone">スマートフォンのダウンロード</string>
+    <string name="notify_group_pc">PC</string>
+    <string name="notify_channel_active_name">アクティブなダウンロード</string>
+    <string name="notify_channel_active_desc">このスマートフォンでダウンロード中に進行状況を表示します。</string>
+    <string name="notify_channel_finished_name">完了</string>
+    <string name="notify_channel_finished_desc">スマートフォンのダウンロードが完了しました。</string>
+    <string name="notify_channel_failed_name">失敗</string>
+    <string name="notify_channel_failed_desc">スマートフォンのダウンロードが失敗しました。再試行はされません。</string>
+    <string name="notify_channel_pc_name">PCのアクティビティ</string>
+    <string name="notify_channel_pc_desc">接続中のPCでダウンロードが完了または失敗しました。</string>
+    <string name="notify_channel_transfers_name">転送</string>
+    <string name="notify_channel_transfers_desc">PCからファイルをコピー中に進行状況を表示します。</string>
+    <string name="notify_pc_finished_title">%1$s がダウンロードを完了しました</string>
+    <string name="notify_pc_finished_text">%1$s が完了しました。</string>
+    <string name="notify_pc_failed_title">%1$s がダウンロードを完了できませんでした</string>
+    <string name="notify_pc_failed_text">%1$s: %2$s</string>
+    <string name="notify_action_open_app">アプリを開く</string>
+    <string name="announce_percent">%1$dパーセント</string>
+    <string name="announce_waiting">待機中</string>
+    <string name="announce_downloaded">%1$s ダウンロード済み</string>
+    <plurals name="announce_percent_hours_left">
+        <item quantity="other">%1$dパーセント、残り%2$d時間</item>
+    </plurals>
+    <plurals name="announce_percent_minutes_left">
+        <item quantity="other">%1$dパーセント、残り%2$d分</item>
+    </plurals>
+    <plurals name="announce_percent_seconds_left">
+        <item quantity="other">%1$dパーセント、残り%2$d秒</item>
+    </plurals>
+</resources>

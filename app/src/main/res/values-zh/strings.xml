@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GrabLine</string>
+    <string name="tab_downloads">下载</string>
+    <string name="tab_devices">设备</string>
+    <string name="tab_settings">设置</string>
+    <string name="add_a_link">添加链接</string>
+    <string name="share_label">GrabLine</string>
+    <string name="paste_a_link">粘贴链接</string>
+    <string name="paste_button">粘贴</string>
+    <string name="paste_button_description">从剪贴板粘贴链接</string>
+    <string name="go_button">开始</string>
+    <string name="go_button_description">添加已粘贴的链接</string>
+    <string name="paste_no_link_found">此文本中未找到网页或磁力链接</string>
+    <string name="kind_file">文件</string>
+    <string name="kind_video">视频</string>
+    <string name="kind_torrent">种子</string>
+    <string name="kind_page">网页</string>
+</resources>

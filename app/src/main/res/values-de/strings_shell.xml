@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shell_torrent_file_later">Das Senden von .torrent-Dateien an einen PC folgt in einem späteren Update. Magnet-Links funktionieren schon jetzt.</string>
+    <string name="shell_offer_copied">Den kopierten Link senden?</string>
+    <string name="shell_offer_send">Senden</string>
+    <string name="shell_pick_a_download">Wähle einen Download, um die Details zu sehen</string>
+    <string name="shell_battery_tip">Dein Telefon hat Downloads pausiert, um Akku zu sparen. GrabLine im Hintergrund laufen lassen?</string>
+    <string name="shell_battery_tip_action">Einstellungen</string>
+</resources>

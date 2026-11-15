@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notify_group_phone">手机下载</string>
+    <string name="notify_group_pc">电脑</string>
+    <string name="notify_channel_active_name">活动下载</string>
+    <string name="notify_channel_active_desc">在此手机上下载时显示进度。</string>
+    <string name="notify_channel_finished_name">完成时间</string>
+    <string name="notify_channel_finished_desc">一个手机下载已完成。</string>
+    <string name="notify_channel_failed_name">失败</string>
+    <string name="notify_channel_failed_desc">一个手机下载失败，不会再重试。</string>
+    <string name="notify_channel_pc_name">电脑活动</string>
+    <string name="notify_channel_pc_desc">已连接的电脑上有下载完成或失败。</string>
+    <string name="notify_channel_transfers_name">传输</string>
+    <string name="notify_channel_transfers_desc">从电脑复制文件时显示进度。</string>
+    <string name="notify_pc_finished_title">%1$s 完成了一个下载</string>
+    <string name="notify_pc_finished_text">%1$s 已完成。</string>
+    <string name="notify_pc_failed_title">%1$s 无法完成一个下载</string>
+    <string name="notify_pc_failed_text">%1$s: %2$s</string>
+    <string name="notify_action_open_app">打开应用</string>
+    <string name="announce_percent">百分之 %1$d</string>
+    <string name="announce_waiting">等待中</string>
+    <string name="announce_downloaded">已下载 %1$s</string>
+    <plurals name="announce_percent_hours_left">
+        <item quantity="other">百分之 %1$d，剩余 %2$d 小时</item>
+    </plurals>
+    <plurals name="announce_percent_minutes_left">
+        <item quantity="other">百分之 %1$d，剩余 %2$d 分钟</item>
+    </plurals>
+    <plurals name="announce_percent_seconds_left">
+        <item quantity="other">百分之 %1$d，剩余 %2$d 秒</item>
+    </plurals>
+</resources>

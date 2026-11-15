@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_update_engine">वीडियो इंजन अपडेट करें</string>
+    <plurals name="add_playlist_count">
+        <item quantity="one">यह %d वीडियो वाली प्लेलिस्ट है। पूरी डाउनलोड की जाएगी।</item>
+        <item quantity="other">यह %d वीडियो वाली प्लेलिस्ट है। सभी डाउनलोड किए जाएँगे।</item>
+    </plurals>
+    <string name="ytdlp_auto">किसी साइट के बदलने पर अपने आप अपडेट करें</string>
+    <string name="about_ytdlp_update">yt-dlp अपडेट करें</string>
+    <string name="about_ytdlp_update_supporting">नए ऐप वर्ज़न के बिना सबसे नया वीडियो इंजन लाता है</string>
+    <string name="about_ytdlp_updating">वीडियो इंजन अपडेट हो रहा है…</string>
+    <string name="about_ytdlp_updated">yt-dlp %1$s पर अपडेट हो गया</string>
+    <string name="about_ytdlp_current">yt-dlp अप-टू-डेट है (%1$s)</string>
+    <string name="about_ytdlp_retry">फिर कोशिश करें</string>
+    <string name="about_ytdlp_update_progress_description">yt-dlp अपडेट हो रहा है</string>
+    <string name="detail_update_engine">वीडियो इंजन अपडेट करें</string>
+    <string name="detail_update_engine_updating">वीडियो इंजन अपडेट हो रहा है…</string>
+    <string name="lic_ytdlp">yt-dlp and youtubedl-android</string>
+    <string name="lic_unlicense">Unlicense and GPL-3.0</string>
+    <string name="lic_ffmpeg">FFmpeg</string>
+    <string name="lic_lgpl">LGPL 2.1 or later</string>
+</resources>

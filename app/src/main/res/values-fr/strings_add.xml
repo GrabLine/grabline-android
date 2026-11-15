@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_title">Ajouter à GrabLine</string>
+    <string name="add_links_count">%1$d liens</string>
+    <string name="add_links_show">Afficher les liens</string>
+    <string name="add_links_hide">Masquer les liens</string>
+    <string name="add_links_toggle_description">Afficher ou masquer la liste des liens</string>
+    <string name="add_kind_description">Type : %1$s</string>
+    <string name="add_download_on">Télécharger sur</string>
+    <string name="add_this_phone">Ce téléphone</string>
+    <string name="add_pc_online">En ligne</string>
+    <string name="add_pc_offline">Hors ligne</string>
+    <string name="add_pc_description">%1$s, %2$s</string>
+    <string name="add_phone_description">Ce téléphone</string>
+    <string name="add_pair_first">Associez d\'abord un PC</string>
+    <string name="add_pair_button">Associer un PC</string>
+    <string name="add_offline_hint">Sera envoyé au retour de votre PC</string>
+    <string name="add_quality">Qualité</string>
+    <string name="add_quality_best">Meilleure</string>
+    <string name="add_quality_description">Qualité %1$s</string>
+    <string name="add_quality_description_size">Qualité %1$s, environ %2$s</string>
+    <string name="add_analysing">Analyse…</string>
+    <string name="add_analyse_retry">Réessayer</string>
+    <string name="add_analyse_failed_best">Vous pouvez quand même télécharger la meilleure qualité.</string>
+    <string name="add_queue">File</string>
+    <string name="add_queue_default">Par défaut</string>
+    <string name="add_folder">Dossier</string>
+    <string name="add_menu_description">%1$s : %2$s. Ouvre une liste</string>
+    <string name="add_not_downloadable">C\'est une page web, pas un fichier</string>
+    <string name="add_open_in_browser">Ouvrir dans le navigateur</string>
+    <string name="add_open_in_browser_description">Ouvrir ce lien dans votre navigateur</string>
+    <string name="add_start_now">Démarrer maintenant</string>
+    <string name="add_start_now_description">Envoyer le lien au PC choisi maintenant</string>
+    <string name="add_sending">Envoi…</string>
+    <string name="add_already_sent">Déjà envoyé</string>
+    <string name="add_send_failed">Envoi impossible. Réessayez</string>
+    <string name="add_sent_to">Envoyé à %1$s</string>
+    <string name="add_will_send_later">Sera envoyé au retour de votre PC</string>
+    <string name="add_start_phone_description">Démarrer le téléchargement sur ce téléphone maintenant</string>
+    <string name="add_phone_folder">Enregistrer dans</string>
+    <string name="add_phone_folder_change">Modifier</string>
+    <string name="add_phone_folder_change_description">Dossier d\'enregistrement : %1$s. Modifier le dossier</string>
+    <string name="add_phone_video_later">Les téléchargements de vidéos sur le téléphone arriveront dans une prochaine mise à jour</string>
+    <string name="add_phone_video_to_pc">Envoyer plutôt à un PC</string>
+    <plurals name="add_phone_video_skipped">
+        <item quantity="one">%1$d lien vidéo sera ignoré</item>
+        <item quantity="many">%1$d liens vidéo seront ignorés</item>
+        <item quantity="other">%1$d liens vidéo seront ignorés</item>
+    </plurals>
+    <plurals name="add_added_on_phone">
+        <item quantity="one">%1$d téléchargement ajouté à ce téléphone</item>
+        <item quantity="many">%1$d téléchargements ajoutés à ce téléphone</item>
+        <item quantity="other">%1$d téléchargements ajoutés à ce téléphone</item>
+    </plurals>
+</resources>

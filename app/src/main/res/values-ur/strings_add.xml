@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_title">GrabLine میں شامل کریں</string>
+    <string name="add_links_count">%1$d لنک</string>
+    <string name="add_links_show">لنک دکھائیں</string>
+    <string name="add_links_hide">لنک چھپائیں</string>
+    <string name="add_links_toggle_description">لنکس کی فہرست دکھائیں یا چھپائیں</string>
+    <string name="add_kind_description">قسم: %1$s</string>
+    <string name="add_download_on">اس پر ڈاؤن لوڈ کریں</string>
+    <string name="add_this_phone">یہ فون</string>
+    <string name="add_pc_online">آن لائن</string>
+    <string name="add_pc_offline">آف لائن</string>
+    <string name="add_pc_description">%1$s, %2$s</string>
+    <string name="add_phone_description">یہ فون</string>
+    <string name="add_pair_first">پہلے ایک پی سی جوڑیں</string>
+    <string name="add_pair_button">پی سی جوڑیں</string>
+    <string name="add_offline_hint">آپ کا پی سی واپس آنے پر بھیجا جائے گا</string>
+    <string name="add_quality">کوالٹی</string>
+    <string name="add_quality_best">بہترین</string>
+    <string name="add_quality_description">معیار %1$s</string>
+    <string name="add_quality_description_size">معیار %1$s، تقریباً %2$s</string>
+    <string name="add_analysing">تجزیہ ہو رہا ہے…</string>
+    <string name="add_analyse_retry">دوبارہ کوشش کریں</string>
+    <string name="add_analyse_failed_best">آپ پھر بھی بہترین معیار میں ڈاؤن لوڈ کر سکتے ہیں۔</string>
+    <string name="add_queue">قطار</string>
+    <string name="add_queue_default">ڈیفالٹ</string>
+    <string name="add_folder">فولڈر</string>
+    <string name="add_menu_description">%1$s: %2$s۔ ایک فہرست کھلتی ہے</string>
+    <string name="add_not_downloadable">یہ ایک ویب صفحہ ہے، فائل نہیں</string>
+    <string name="add_open_in_browser">براؤزر میں کھولیں</string>
+    <string name="add_open_in_browser_description">یہ لنک اپنے براؤزر میں کھولیں</string>
+    <string name="add_start_now">ابھی شروع کریں</string>
+    <string name="add_start_now_description">لنک ابھی منتخب پی سی کو بھیجیں</string>
+    <string name="add_sending">بھیجا جا رہا ہے…</string>
+    <string name="add_already_sent">پہلے ہی بھیجا جا چکا ہے</string>
+    <string name="add_send_failed">بھیجا نہیں جا سکا۔ دوبارہ کوشش کریں</string>
+    <string name="add_sent_to">%1$s کو بھیج دیا گیا</string>
+    <string name="add_will_send_later">آپ کا پی سی واپس آنے پر بھیجا جائے گا</string>
+    <string name="add_start_phone_description">اس فون پر ڈاؤن لوڈ ابھی شروع کریں</string>
+    <string name="add_phone_folder">محفوظ کریں در</string>
+    <string name="add_phone_folder_change">تبدیل کریں</string>
+    <string name="add_phone_folder_change_description">محفوظ کرنے کا فولڈر: %1$s۔ فولڈر تبدیل کریں</string>
+    <string name="add_phone_video_later">فون پر ویڈیو ڈاؤن لوڈ بعد کی اپ ڈیٹ میں آئیں گے</string>
+    <string name="add_phone_video_to_pc">اس کے بجائے پی سی کو بھیجیں</string>
+    <plurals name="add_phone_video_skipped">
+        <item quantity="one">%1$d ویڈیو لنک چھوڑ دیا جائے گا</item>
+        <item quantity="other">%1$d ویڈیو لنک چھوڑ دیے جائیں گے</item>
+    </plurals>
+    <plurals name="add_added_on_phone">
+        <item quantity="one">اس فون میں شامل کیا گیا</item>
+        <item quantity="other">اس فون میں %1$d ڈاؤن لوڈ شامل کیے گئے</item>
+    </plurals>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GrabLine</string>
+    <string name="tab_downloads">التنزيلات</string>
+    <string name="tab_devices">الأجهزة</string>
+    <string name="tab_settings">الإعدادات</string>
+    <string name="add_a_link">إضافة رابط</string>
+    <string name="share_label">GrabLine</string>
+    <string name="paste_a_link">الصق رابطًا</string>
+    <string name="paste_button">لصق</string>
+    <string name="paste_button_description">لصق رابط من الحافظة</string>
+    <string name="go_button">انتقال</string>
+    <string name="go_button_description">إضافة الروابط الملصوقة</string>
+    <string name="paste_no_link_found">لم يُعثر على رابط ويب أو رابط مغناطيسي في هذا النص</string>
+    <string name="kind_file">ملف</string>
+    <string name="kind_video">فيديو</string>
+    <string name="kind_torrent">تورنت</string>
+    <string name="kind_page">صفحة ويب</string>
+</resources>

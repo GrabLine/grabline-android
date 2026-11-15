@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notify_group_phone">Telefon-Downloads</string>
+    <string name="notify_group_pc">PC</string>
+    <string name="notify_channel_active_name">Aktive Downloads</string>
+    <string name="notify_channel_active_desc">Zeigt den Fortschritt, während Downloads auf diesem Telefon laufen.</string>
+    <string name="notify_channel_finished_name">Fertig</string>
+    <string name="notify_channel_finished_desc">Ein Telefon-Download wurde abgeschlossen.</string>
+    <string name="notify_channel_failed_name">Fehlgeschlagen</string>
+    <string name="notify_channel_failed_desc">Ein Telefon-Download ist fehlgeschlagen und wird nicht wiederholt.</string>
+    <string name="notify_channel_pc_name">PC-Aktivität</string>
+    <string name="notify_channel_pc_desc">Auf einem verbundenen PC wurde ein Download abgeschlossen oder ist fehlgeschlagen.</string>
+    <string name="notify_channel_transfers_name">Übertragungen</string>
+    <string name="notify_channel_transfers_desc">Zeigt den Fortschritt, während eine Datei von deinem PC kopiert wird.</string>
+    <string name="notify_pc_finished_title">%1$s hat einen Download abgeschlossen</string>
+    <string name="notify_pc_finished_text">%1$s ist fertig.</string>
+    <string name="notify_pc_failed_title">%1$s konnte einen Download nicht abschließen</string>
+    <string name="notify_pc_failed_text">%1$s: %2$s</string>
+    <string name="notify_action_open_app">App öffnen</string>
+    <string name="announce_percent">%1$d Prozent</string>
+    <string name="announce_waiting">Wartet</string>
+    <string name="announce_downloaded">%1$s heruntergeladen</string>
+    <plurals name="announce_percent_hours_left">
+        <item quantity="one">%1$d Prozent, noch %2$d Stunde</item>
+        <item quantity="other">%1$d Prozent, noch %2$d Stunden</item>
+    </plurals>
+    <plurals name="announce_percent_minutes_left">
+        <item quantity="one">%1$d Prozent, noch %2$d Minute</item>
+        <item quantity="other">%1$d Prozent, noch %2$d Minuten</item>
+    </plurals>
+    <plurals name="announce_percent_seconds_left">
+        <item quantity="one">%1$d Prozent, noch %2$d Sekunde</item>
+        <item quantity="other">%1$d Prozent, noch %2$d Sekunden</item>
+    </plurals>
+</resources>

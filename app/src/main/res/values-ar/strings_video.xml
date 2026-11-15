@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_update_engine">تحديث محرك الفيديو</string>
+    <plurals name="add_playlist_count">
+        <item quantity="zero">هذه قائمة تشغيل فيها %d مقطع فيديو. ستُنزَّل كلها.</item>
+        <item quantity="one">هذه قائمة تشغيل فيها فيديو واحد. سيُنزَّل بالكامل.</item>
+        <item quantity="two">هذه قائمة تشغيل فيها فيديوان. سيُنزَّلان بالكامل.</item>
+        <item quantity="few">هذه قائمة تشغيل فيها %d مقاطع فيديو. ستُنزَّل كلها.</item>
+        <item quantity="many">هذه قائمة تشغيل فيها %d مقطع فيديو. ستُنزَّل كلها.</item>
+        <item quantity="other">هذه قائمة تشغيل فيها %d مقطع فيديو. ستُنزَّل كلها.</item>
+    </plurals>
+    <string name="ytdlp_auto">التحديث تلقائيًا عند تغيّر موقع</string>
+    <string name="about_ytdlp_update">تحديث yt-dlp</string>
+    <string name="about_ytdlp_update_supporting">يحصل على أحدث محرك فيديو دون إصدار جديد من التطبيق</string>
+    <string name="about_ytdlp_updating">جارٍ تحديث محرك الفيديو…</string>
+    <string name="about_ytdlp_updated">تم تحديث yt-dlp إلى %1$s</string>
+    <string name="about_ytdlp_current">yt-dlp محدّث (%1$s)</string>
+    <string name="about_ytdlp_retry">إعادة المحاولة</string>
+    <string name="about_ytdlp_update_progress_description">جارٍ تحديث yt-dlp</string>
+    <string name="detail_update_engine">تحديث محرك الفيديو</string>
+    <string name="detail_update_engine_updating">جارٍ تحديث محرك الفيديو…</string>
+    <string name="lic_ytdlp">yt-dlp and youtubedl-android</string>
+    <string name="lic_unlicense">Unlicense and GPL-3.0</string>
+    <string name="lic_ffmpeg">FFmpeg</string>
+    <string name="lic_lgpl">LGPL 2.1 or later</string>
+</resources>

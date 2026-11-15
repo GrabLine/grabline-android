@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notify_group_phone">फ़ोन डाउनलोड</string>
+    <string name="notify_group_pc">पीसी</string>
+    <string name="notify_channel_active_name">सक्रिय डाउनलोड</string>
+    <string name="notify_channel_active_desc">इस फ़ोन पर डाउनलोड चलते समय प्रगति दिखाता है।</string>
+    <string name="notify_channel_finished_name">समाप्त</string>
+    <string name="notify_channel_finished_desc">एक फ़ोन डाउनलोड पूरा हो गया।</string>
+    <string name="notify_channel_failed_name">असफल</string>
+    <string name="notify_channel_failed_desc">एक फ़ोन डाउनलोड विफल रहा और दोबारा नहीं आज़माया जाएगा।</string>
+    <string name="notify_channel_pc_name">पीसी गतिविधि</string>
+    <string name="notify_channel_pc_desc">कनेक्टेड पीसी पर कोई डाउनलोड पूरा हुआ या विफल रहा।</string>
+    <string name="notify_channel_transfers_name">ट्रांसफ़र</string>
+    <string name="notify_channel_transfers_desc">आपके पीसी से फ़ाइल कॉपी होते समय प्रगति दिखाता है।</string>
+    <string name="notify_pc_finished_title">%1$s ने एक डाउनलोड पूरा किया</string>
+    <string name="notify_pc_finished_text">%1$s पूरा हो गया।</string>
+    <string name="notify_pc_failed_title">%1$s एक डाउनलोड पूरा नहीं कर सका</string>
+    <string name="notify_pc_failed_text">%1$s: %2$s</string>
+    <string name="notify_action_open_app">ऐप खोलें</string>
+    <string name="announce_percent">%1$d प्रतिशत</string>
+    <string name="announce_waiting">इंतज़ार में</string>
+    <string name="announce_downloaded">%1$s डाउनलोड हुआ</string>
+    <plurals name="announce_percent_hours_left">
+        <item quantity="one">%1$d प्रतिशत, %2$d घंटा बाकी</item>
+        <item quantity="other">%1$d प्रतिशत, %2$d घंटे बाकी</item>
+    </plurals>
+    <plurals name="announce_percent_minutes_left">
+        <item quantity="one">%1$d प्रतिशत, %2$d मिनट बाकी</item>
+        <item quantity="other">%1$d प्रतिशत, %2$d मिनट बाकी</item>
+    </plurals>
+    <plurals name="announce_percent_seconds_left">
+        <item quantity="one">%1$d प्रतिशत, %2$d सेकंड बाकी</item>
+        <item quantity="other">%1$d प्रतिशत, %2$d सेकंड बाकी</item>
+    </plurals>
+</resources>

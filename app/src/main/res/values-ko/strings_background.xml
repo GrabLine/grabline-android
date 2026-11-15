@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notify_active_starting">다운로드를 시작하는 중</string>
+    <plurals name="notify_active_downloading">
+        <item quantity="other">파일 %d개 다운로드 중</item>
+    </plurals>
+    <string name="notify_active_waiting_network">%d개가 네트워크 대기 중</string>
+    <string name="notify_active_waiting_wifi">%d개가 Wi-Fi 대기 중</string>
+    <string name="notify_active_waiting_charging">%d개가 충전 대기 중</string>
+    <string name="notify_active_queued">%d개 대기 중</string>
+    <string name="notify_action_pause_all">모두 일시정지</string>
+    <string name="notify_action_cancel">취소</string>
+    <string name="notify_action_open">열기</string>
+    <string name="notify_action_share">공유</string>
+    <string name="notify_action_retry">다시 시도</string>
+    <string name="notify_action_details">세부 정보</string>
+    <string name="notify_finished_title">다운로드 완료</string>
+    <string name="notify_failed_title">다운로드 실패</string>
+    <string name="notify_failed_text">%1$s: %2$s</string>
+    <string name="notify_failed_default">다운로드하지 못했습니다. 다시 시도하세요</string>
+    <string name="battery_tip_text">배터리를 아끼기 위해 휴대전화가 다운로드를 일시중지할 수 있습니다. GrabLine이 계속 실행되도록 허용하세요.</string>
+    <string name="battery_tip_action">배터리 설정</string>
+    <string name="battery_tip_dismiss">나중에</string>
+</resources>

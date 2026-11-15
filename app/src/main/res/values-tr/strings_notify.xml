@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notify_group_phone">Telefon indirmeleri</string>
+    <string name="notify_group_pc">Bilgisayar</string>
+    <string name="notify_channel_active_name">Etkin indirmeler</string>
+    <string name="notify_channel_active_desc">Bu telefonda indirmeler sürerken ilerlemeyi gösterir.</string>
+    <string name="notify_channel_finished_name">Bitti</string>
+    <string name="notify_channel_finished_desc">Bir telefon indirmesi tamamlandı.</string>
+    <string name="notify_channel_failed_name">Başarısız</string>
+    <string name="notify_channel_failed_desc">Bir telefon indirmesi başarısız oldu ve yeniden denenmeyecek.</string>
+    <string name="notify_channel_pc_name">Bilgisayar etkinliği</string>
+    <string name="notify_channel_pc_desc">Bağlı bir bilgisayarda bir indirme bitti veya başarısız oldu.</string>
+    <string name="notify_channel_transfers_name">Aktarımlar</string>
+    <string name="notify_channel_transfers_desc">Bilgisayarından bir dosya kopyalanırken ilerlemeyi gösterir.</string>
+    <string name="notify_pc_finished_title">%1$s bir indirmeyi tamamladı</string>
+    <string name="notify_pc_finished_text">%1$s tamamlandı.</string>
+    <string name="notify_pc_failed_title">%1$s bir indirmeyi tamamlayamadı</string>
+    <string name="notify_pc_failed_text">%1$s: %2$s</string>
+    <string name="notify_action_open_app">Uygulamayı aç</string>
+    <string name="announce_percent">yüzde %1$d</string>
+    <string name="announce_waiting">Bekliyor</string>
+    <string name="announce_downloaded">%1$s indirildi</string>
+    <plurals name="announce_percent_hours_left">
+        <item quantity="one">yüzde %1$d, %2$d saat kaldı</item>
+        <item quantity="other">yüzde %1$d, %2$d saat kaldı</item>
+    </plurals>
+    <plurals name="announce_percent_minutes_left">
+        <item quantity="one">yüzde %1$d, %2$d dakika kaldı</item>
+        <item quantity="other">yüzde %1$d, %2$d dakika kaldı</item>
+    </plurals>
+    <plurals name="announce_percent_seconds_left">
+        <item quantity="one">yüzde %1$d, %2$d saniye kaldı</item>
+        <item quantity="other">yüzde %1$d, %2$d saniye kaldı</item>
+    </plurals>
+</resources>

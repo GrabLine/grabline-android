@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_update_engine">Aggiorna il motore video</string>
+    <plurals name="add_playlist_count">
+        <item quantity="one">Questa è una playlist con %d video. Verrà scaricata per intero.</item>
+        <item quantity="many">Questa è una playlist con %d video. Verranno scaricati tutti.</item>
+        <item quantity="other">Questa è una playlist con %d video. Verranno scaricati tutti.</item>
+    </plurals>
+    <string name="ytdlp_auto">Aggiorna automaticamente quando un sito cambia</string>
+    <string name="about_ytdlp_update">Aggiorna yt-dlp</string>
+    <string name="about_ytdlp_update_supporting">Ottiene il motore video più recente senza una nuova versione dell\'app</string>
+    <string name="about_ytdlp_updating">Aggiornamento del motore video…</string>
+    <string name="about_ytdlp_updated">yt-dlp aggiornato alla versione %1$s</string>
+    <string name="about_ytdlp_current">yt-dlp è aggiornato (%1$s)</string>
+    <string name="about_ytdlp_retry">Riprova</string>
+    <string name="about_ytdlp_update_progress_description">Aggiornamento di yt-dlp</string>
+    <string name="detail_update_engine">Aggiorna il motore video</string>
+    <string name="detail_update_engine_updating">Aggiornamento del motore video…</string>
+    <string name="lic_ytdlp">yt-dlp and youtubedl-android</string>
+    <string name="lic_unlicense">Unlicense and GPL-3.0</string>
+    <string name="lic_ffmpeg">FFmpeg</string>
+    <string name="lic_lgpl">LGPL 2.1 or later</string>
+</resources>

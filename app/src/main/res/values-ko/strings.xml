@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GrabLine</string>
+    <string name="tab_downloads">다운로드</string>
+    <string name="tab_devices">기기</string>
+    <string name="tab_settings">설정</string>
+    <string name="add_a_link">링크 추가</string>
+    <string name="share_label">GrabLine</string>
+    <string name="paste_a_link">링크 붙여넣기</string>
+    <string name="paste_button">붙여넣기</string>
+    <string name="paste_button_description">클립보드의 링크를 붙여넣습니다</string>
+    <string name="go_button">이동</string>
+    <string name="go_button_description">붙여넣은 링크를 추가합니다</string>
+    <string name="paste_no_link_found">이 텍스트에서 웹 링크나 마그넷 링크를 찾지 못했습니다</string>
+    <string name="kind_file">파일</string>
+    <string name="kind_video">동영상</string>
+    <string name="kind_torrent">토렌트</string>
+    <string name="kind_page">웹 페이지</string>
+</resources>

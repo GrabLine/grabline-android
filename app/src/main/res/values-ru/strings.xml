@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GrabLine</string>
+    <string name="tab_downloads">Загрузки</string>
+    <string name="tab_devices">Устройства</string>
+    <string name="tab_settings">Настройки</string>
+    <string name="add_a_link">Добавить ссылку</string>
+    <string name="share_label">GrabLine</string>
+    <string name="paste_a_link">Вставьте ссылку</string>
+    <string name="paste_button">Вставить</string>
+    <string name="paste_button_description">Вставить ссылку из буфера обмена</string>
+    <string name="go_button">Вперёд</string>
+    <string name="go_button_description">Добавить вставленные ссылки</string>
+    <string name="paste_no_link_found">В этом тексте нет веб-ссылки или magnet-ссылки</string>
+    <string name="kind_file">Файл</string>
+    <string name="kind_video">Видео</string>
+    <string name="kind_torrent">Торрент</string>
+    <string name="kind_page">Веб-страница</string>
+</resources>

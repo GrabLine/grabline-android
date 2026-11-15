@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GrabLine</string>
+    <string name="tab_downloads">Téléchargements</string>
+    <string name="tab_devices">Appareils</string>
+    <string name="tab_settings">Paramètres</string>
+    <string name="add_a_link">Ajouter un lien</string>
+    <string name="share_label">GrabLine</string>
+    <string name="paste_a_link">Collez un lien</string>
+    <string name="paste_button">Coller</string>
+    <string name="paste_button_description">Coller un lien depuis le presse-papiers</string>
+    <string name="go_button">OK</string>
+    <string name="go_button_description">Ajouter les liens collés</string>
+    <string name="paste_no_link_found">Aucun lien web ou magnet dans ce texte</string>
+    <string name="kind_file">Fichier</string>
+    <string name="kind_video">Vidéo</string>
+    <string name="kind_torrent">Torrent</string>
+    <string name="kind_page">Page web</string>
+</resources>

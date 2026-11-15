@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_title">GrabLine に追加</string>
+    <string name="add_links_count">%1$d件のリンク</string>
+    <string name="add_links_show">リンクを表示</string>
+    <string name="add_links_hide">リンクを非表示</string>
+    <string name="add_links_toggle_description">リンクの一覧を表示または非表示にします</string>
+    <string name="add_kind_description">種類：%1$s</string>
+    <string name="add_download_on">ダウンロード先</string>
+    <string name="add_this_phone">このスマートフォン</string>
+    <string name="add_pc_online">オンライン</string>
+    <string name="add_pc_offline">オフライン</string>
+    <string name="add_pc_description">%1$s, %2$s</string>
+    <string name="add_phone_description">このスマートフォン</string>
+    <string name="add_pair_first">先にPCをペアリングしてください</string>
+    <string name="add_pair_button">PCをペアリング</string>
+    <string name="add_offline_hint">PCが戻ったら送信されます</string>
+    <string name="add_quality">画質</string>
+    <string name="add_quality_best">最高</string>
+    <string name="add_quality_description">画質 %1$s</string>
+    <string name="add_quality_description_size">画質 %1$s、約 %2$s</string>
+    <string name="add_analysing">解析中…</string>
+    <string name="add_analyse_retry">再試行</string>
+    <string name="add_analyse_failed_best">最高画質でダウンロードすることはできます。</string>
+    <string name="add_queue">キュー</string>
+    <string name="add_queue_default">デフォルト</string>
+    <string name="add_folder">フォルダ</string>
+    <string name="add_menu_description">%1$s：%2$s。リストが開きます</string>
+    <string name="add_not_downloadable">これはWebページで、ファイルではありません</string>
+    <string name="add_open_in_browser">ブラウザで開く</string>
+    <string name="add_open_in_browser_description">このリンクをブラウザで開きます</string>
+    <string name="add_start_now">今すぐ開始</string>
+    <string name="add_start_now_description">選択したPCにリンクを今すぐ送信します</string>
+    <string name="add_sending">送信中…</string>
+    <string name="add_already_sent">送信済み</string>
+    <string name="add_send_failed">送信できませんでした。もう一度お試しください</string>
+    <string name="add_sent_to">%1$s に送信しました</string>
+    <string name="add_will_send_later">PCが戻ったら送信されます</string>
+    <string name="add_start_phone_description">このスマートフォンでダウンロードを今すぐ開始します</string>
+    <string name="add_phone_folder">保存先</string>
+    <string name="add_phone_folder_change">変更</string>
+    <string name="add_phone_folder_change_description">保存先：%1$s。フォルダを変更します</string>
+    <string name="add_phone_video_later">スマートフォンでの動画のダウンロードは今後のアップデートで対応します</string>
+    <string name="add_phone_video_to_pc">代わりにPCに送信</string>
+    <plurals name="add_phone_video_skipped">
+        <item quantity="other">動画リンク%1$d件はスキップされます</item>
+    </plurals>
+    <plurals name="add_added_on_phone">
+        <item quantity="other">このスマートフォンにダウンロードを%1$d件追加しました</item>
+    </plurals>
+</resources>

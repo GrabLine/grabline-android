@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notify_active_starting">İndirmeler başlatılıyor</string>
+    <plurals name="notify_active_downloading">
+        <item quantity="one">%d dosya indiriliyor</item>
+        <item quantity="other">%d dosya indiriliyor</item>
+    </plurals>
+    <string name="notify_active_waiting_network">%d ağ bekliyor</string>
+    <string name="notify_active_waiting_wifi">%d Wi-Fi bekliyor</string>
+    <string name="notify_active_waiting_charging">%d şarj cihazı bekliyor</string>
+    <string name="notify_active_queued">%d bekliyor</string>
+    <string name="notify_action_pause_all">Tümünü duraklat</string>
+    <string name="notify_action_cancel">İptal</string>
+    <string name="notify_action_open">Aç</string>
+    <string name="notify_action_share">Paylaş</string>
+    <string name="notify_action_retry">Yeniden dene</string>
+    <string name="notify_action_details">Ayrıntılar</string>
+    <string name="notify_finished_title">İndirme tamamlandı</string>
+    <string name="notify_failed_title">İndirme başarısız</string>
+    <string name="notify_failed_text">%1$s: %2$s</string>
+    <string name="notify_failed_default">İndirilemedi. Tekrar dene</string>
+    <string name="battery_tip_text">Telefonun pil tasarrufu için indirmeleri duraklatabilir. GrabLine\'ın çalışmaya devam etmesine izin ver.</string>
+    <string name="battery_tip_action">Pil ayarları</string>
+    <string name="battery_tip_dismiss">Şimdi değil</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_update_engine">동영상 엔진 업데이트</string>
+    <plurals name="add_playlist_count">
+        <item quantity="other">동영상 %d개가 있는 재생목록입니다. 모두 다운로드됩니다.</item>
+    </plurals>
+    <string name="ytdlp_auto">사이트가 바뀌면 자동으로 업데이트</string>
+    <string name="about_ytdlp_update">yt-dlp 업데이트</string>
+    <string name="about_ytdlp_update_supporting">새 앱 버전 없이 최신 동영상 엔진을 받습니다</string>
+    <string name="about_ytdlp_updating">동영상 엔진 업데이트 중…</string>
+    <string name="about_ytdlp_updated">yt-dlp를 %1$s(으)로 업데이트했습니다</string>
+    <string name="about_ytdlp_current">yt-dlp가 최신 상태입니다(%1$s)</string>
+    <string name="about_ytdlp_retry">다시 시도</string>
+    <string name="about_ytdlp_update_progress_description">yt-dlp 업데이트 중</string>
+    <string name="detail_update_engine">동영상 엔진 업데이트</string>
+    <string name="detail_update_engine_updating">동영상 엔진 업데이트 중…</string>
+    <string name="lic_ytdlp">yt-dlp and youtubedl-android</string>
+    <string name="lic_unlicense">Unlicense and GPL-3.0</string>
+    <string name="lic_ffmpeg">FFmpeg</string>
+    <string name="lic_lgpl">LGPL 2.1 or later</string>
+</resources>

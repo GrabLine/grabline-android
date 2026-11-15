@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notify_group_phone">휴대전화 다운로드</string>
+    <string name="notify_group_pc">PC</string>
+    <string name="notify_channel_active_name">진행 중인 다운로드</string>
+    <string name="notify_channel_active_desc">이 휴대전화에서 다운로드가 진행되는 동안 진행률을 표시합니다.</string>
+    <string name="notify_channel_finished_name">완료</string>
+    <string name="notify_channel_finished_desc">휴대전화 다운로드가 완료되었습니다.</string>
+    <string name="notify_channel_failed_name">실패</string>
+    <string name="notify_channel_failed_desc">휴대전화 다운로드가 실패했으며 다시 시도하지 않습니다.</string>
+    <string name="notify_channel_pc_name">PC 활동</string>
+    <string name="notify_channel_pc_desc">연결된 PC에서 다운로드가 완료되었거나 실패했습니다.</string>
+    <string name="notify_channel_transfers_name">전송</string>
+    <string name="notify_channel_transfers_desc">PC에서 파일을 복사하는 동안 진행률을 표시합니다.</string>
+    <string name="notify_pc_finished_title">%1$s에서 다운로드를 완료했습니다</string>
+    <string name="notify_pc_finished_text">%1$s 완료되었습니다.</string>
+    <string name="notify_pc_failed_title">%1$s에서 다운로드를 완료하지 못했습니다</string>
+    <string name="notify_pc_failed_text">%1$s: %2$s</string>
+    <string name="notify_action_open_app">앱 열기</string>
+    <string name="announce_percent">%1$d퍼센트</string>
+    <string name="announce_waiting">대기 중</string>
+    <string name="announce_downloaded">%1$s 다운로드됨</string>
+    <plurals name="announce_percent_hours_left">
+        <item quantity="other">%1$d퍼센트, %2$d시간 남음</item>
+    </plurals>
+    <plurals name="announce_percent_minutes_left">
+        <item quantity="other">%1$d퍼센트, %2$d분 남음</item>
+    </plurals>
+    <plurals name="announce_percent_seconds_left">
+        <item quantity="other">%1$d퍼센트, %2$d초 남음</item>
+    </plurals>
+</resources>

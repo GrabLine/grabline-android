@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_title">Добавить в GrabLine</string>
+    <string name="add_links_count">Ссылок: %1$d</string>
+    <string name="add_links_show">Показать ссылки</string>
+    <string name="add_links_hide">Скрыть ссылки</string>
+    <string name="add_links_toggle_description">Показать или скрыть список ссылок</string>
+    <string name="add_kind_description">Тип: %1$s</string>
+    <string name="add_download_on">Скачать на</string>
+    <string name="add_this_phone">Этот телефон</string>
+    <string name="add_pc_online">В сети</string>
+    <string name="add_pc_offline">Не в сети</string>
+    <string name="add_pc_description">%1$s, %2$s</string>
+    <string name="add_phone_description">Этот телефон</string>
+    <string name="add_pair_first">Сначала подключите компьютер</string>
+    <string name="add_pair_button">Подключить компьютер</string>
+    <string name="add_offline_hint">Будет отправлено, когда компьютер появится в сети</string>
+    <string name="add_quality">Качество</string>
+    <string name="add_quality_best">Лучшее</string>
+    <string name="add_quality_description">Качество %1$s</string>
+    <string name="add_quality_description_size">Качество %1$s, около %2$s</string>
+    <string name="add_analysing">Анализ…</string>
+    <string name="add_analyse_retry">Повторить</string>
+    <string name="add_analyse_failed_best">Вы всё равно можете скачать в лучшем качестве.</string>
+    <string name="add_queue">Очередь</string>
+    <string name="add_queue_default">По умолчанию</string>
+    <string name="add_folder">Папка</string>
+    <string name="add_menu_description">%1$s: %2$s. Открывает список</string>
+    <string name="add_not_downloadable">Это веб-страница, а не файл</string>
+    <string name="add_open_in_browser">Открыть в браузере</string>
+    <string name="add_open_in_browser_description">Открыть эту ссылку в браузере</string>
+    <string name="add_start_now">Начать сейчас</string>
+    <string name="add_start_now_description">Отправить ссылку на выбранный компьютер сейчас</string>
+    <string name="add_sending">Отправка…</string>
+    <string name="add_already_sent">Уже отправлено</string>
+    <string name="add_send_failed">Не удалось отправить. Повторите попытку</string>
+    <string name="add_sent_to">Отправлено на %1$s</string>
+    <string name="add_will_send_later">Будет отправлено, когда компьютер появится в сети</string>
+    <string name="add_start_phone_description">Начать скачивание на этом телефоне сейчас</string>
+    <string name="add_phone_folder">Сохранить в</string>
+    <string name="add_phone_folder_change">Изменить</string>
+    <string name="add_phone_folder_change_description">Папка сохранения: %1$s. Изменить папку</string>
+    <string name="add_phone_video_later">Скачивание видео на телефон появится в одном из следующих обновлений</string>
+    <string name="add_phone_video_to_pc">Отправить на компьютер</string>
+    <plurals name="add_phone_video_skipped">
+        <item quantity="one">Будет пропущена %1$d видеоссылка</item>
+        <item quantity="few">Будет пропущено %1$d видеоссылки</item>
+        <item quantity="many">Будет пропущено %1$d видеоссылок</item>
+        <item quantity="other">Будет пропущено %1$d видеоссылки</item>
+    </plurals>
+    <plurals name="add_added_on_phone">
+        <item quantity="one">Добавлена на этот телефон %1$d загрузка</item>
+        <item quantity="few">Добавлено на этот телефон: %1$d загрузки</item>
+        <item quantity="many">Добавлено на этот телефон: %1$d загрузок</item>
+        <item quantity="other">Добавлено на этот телефон: %1$d загрузки</item>
+    </plurals>
+</resources>

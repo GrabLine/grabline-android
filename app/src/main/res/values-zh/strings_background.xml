@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notify_active_starting">正在启动下载</string>
+    <plurals name="notify_active_downloading">
+        <item quantity="other">正在下载 %d 个文件</item>
+    </plurals>
+    <string name="notify_active_waiting_network">%d 个在等待网络</string>
+    <string name="notify_active_waiting_wifi">%d 个在等待 Wi-Fi</string>
+    <string name="notify_active_waiting_charging">%d 个在等待充电</string>
+    <string name="notify_active_queued">%d 个在等待</string>
+    <string name="notify_action_pause_all">全部暂停</string>
+    <string name="notify_action_cancel">取消</string>
+    <string name="notify_action_open">打开</string>
+    <string name="notify_action_share">分享</string>
+    <string name="notify_action_retry">重试</string>
+    <string name="notify_action_details">详情</string>
+    <string name="notify_finished_title">下载完成</string>
+    <string name="notify_failed_title">下载失败</string>
+    <string name="notify_failed_text">%1$s: %2$s</string>
+    <string name="notify_failed_default">无法下载。请重试</string>
+    <string name="battery_tip_text">手机可能会暂停下载以节省电量。请让 GrabLine 保持运行。</string>
+    <string name="battery_tip_action">电池设置</string>
+    <string name="battery_tip_dismiss">以后再说</string>
+</resources>

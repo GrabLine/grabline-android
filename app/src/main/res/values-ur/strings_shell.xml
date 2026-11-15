@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shell_torrent_file_later">پی سی کو .torrent فائلیں بھیجنا بعد کی اپ ڈیٹ میں آئے گا۔ میگنیٹ لنک ابھی کام کرتے ہیں۔</string>
+    <string name="shell_offer_copied">کاپی کیا ہوا لنک بھیجیں؟</string>
+    <string name="shell_offer_send">بھیجیں</string>
+    <string name="shell_pick_a_download">تفصیلات دیکھنے کے لیے کوئی ڈاؤن لوڈ منتخب کریں</string>
+    <string name="shell_battery_tip">بیٹری بچانے کے لیے آپ کے فون نے ڈاؤن لوڈ روک دیے۔ GrabLine کو پس منظر میں چلنے دیں؟</string>
+    <string name="shell_battery_tip_action">ترتیبات</string>
+</resources>

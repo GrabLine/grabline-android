@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_update_engine">動画エンジンを更新</string>
+    <plurals name="add_playlist_count">
+        <item quantity="other">%d本の動画を含むプレイリストです。すべてダウンロードされます。</item>
+    </plurals>
+    <string name="ytdlp_auto">サイトが変わったときに自動で更新</string>
+    <string name="about_ytdlp_update">yt-dlp を更新</string>
+    <string name="about_ytdlp_update_supporting">アプリの新バージョンなしで最新の動画エンジンを取得します</string>
+    <string name="about_ytdlp_updating">動画エンジンを更新中…</string>
+    <string name="about_ytdlp_updated">yt-dlp を %1$s に更新しました</string>
+    <string name="about_ytdlp_current">yt-dlp は最新です（%1$s）</string>
+    <string name="about_ytdlp_retry">再試行</string>
+    <string name="about_ytdlp_update_progress_description">yt-dlp を更新中</string>
+    <string name="detail_update_engine">動画エンジンを更新</string>
+    <string name="detail_update_engine_updating">動画エンジンを更新中…</string>
+    <string name="lic_ytdlp">yt-dlp and youtubedl-android</string>
+    <string name="lic_unlicense">Unlicense and GPL-3.0</string>
+    <string name="lic_ffmpeg">FFmpeg</string>
+    <string name="lic_lgpl">LGPL 2.1 or later</string>
+</resources>

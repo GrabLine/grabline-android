@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shell_torrent_file_later">سيتوفر إرسال ملفات .torrent إلى الحاسوب في تحديث لاحق. الروابط المغناطيسية تعمل الآن.</string>
+    <string name="shell_offer_copied">إرسال الرابط الذي نسخته؟</string>
+    <string name="shell_offer_send">إرسال</string>
+    <string name="shell_pick_a_download">اختر تنزيلًا لعرض تفاصيله</string>
+    <string name="shell_battery_tip">أوقف هاتفك التنزيلات لتوفير البطارية. هل تسمح لـ GrabLine بالعمل في الخلفية؟</string>
+    <string name="shell_battery_tip_action">الإعدادات</string>
+</resources>

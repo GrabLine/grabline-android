@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_update_engine">Video motorunu güncelle</string>
+    <plurals name="add_playlist_count">
+        <item quantity="one">Bu, %d videolu bir oynatma listesi. Tamamı indirilecek.</item>
+        <item quantity="other">Bu, %d videolu bir oynatma listesi. Hepsi indirilecek.</item>
+    </plurals>
+    <string name="ytdlp_auto">Bir site değiştiğinde otomatik güncelle</string>
+    <string name="about_ytdlp_update">yt-dlp\'yi güncelle</string>
+    <string name="about_ytdlp_update_supporting">Yeni bir uygulama sürümü olmadan en yeni video motorunu alır</string>
+    <string name="about_ytdlp_updating">Video motoru güncelleniyor…</string>
+    <string name="about_ytdlp_updated">yt-dlp %1$s sürümüne güncellendi</string>
+    <string name="about_ytdlp_current">yt-dlp güncel (%1$s)</string>
+    <string name="about_ytdlp_retry">Yeniden dene</string>
+    <string name="about_ytdlp_update_progress_description">yt-dlp güncelleniyor</string>
+    <string name="detail_update_engine">Video motorunu güncelle</string>
+    <string name="detail_update_engine_updating">Video motoru güncelleniyor…</string>
+    <string name="lic_ytdlp">yt-dlp and youtubedl-android</string>
+    <string name="lic_unlicense">Unlicense and GPL-3.0</string>
+    <string name="lic_ffmpeg">FFmpeg</string>
+    <string name="lic_lgpl">LGPL 2.1 or later</string>
+</resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_update_engine">Обновить видеодвижок</string>
+    <plurals name="add_playlist_count">
+        <item quantity="one">Это плейлист из %d видео. Он будет скачан целиком.</item>
+        <item quantity="few">Это плейлист из %d видео. Они будут скачаны целиком.</item>
+        <item quantity="many">Это плейлист из %d видео. Все они будут скачаны.</item>
+        <item quantity="other">Это плейлист из %d видео. Все они будут скачаны.</item>
+    </plurals>
+    <string name="ytdlp_auto">Обновлять автоматически, когда сайт меняется</string>
+    <string name="about_ytdlp_update">Обновить yt-dlp</string>
+    <string name="about_ytdlp_update_supporting">Загружает новейший видеодвижок без новой версии приложения</string>
+    <string name="about_ytdlp_updating">Обновление видеодвижка…</string>
+    <string name="about_ytdlp_updated">yt-dlp обновлён до %1$s</string>
+    <string name="about_ytdlp_current">yt-dlp актуален (%1$s)</string>
+    <string name="about_ytdlp_retry">Повторить</string>
+    <string name="about_ytdlp_update_progress_description">Обновление yt-dlp</string>
+    <string name="detail_update_engine">Обновить видеодвижок</string>
+    <string name="detail_update_engine_updating">Обновление видеодвижка…</string>
+    <string name="lic_ytdlp">yt-dlp and youtubedl-android</string>
+    <string name="lic_unlicense">Unlicense and GPL-3.0</string>
+    <string name="lic_ffmpeg">FFmpeg</string>
+    <string name="lic_lgpl">LGPL 2.1 or later</string>
+</resources>

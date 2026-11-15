@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_update_engine">更新视频引擎</string>
+    <plurals name="add_playlist_count">
+        <item quantity="other">这是一个包含 %d 个视频的播放列表。将全部下载。</item>
+    </plurals>
+    <string name="ytdlp_auto">网站变化时自动更新</string>
+    <string name="about_ytdlp_update">更新 yt-dlp</string>
+    <string name="about_ytdlp_update_supporting">无需新版应用即可获取最新的视频引擎</string>
+    <string name="about_ytdlp_updating">正在更新视频引擎…</string>
+    <string name="about_ytdlp_updated">yt-dlp 已更新到 %1$s</string>
+    <string name="about_ytdlp_current">yt-dlp 已是最新版本（%1$s）</string>
+    <string name="about_ytdlp_retry">重试</string>
+    <string name="about_ytdlp_update_progress_description">正在更新 yt-dlp</string>
+    <string name="detail_update_engine">更新视频引擎</string>
+    <string name="detail_update_engine_updating">正在更新视频引擎…</string>
+    <string name="lic_ytdlp">yt-dlp and youtubedl-android</string>
+    <string name="lic_unlicense">Unlicense and GPL-3.0</string>
+    <string name="lic_ffmpeg">FFmpeg</string>
+    <string name="lic_lgpl">LGPL 2.1 or later</string>
+</resources>

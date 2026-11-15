@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GrabLine</string>
+    <string name="tab_downloads">İndirilenler</string>
+    <string name="tab_devices">Cihazlar</string>
+    <string name="tab_settings">Ayarlar</string>
+    <string name="add_a_link">Bağlantı ekle</string>
+    <string name="share_label">GrabLine</string>
+    <string name="paste_a_link">Bir bağlantı yapıştır</string>
+    <string name="paste_button">Yapıştır</string>
+    <string name="paste_button_description">Panodaki bağlantıyı yapıştır</string>
+    <string name="go_button">Git</string>
+    <string name="go_button_description">Yapıştırılan bağlantıları ekle</string>
+    <string name="paste_no_link_found">Bu metinde web veya magnet bağlantısı bulunamadı</string>
+    <string name="kind_file">Dosya</string>
+    <string name="kind_video">Video</string>
+    <string name="kind_torrent">Torrent</string>
+    <string name="kind_page">Web sayfası</string>
+</resources>

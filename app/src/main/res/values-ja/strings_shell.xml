@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shell_torrent_file_later">PCへの .torrent ファイルの送信は今後のアップデートで対応します。マグネットリンクは今すぐ使えます。</string>
+    <string name="shell_offer_copied">コピーしたリンクを送信しますか？</string>
+    <string name="shell_offer_send">送信</string>
+    <string name="shell_pick_a_download">ダウンロードを選ぶと詳細を表示します</string>
+    <string name="shell_battery_tip">バッテリーを節約するため、スマートフォンがダウンロードを一時停止しました。GrabLine をバックグラウンドで実行しますか？</string>
+    <string name="shell_battery_tip_action">設定</string>
+</resources>
