@@ -4,7 +4,9 @@ Status: todo / doing / review / done. Repo: **D** = desktop worktree `GrabLine-p
 
 **Phase 1: done, tagged phase-1-gate (2026-11-16).** QA-01..11, 14..17, 43, 44 Pass; Blocked (need a real phone / network / manual pass): QA-12 (real DHCP change; sweeper + Edit address unit-tested), QA-13 (YouTube app share; e2e passes with a local file), QA-41 (manual TalkBack walk; automated label checks pass on 12 screens), QA-42 (largest display size; 200% font passes). Deferred: fetchAck no-reply (Phase 4, strict xfail), .torrent file upload to PC, Reset phone connections button, stale-outbox prompt, Windows owner-only key ACL.
 
-**Next step:** Phase 2 - P2-01 engine and P2-03 UI in progress; P2-02 background work after P2-01.
+**Phase 2: done, tagged phase-2-gate (2026-11-16).** QA-22..27, 31 Pass (MockWebServer suite, SHA-256 checked; background job completes on the emulator). Blocked, need a real phone or real network: QA-18 (1 GB over real Wi-Fi; logic tested with small files), QA-19 airplane mode, QA-20 force-stop, QA-21 reboot, QA-28 Wi-Fi to mobile, QA-29 Doze, QA-30 7-hour run on Android 15, QA-32 notifications off, QA-45 tablet/foldable. Desktop Phase 4 server side is already done (files, fetch, fileHash, outbox).
+
+**Next step:** Phase 3 (video on the phone).
 
 ## Phase 0 - Setup
 
@@ -63,10 +65,10 @@ Contract: `engine/PhoneEngine.kt` (lead). Builders work against it in parallel.
 
 | ID | Task | Repo | Model | Depends | Files | Acceptance | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| P2-01 | Engine core: probe, segments, work stealing, rules 1-10, Room jobs/segments (DB v3), MediaStore/SAF storage, unique names, free space, temp+rename, retry budget, speed cap | A | sonnet | P1 | engine/** (not work/), data/ (new tables + migration) | MockWebServer suite: no ranges, redirects, mid-body drop, unknown size, compressed-anyway, 416, 429/503/403 pushback, ETag change, same-name, existing name, no space; SHA-256 equals source (QA-18, 22-27, 31) | todo |
-| P2-02 | Background + constraints + notifications: user-initiated data transfer jobs (API 34+) / dataSync FGS (26-33), resume after kill/reboot (BOOT_COMPLETED), Wi-Fi only / charging only, waiting states, Active/Finished/Failed notifications with actions, battery-optimisation tip | A | sonnet | P2-01 API | engine/work/**, notify/**, manifest | Unit tests for constraint logic; instrumented: process death resumes; notifications denied still downloads (QA-19-21, 28-30, 32) | todo |
-| P2-03 | UI: phone jobs in Downloads/Details, "This phone" in the Add sheet, default device + rules, paste many links, Phone downloads settings enabled, Open/Share | A | sonnet | P2-01 API | ui/**, PcRemote-free adapters | ViewModel tests; two-pane selection kept (QA-45) | todo |
-| P2-G | Phase 2 gate | A | runner + opus review | all | - | Suites, review, QA table, tag | todo |
+| P2-01 | Engine core: probe, segments, work stealing, rules 1-10, Room jobs/segments (DB v3), MediaStore/SAF storage, unique names, free space, temp+rename, retry budget, speed cap | A | sonnet | P1 | engine/** (not work/), data/ (new tables + migration) | MockWebServer suite: no ranges, redirects, mid-body drop, unknown size, compressed-anyway, 416, 429/503/403 pushback, ETag change, same-name, existing name, no space; SHA-256 equals source (QA-18, 22-27, 31) | done |
+| P2-02 | Background + constraints + notifications: user-initiated data transfer jobs (API 34+) / dataSync FGS (26-33), resume after kill/reboot (BOOT_COMPLETED), Wi-Fi only / charging only, waiting states, Active/Finished/Failed notifications with actions, battery-optimisation tip | A | sonnet | P2-01 API | engine/work/**, notify/**, manifest | Unit tests for constraint logic; instrumented: process death resumes; notifications denied still downloads (QA-19-21, 28-30, 32) | done |
+| P2-03 | UI: phone jobs in Downloads/Details, "This phone" in the Add sheet, default device + rules, paste many links, Phone downloads settings enabled, Open/Share | A | sonnet | P2-01 API | ui/**, PcRemote-free adapters | ViewModel tests; two-pane selection kept (QA-45) | done |
+| P2-G | Phase 2 gate | A | runner + opus review | all | - | Suites, review, QA table, tag | done |
 
 ## Phase 3 - Video on the phone (outline)
 
