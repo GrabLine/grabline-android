@@ -11,7 +11,15 @@ import dev.grabline.app.data.PairedPc
 import dev.grabline.app.engine.AndroidPhoneStorage
 import dev.grabline.app.engine.AppEngineSettings
 import dev.grabline.app.engine.DownloadEngine
+import androidx.lifecycle.Lifecycle
+import dev.grabline.app.engine.work.BatteryTip
+import dev.grabline.app.engine.work.ChargingMonitor
+import dev.grabline.app.engine.work.DownloadScheduler
+import dev.grabline.app.engine.work.NetworkMonitor
 import dev.grabline.app.notify.PcActivityNotifier
+import dev.grabline.app.notify.PhoneJobNotifier
+import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.flow.first
 import dev.grabline.app.remote.DefaultPcRemote
 import dev.grabline.app.remote.PcRemote
 import dev.grabline.app.remote.connection.AuthProvider
@@ -58,7 +66,12 @@ class AppContainer(context: Context) {
     private val keyStore = AndroidDeviceKeyStore(preferStrongBox = true)
     private val baseClient = OkHttpClient.Builder().build()
     private val appVersion = BuildConfig.VERSION_NAME
-    val phone: DownloadEngine = DownloadEngine(db.phoneJobs(), baseClient, AndroidPhoneStorage(app), AppEngineSettings(settings), scope)
+    // Downloads read slowly from some servers: 60 s read timeout for the engine (the shared client keeps 10 s).
+    private val engineClient = baseClient.newBuilder().readTimeout(60, TimeUnit.SECONDS).build()
+    val phone: DownloadEngine = DownloadEngine(db.phoneJobs(), engineClient, AndroidPhoneStorage(app), AppEngineSettings(settings), scope)
+    val batteryTip = BatteryTip.create(app)
+    val scheduler = DownloadScheduler(app) { ProcessLifecycleOwner.get().lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED) }
+    private val phoneNotifier = PhoneJobNotifier(app)
 
     val connections = ConnectionManager(
         scope = scope,
@@ -106,8 +119,17 @@ class AppContainer(context: Context) {
                 }
             }
         }
+        // Phone downloads: constraints in, scheduling out, finished/failed notifications.
+        NetworkMonitor(app, phone).start()
+        ChargingMonitor(app, phone).start()
+        scope.launch { phone.hasRunnableWork().collect { if (it) scheduler.ensureRunning() } }
+        scope.launch { phone.jobs.collect { phoneNotifier.onJobs(it) } }
         ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
-            override fun onStart(owner: LifecycleOwner) = remote.setForeground(true)
+            override fun onStart(owner: LifecycleOwner) {
+                remote.setForeground(true)
+                // Back on screen with a silent job running: upgrade it to the visible kind.
+                scope.launch { if (phone.hasRunnableWork().first()) scheduler.ensureRunning() }
+            }
             override fun onStop(owner: LifecycleOwner) = remote.setForeground(false)
         })
     }

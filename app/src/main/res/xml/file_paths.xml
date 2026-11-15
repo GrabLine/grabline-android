@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Public Downloads (API 26-28 saves to Download/GrabLine as file://). -->
+    <external-path name="downloads" path="Download/" />
+    <files-path name="files" path="." />
+    <external-files-path name="external_files" path="." />
+</paths>
