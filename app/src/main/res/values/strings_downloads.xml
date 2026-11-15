@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="downloads_title">Downloads</string>
+
+    <string name="chip_all">All</string>
+    <string name="chip_phone">Phone</string>
+    <string name="chip_active">Active</string>
+    <string name="chip_done">Done</string>
+    <string name="chip_failed">Failed</string>
+    <string name="filters_description">Filter downloads</string>
+
+    <string name="status_queued">Queued</string>
+    <string name="status_downloading">Downloading</string>
+    <string name="status_paused">Paused</string>
+    <string name="status_done">Done</string>
+    <string name="status_failed">Failed: %1$s</string>
+    <string name="status_failed_plain">Failed</string>
+    <string name="status_cancelled">Cancelled</string>
+    <string name="status_unknown">Unknown</string>
+
+    <string name="badge_phone">Phone</string>
+    <string name="badge_on_device">On %1$s</string>
+    <string name="last_seen">Last seen %1$s</string>
+    <string name="pc_unreachable">Offline</string>
+    <string name="time_left">%1$s left</string>
+    <string name="bytes_counted">%1$s downloaded</string>
+    <string name="per_second">%1$s/s</string>
+    <string name="size_of">%1$s of %2$s</string>
+    <string name="size_unknown">Size unknown</string>
+
+    <string name="downloads_empty">Share a link to GrabLine, or tap +</string>
+    <string name="downloads_add_link">Add a link</string>
+    <string name="downloads_no_match">No downloads match these filters</string>
+    <string name="downloads_clear_filters">Show all</string>
+
+    <string name="outbox_waiting">Will send when your PC is back</string>
+    <plurals name="outbox_count">
+        <item quantity="one">%d link waiting</item>
+        <item quantity="other">%d links waiting</item>
+    </plurals>
+    <string name="outbox_failed_item">Couldn\'t send %1$s: %2$s</string>
+    <string name="outbox_failed_generic">Your PC refused it</string>
+    <string name="outbox_dismiss">Dismiss</string>
+    <string name="outbox_dismiss_description">Dismiss the failed link %1$s</string>
+
+    <string name="action_pause">Pause</string>
+    <string name="action_resume">Resume</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_remove">Remove</string>
+    <string name="action_copy_link">Copy link</string>
+    <string name="action_undo">Undo</string>
+    <string name="link_copied">Link copied</string>
+
+    <string name="undo_cancelled_one">Cancelled %1$s</string>
+    <string name="undo_removed_one">Removed %1$s</string>
+    <plurals name="undo_cancelled_many">
+        <item quantity="one">Cancelled %d download</item>
+        <item quantity="other">Cancelled %d downloads</item>
+    </plurals>
+    <plurals name="undo_removed_many">
+        <item quantity="one">Removed %d download</item>
+        <item quantity="other">Removed %d downloads</item>
+    </plurals>
+
+    <plurals name="selected_count">
+        <item quantity="one">%d selected</item>
+        <item quantity="other">%d selected</item>
+    </plurals>
+    <string name="selection_clear">Clear selection</string>
+    <string name="row_selected">Selected</string>
+    <string name="row_open_details">Open details</string>
+
+    <string name="details_title">Download details</string>
+    <string name="details_back">Back</string>
+    <string name="detail_status">Status</string>
+    <string name="detail_progress">Progress</string>
+    <string name="detail_speed">Speed</string>
+    <string name="detail_time_left">Time left</string>
+    <string name="detail_size">Size</string>
+    <string name="detail_source">Source</string>
+    <string name="detail_destination">Destination</string>
+    <string name="detail_device">Device</string>
+    <string name="detail_queue_default">Default queue</string>
+    <string name="detail_queue_named">%1$s queue</string>
+    <string name="detail_failed_what_to_try">What to try</string>
+    <string name="detail_failed_advice">Tap Retry. If it fails again, open the link in your browser to check that it still works.</string>
+    <string name="detail_unreachable">Your PC is off or on another network. The buttons come back when it is reachable.</string>
+    <string name="detail_removed">Removed</string>
+    <string name="detail_gone">This download is no longer on your PC</string>
+</resources>
