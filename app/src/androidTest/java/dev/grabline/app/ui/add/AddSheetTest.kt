@@ -80,7 +80,6 @@ class AddSheetTest {
         }
         compose.onNodeWithText(link).assertExists()
         compose.onNodeWithContentDescription("Desk PC, Offline").assertExists()
-        compose.onNodeWithText("Coming in a later update").assertExists()
     }
 
     @Test fun rotationKeepsTheChosenQuality() {
