@@ -26,6 +26,14 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     private val incoming = MutableStateFlow<IncomingRequest?>(null)
     private val clipboardOffer = MutableStateFlow<String?>(null)
+    private val openJob = MutableStateFlow<String?>(null)
+
+    private fun readOpenJob(intent: Intent?) {
+        intent ?: return
+        intent.getStringExtra(dev.grabline.app.notify.PcActivityNotifier.EXTRA_OPEN_JOB)?.let { openJob.value = it }
+        val phoneJob = intent.getLongExtra(dev.grabline.app.notify.ActiveNotifications.EXTRA_OPEN_PHONE_JOB, -1L)
+        if (phoneJob > 0) openJob.value = "phone:$phoneJob"
+    }
     private val offers by lazy { ClipboardOffer(getSharedPreferences("clipboard_offer", Context.MODE_PRIVATE)) }
 
     /** Below Android 13 the chosen app language is applied here (see [AppLocale]). */
@@ -37,7 +45,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val container = (application as GrabLineApp).container
-        if (savedInstanceState == null) incoming.value = IntentLinkReader.read(this, intent)
+        if (savedInstanceState == null) {
+            incoming.value = IntentLinkReader.read(this, intent)
+            readOpenJob(intent)
+        }
         setContent {
             val settings = container.settings
             val theme by remember { settings.observe(AppSettings.THEME) }.collectAsState(AppSettings.THEME.default)
@@ -56,6 +67,13 @@ class MainActivity : ComponentActivity() {
                     settings = settings,
                     incoming = incoming,
                     onIncomingHandled = { incoming.value = null },
+                    openJob = openJob,
+                    onOpenJobHandled = { openJob.value = null },
+                    batteryTip = container.batteryTip.visible,
+                    onBatteryTipOpen = {
+                        runCatching { startActivity(Intent(android.provider.Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)) }
+                    },
+                    onBatteryTipDismiss = { container.batteryTip.dismiss() },
                     phone = container.phone,
                     clipboardOffer = clipboardOffer,
                     onClipboardHandled = { _ ->
@@ -70,6 +88,7 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         IntentLinkReader.read(this, intent)?.let { incoming.value = it }
+        readOpenJob(intent)
     }
 
     /** Android 10+ lets only a focused app read the clipboard, so check on focus. */

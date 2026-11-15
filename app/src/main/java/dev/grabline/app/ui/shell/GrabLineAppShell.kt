@@ -98,6 +98,12 @@ fun GrabLineAppShell(
     settings: AppSettings,
     incoming: StateFlow<IncomingRequest?>,
     onIncomingHandled: () -> Unit,
+    /** "deviceId:jobId" from a notification tap (deviceId "phone" or a pcId). */
+    openJob: StateFlow<String?> = kotlinx.coroutines.flow.MutableStateFlow(null),
+    onOpenJobHandled: () -> Unit = {},
+    batteryTip: StateFlow<Boolean> = kotlinx.coroutines.flow.MutableStateFlow(false),
+    onBatteryTipOpen: () -> Unit = {},
+    onBatteryTipDismiss: () -> Unit = {},
     clipboardOffer: StateFlow<String?>,
     onClipboardHandled: (accepted: Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -152,6 +158,28 @@ fun GrabLineAppShell(
         onIncomingHandled()
         if (r.links.isNotEmpty()) openAdd(r.links, r.sourceTitle)
         else if (r.torrentFile != null) snackbar.showSnackbar(torrentLater)
+    }
+
+    // A notification was tapped: open that job (side pane above 600 dp).
+    val open by openJob.collectAsState()
+    LaunchedEffect(open) {
+        val target = open ?: return@LaunchedEffect
+        onOpenJobHandled()
+        val device = target.substringBeforeLast(':')
+        val jobId = target.substringAfterLast(':').toLongOrNull() ?: return@LaunchedEffect
+        selectedJob = "$device:$jobId"
+        navController.navigate(Routes.details(device, jobId)) { launchSingleTop = true }
+    }
+
+    // One-time tip when a battery saver paused downloads.
+    val showTip by batteryTip.collectAsState()
+    val tipText = stringResource(R.string.shell_battery_tip)
+    val tipAction = stringResource(R.string.shell_battery_tip_action)
+    LaunchedEffect(showTip) {
+        if (!showTip) return@LaunchedEffect
+        val result = snackbar.showSnackbar(tipText, actionLabel = tipAction, withDismissAction = true, duration = androidx.compose.material3.SnackbarDuration.Long)
+        if (result == SnackbarResult.ActionPerformed) onBatteryTipOpen()
+        onBatteryTipDismiss()
     }
 
     // "Send the link you copied?" once per distinct copy.

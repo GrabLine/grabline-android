@@ -4,4 +4,6 @@
     <string name="shell_offer_copied">Send the link you copied?</string>
     <string name="shell_offer_send">Send</string>
     <string name="shell_pick_a_download">Pick a download to see its details</string>
+    <string name="shell_battery_tip">Your phone paused downloads to save battery. Let GrabLine run in the background?</string>
+    <string name="shell_battery_tip_action">Settings</string>
 </resources>

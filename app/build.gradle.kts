@@ -38,6 +38,8 @@ android {
 
     testOptions {
         unitTests.isIncludeAndroidResources = true
+        // Bounded test JVMs: the dev PC also runs an emulator and the desktop app.
+        unitTests.all { it.maxHeapSize = "1g"; it.maxParallelForks = 1 }
     }
 }
 
