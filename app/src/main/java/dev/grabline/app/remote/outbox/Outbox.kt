@@ -98,15 +98,26 @@ class Outbox(
     suspend fun flush(pcId: String) = sendLock.withLock {
         if (!connections.isOnline(pcId)) return@withLock
         for (item in dao.pending(pcId)) {
-            dao.markSending(item.id)
-            when (val outcome = send(item)) {
-                Outcome.Delivered -> dao.markDelivered(item.id)
-                is Outcome.Refused -> dao.markFailed(item.id, outcome.code.wire)
-                is Outcome.Retry -> {
+            var busyRetries = 0
+            while (true) {
+                dao.markSending(item.id)
+                val outcome = send(item)
+                if (outcome is Outcome.Retry && outcome.waitMs > 0) {
+                    // rateLimited: wait retryAfterMs and retry the same item (up to 3 times, PROTOCOL.md 16)
                     dao.markRetry(item.id, outcome.reason)
-                    if (outcome.waitMs > 0) delay(outcome.waitMs.coerceAtMost(5_000))
-                    if (outcome.stop) return@withLock
+                    delay(outcome.waitMs.coerceAtMost(5_000))
+                    if (++busyRetries <= MAX_BUSY_RETRIES && connections.isOnline(pcId)) continue
+                    return@withLock
                 }
+                when (outcome) {
+                    Outcome.Delivered -> dao.markDelivered(item.id)
+                    is Outcome.Refused -> dao.markFailed(item.id, outcome.code.wire)
+                    is Outcome.Retry -> {
+                        dao.markRetry(item.id, outcome.reason)
+                        return@withLock
+                    }
+                }
+                break
             }
         }
     }
@@ -142,6 +153,7 @@ class Outbox(
 
     companion object {
         const val DUPLICATE_WINDOW_MS = 2_000L
+        private const val MAX_BUSY_RETRIES = 3
         /** Items older than this are confirmed with the user before sending (PROTOCOL.md 12). */
         const val STALE_AFTER_MS = 7L * 24 * 3600 * 1000
         private val random = SecureRandom()
