@@ -167,7 +167,11 @@ fun WelcomeScreen(
 private fun WelcomeCard(title: Int, body: Int) {
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(stringResource(title), style = MaterialTheme.typography.titleMedium)
+            Text(
+                stringResource(title),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.semantics { heading() },
+            )
             Text(stringResource(body), style = MaterialTheme.typography.bodyMedium)
         }
     }

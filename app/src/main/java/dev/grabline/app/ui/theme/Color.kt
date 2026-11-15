@@ -12,6 +12,9 @@ object GrabLineColors {
     val DarkOnSurfaceVariant = Color(0xFFA4B0C4)
     val DarkPrimary = Color(0xFF2563EB)
     val DarkOnPrimary = Color(0xFFFFFFFF)
+    /** The accent as small text: the brand blue itself is only 3.8:1 on the dark background. */
+    val DarkAccentText = Color(0xFF86AAFF)
+    val LightAccentText = Color(0xFF0A55C9)
 
     // Light (desktop LIGHT palette: bg, surface, border, text, text2, accent)
     val LightBackground = Color(0xFFF3F5F9)

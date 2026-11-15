@@ -1,6 +1,7 @@
 package dev.grabline.app.notify
 
 import android.content.Context
+import android.text.format.Formatter
 import dev.grabline.app.R
 import java.util.Locale
 
@@ -12,10 +13,14 @@ interface AnnounceFormatter {
     fun percentSecondsLeft(percent: Int, seconds: Int): String
     fun waiting(): String
     fun downloaded(size: String): String
+
+    /** A byte count in the user's locale; JVM tests rely on this English fallback. */
+    fun size(bytes: Long): String = ProgressAnnouncer.formatSize(bytes)
 }
 
 class AndroidAnnounceFormatter(context: Context) : AnnounceFormatter {
-    private val res = context.applicationContext.resources
+    private val appContext = context.applicationContext
+    private val res = appContext.resources
     override fun percent(percent: Int): String = res.getString(R.string.announce_percent, percent)
     override fun percentHoursLeft(percent: Int, hours: Int): String =
         res.getQuantityString(R.plurals.announce_percent_hours_left, hours, percent, hours)
@@ -25,6 +30,7 @@ class AndroidAnnounceFormatter(context: Context) : AnnounceFormatter {
         res.getQuantityString(R.plurals.announce_percent_seconds_left, seconds, percent, seconds)
     override fun waiting(): String = res.getString(R.string.announce_waiting)
     override fun downloaded(size: String): String = res.getString(R.string.announce_downloaded, size)
+    override fun size(bytes: Long): String = Formatter.formatShortFileSize(appContext, bytes)
 }
 
 /** Builds the progress text used by notifications and TalkBack. */
@@ -36,7 +42,7 @@ class ProgressAnnouncer(private val f: AnnounceFormatter) {
             return if (bytesPerSecond <= 0L && downloadedBytes <= 0L) {
                 f.waiting()
             } else {
-                f.downloaded(formatSize(downloadedBytes))
+                f.downloaded(f.size(downloadedBytes))
             }
         }
         val done = downloadedBytes.coerceIn(0L, totalBytes)

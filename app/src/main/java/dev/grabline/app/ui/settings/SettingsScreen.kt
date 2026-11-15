@@ -7,7 +7,6 @@ import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -37,7 +36,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.core.os.LocaleListCompat
 import dev.grabline.app.R
 import dev.grabline.app.data.AppSettings
 import dev.grabline.app.data.PairedPc
@@ -68,10 +66,7 @@ val LanguageOptions: List<Pair<String, Int>> = listOf(
     "tr" to R.string.lang_tr, "ur" to R.string.lang_ur,
 )
 
-fun applyAppLanguage(tag: String) {
-    val list = if (tag == "system") LocaleListCompat.getEmptyLocaleList() else LocaleListCompat.forLanguageTags(tag)
-    AppCompatDelegate.setApplicationLocales(list)
-}
+fun applyAppLanguage(context: Context, tag: String) = AppLocale.apply(context, tag)
 
 private fun startSafely(context: Context, intent: Intent) {
     try {
@@ -86,9 +81,11 @@ fun SettingsScreen(
     pcs: List<PairedPc>,
     modifier: Modifier = Modifier,
     onPairPc: () -> Unit = {},
-    onLanguageChange: (String) -> Unit = ::applyAppLanguage,
+    onLanguageChange: ((String) -> Unit)? = null,
     crashLogDir: File? = null,
 ) {
+    val appContext = LocalContext.current
+    val languageChange: (String) -> Unit = onLanguageChange ?: { applyAppLanguage(appContext, it) }
     var page by rememberSaveable { mutableStateOf(PAGE_MAIN) }
     BackHandler(enabled = page != PAGE_MAIN) {
         page = if (page == PAGE_LICENCES) PAGE_ABOUT else PAGE_MAIN
@@ -102,7 +99,7 @@ fun SettingsScreen(
         )
         PAGE_LICENCES -> LicencesScreen(onBack = { page = PAGE_ABOUT }, modifier = modifier)
         else -> SettingsMain(
-            settings, pcs, modifier, onPairPc, onLanguageChange, crashLogDir,
+            settings, pcs, modifier, onPairPc, languageChange, crashLogDir,
             onRules = { page = PAGE_RULES },
             onAbout = { page = PAGE_ABOUT },
         )

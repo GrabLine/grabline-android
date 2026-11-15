@@ -37,7 +37,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
@@ -60,6 +63,8 @@ import dev.grabline.app.ui.downloads.UNDO_MILLIS
 import dev.grabline.app.ui.downloads.actionIcon
 import dev.grabline.app.ui.downloads.actionLabel
 import dev.grabline.app.ui.downloads.lastSeenText
+import dev.grabline.app.ui.downloads.progressSpeech
+import dev.grabline.app.ui.downloads.rememberThrottled
 import dev.grabline.app.ui.downloads.sizeText
 import dev.grabline.app.ui.downloads.speedText
 import dev.grabline.app.ui.downloads.statusText
@@ -68,6 +73,7 @@ import dev.grabline.app.ui.theme.MonoNumbers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
+import java.text.NumberFormat
 
 /** Works at any width; the lead may show it beside the list above 600 dp. */
 @Composable
@@ -186,10 +192,21 @@ private fun DetailsBody(row: DownloadRow, state: DetailsUiState, onAction: (RowA
             Text(lastSeenText(context, row), color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(stringResource(R.string.detail_unreachable), style = MaterialTheme.typography.bodySmall)
         }
-        Field(stringResource(R.string.detail_progress)) {
+        // One polite, throttled announcement ("45 percent, 2 minutes left"), never every tick.
+        val spoken = rememberThrottled(progressSpeech(context, row).orEmpty(), row.status)
+        val progressLabel = stringResource(R.string.detail_progress)
+        Field(
+            progressLabel,
+            Modifier.semantics(mergeDescendants = true) {
+                if (spoken.isNotEmpty()) {
+                    contentDescription = "$progressLabel, $spoken"
+                    liveRegion = LiveRegionMode.Polite
+                }
+            },
+        ) {
             RowProgress(row, Modifier.fillMaxWidth())
             val p = row.progress
-            if (p != null) Text("${(p * 100).toInt()}%", style = MonoNumbers)
+            if (p != null) Text(NumberFormat.getPercentInstance().format(p.toDouble()), style = MonoNumbers)
         }
         Field(stringResource(R.string.detail_size)) {
             val total = row.total
@@ -239,8 +256,8 @@ private fun DetailsBody(row: DownloadRow, state: DetailsUiState, onAction: (RowA
 }
 
 @Composable
-private fun Field(label: String, content: @Composable () -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+private fun Field(label: String, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Text(label, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         content()
     }

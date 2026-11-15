@@ -15,6 +15,7 @@ import dev.grabline.app.data.AppSettings
 import dev.grabline.app.ui.entry.ClipboardOffer
 import dev.grabline.app.ui.entry.IncomingRequest
 import dev.grabline.app.ui.entry.IntentLinkReader
+import dev.grabline.app.ui.settings.AppLocale
 import dev.grabline.app.ui.shell.GrabLineAppShell
 import dev.grabline.app.ui.theme.GrabLineTheme
 import dev.grabline.app.ui.theme.ThemeMode
@@ -26,6 +27,11 @@ class MainActivity : ComponentActivity() {
     private val incoming = MutableStateFlow<IncomingRequest?>(null)
     private val clipboardOffer = MutableStateFlow<String?>(null)
     private val offers by lazy { ClipboardOffer(getSharedPreferences("clipboard_offer", Context.MODE_PRIVATE)) }
+
+    /** Below Android 13 the chosen app language is applied here (see [AppLocale]). */
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppLocale.wrap(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

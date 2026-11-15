@@ -214,7 +214,11 @@ private fun SettingRow(title: String, value: String, onClick: () -> Unit) {
 @Composable
 private fun OfflineTips(onRetry: () -> Unit) {
     Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text(stringResource(R.string.pc_offline_tips_title), style = MaterialTheme.typography.titleMedium)
+        Text(
+            stringResource(R.string.pc_offline_tips_title),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.semantics { heading() },
+        )
         Text("• " + stringResource(R.string.pc_tip_wifi))
         Text("• " + stringResource(R.string.pc_tip_awake))
         Text("• " + stringResource(R.string.pc_tip_running))

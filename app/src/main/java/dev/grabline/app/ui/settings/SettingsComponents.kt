@@ -37,6 +37,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import dev.grabline.app.R
 import dev.grabline.app.ui.theme.MonoNumbers
+import dev.grabline.app.ui.theme.accentText
 import kotlin.math.roundToInt
 
 private val RowMinHeight = 56.dp
@@ -48,7 +49,7 @@ fun SettingsGroup(title: String, note: String? = null, content: @Composable () -
         Text(
             title,
             style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.colorScheme.accentText,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp).semantics { heading() },
         )
         if (note != null) {

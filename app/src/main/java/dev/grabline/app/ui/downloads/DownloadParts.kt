@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import dev.grabline.app.R
 import dev.grabline.app.notify.AndroidAnnounceFormatter
 import dev.grabline.app.notify.ProgressAnnouncer
+import dev.grabline.app.ui.theme.LocalReducedMotion
 import kotlinx.coroutines.delay
 
 class AndroidStatusStrings(private val context: Context) : StatusStrings {
@@ -140,9 +141,11 @@ fun DeviceBadge(device: Device, modifier: Modifier = Modifier) {
 fun RowProgress(row: DownloadRow, modifier: Modifier = Modifier) {
     val p = row.progress
     val animate = row.status == RowStatus.Downloading || row.status == RowStatus.Queued
+    val reduced = LocalReducedMotion.current
     when {
         p != null -> LinearProgressIndicator(progress = { p }, modifier = modifier)
-        animate && row.status == RowStatus.Downloading -> LinearProgressIndicator(modifier = modifier)
+        // Reduced motion: no looping bar; the bytes counted beside it carry the progress.
+        animate && row.status == RowStatus.Downloading && !reduced -> LinearProgressIndicator(modifier = modifier)
         else -> LinearProgressIndicator(progress = { 0f }, modifier = modifier)
     }
 }

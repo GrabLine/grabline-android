@@ -1,7 +1,21 @@
 package dev.grabline.app.ui.theme
 
+import android.content.Context
+import android.database.ContentObserver
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.provider.Settings
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -61,5 +75,41 @@ fun GrabLineTheme(
         dark -> GrabLineDarkScheme
         else -> GrabLineLightScheme
     }
-    MaterialTheme(colorScheme = scheme, typography = GrabLineTypography, content = content)
+    val reduced = rememberReducedMotion()
+    CompositionLocalProvider(LocalReducedMotion provides reduced) {
+        MaterialTheme(colorScheme = scheme, typography = GrabLineTypography, content = content)
+    }
 }
+
+/** True when the user turned animations off (animator scale 0, or "Remove animations"). */
+val LocalReducedMotion = compositionLocalOf { false }
+
+private fun animationsOff(context: Context): Boolean = try {
+    Settings.Global.getFloat(context.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
+} catch (_: Exception) {
+    false
+}
+
+@Composable
+private fun rememberReducedMotion(): Boolean {
+    val context = LocalContext.current
+    var reduced by remember { mutableStateOf(animationsOff(context)) }
+    DisposableEffect(context) {
+        val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
+            override fun onChange(selfChange: Boolean) {
+                reduced = animationsOff(context)
+            }
+        }
+        val uri = Settings.Global.getUriFor(Settings.Global.ANIMATOR_DURATION_SCALE)
+        try {
+            context.contentResolver.registerContentObserver(uri, false, observer)
+        } catch (_: Exception) {
+        }
+        onDispose { context.contentResolver.unregisterContentObserver(observer) }
+    }
+    return reduced
+}
+
+/** Accent colour that is safe for small text (>= 4.5:1) on this scheme's background. */
+val ColorScheme.accentText: Color
+    get() = if (background.luminance() < 0.5f) GrabLineColors.DarkAccentText else GrabLineColors.LightAccentText

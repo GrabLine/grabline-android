@@ -49,6 +49,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -135,7 +136,11 @@ fun AddSheetContent(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Text(stringResource(R.string.add_title), style = MaterialTheme.typography.titleLarge)
+        Text(
+            stringResource(R.string.add_title),
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.semantics { heading() },
+        )
         if (!state.ready) {
             LinearProgressIndicator(Modifier.fillMaxWidth())
             return@Column
@@ -237,7 +242,7 @@ fun AddSheetContent(
 @Composable
 private fun Section(title: String, content: @Composable () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(title, style = MaterialTheme.typography.titleSmall)
+        Text(title, style = MaterialTheme.typography.titleSmall, modifier = Modifier.semantics { heading() })
         content()
     }
 }

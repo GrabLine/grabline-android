@@ -52,6 +52,7 @@ import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
@@ -191,7 +192,8 @@ private fun Header() {
     Text(
         stringResource(R.string.downloads_title),
         style = MaterialTheme.typography.titleLarge,
-        modifier = Modifier.padding(horizontal = 16.dp).heightIn(min = 48.dp).padding(top = 12.dp),
+        modifier = Modifier.padding(horizontal = 16.dp).heightIn(min = 48.dp).padding(top = 12.dp)
+            .semantics { heading() },
     )
 }
 
@@ -312,7 +314,11 @@ private fun OutboxBanner(pending: Int, failed: List<OutboxItem>, onDismiss: (Lon
     Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
         Column(Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             if (pending > 0) {
-                Text(stringResource(R.string.outbox_waiting), style = MaterialTheme.typography.titleSmall)
+                Text(
+                    stringResource(R.string.outbox_waiting),
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.semantics { heading() },
+                )
                 Text(pluralStringResource(R.plurals.outbox_count, pending, pending), style = MaterialTheme.typography.bodyMedium)
             }
             failed.forEach { item ->
@@ -362,6 +368,7 @@ fun DownloadRowItem(
     val description = rowDescription(context, row)
     val spoken = rememberThrottled(description, row.status)
     val selectedLabel = stringResource(R.string.row_selected)
+    val longClickLabel = stringResource(R.string.row_select_action)
     val labelsByAction = RowAction.entries.associateWith { actionLabelPlain(context, it) }
 
     SwipeToDismissBox(
@@ -394,7 +401,11 @@ fun DownloadRowItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .graphicsLayer { alpha = if (row.offline) 0.6f else 1f }
-                .combinedClickable(onClick = onClick, onLongClick = onLongClick)
+                .combinedClickable(
+                    onClick = onClick,
+                    onLongClick = onLongClick,
+                    onLongClickLabel = longClickLabel,
+                )
                 .semantics(mergeDescendants = true) {
                     contentDescription = if (selected) "$selectedLabel, $spoken" else spoken
                     liveRegion = LiveRegionMode.Polite

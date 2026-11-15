@@ -69,6 +69,7 @@
     </plurals>
     <string name="selection_clear">Clear selection</string>
     <string name="row_selected">Selected</string>
+    <string name="row_select_action">Select</string>
     <string name="row_open_details">Open details</string>
 
     <string name="details_title">Download details</string>
