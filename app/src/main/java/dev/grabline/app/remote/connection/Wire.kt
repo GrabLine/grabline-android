@@ -31,8 +31,10 @@ fun interface WireFactory {
 }
 
 /** Formats an address for a URL: IPv6 in brackets, scope id percent-encoded. */
-fun urlHost(address: String): String =
-    if (address.contains(':')) "[" + address.replace("%", "%25") + "]" else address
+fun urlHost(address: String): String {
+    val bare = address.removePrefix("[").removeSuffix("]")
+    return if (bare.contains(':')) "[" + bare.replace("%25", "%").replace("%", "%25") + "]" else bare
+}
 
 /**
  * OkHttp transport. [clientForPin] returns a client whose TLS accepts only the
