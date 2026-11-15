@@ -26,7 +26,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 /** A failure the UI can show as is (plain words from the spec's error table). */
-class RemoteFailure(val code: ErrorCode, val userMessage: String) : Exception(userMessage)
+class RemoteFailure(
+    val code: ErrorCode,
+    val userMessage: String,
+    /** For `failed` replies: noMedia, drm, siteError, timeout or io (PROTOCOL.md 16). */
+    val reason: String? = null,
+) : Exception(userMessage)
 
 /** Everything the screens need from paired PCs. Implemented by [DefaultPcRemote]; faked in UI tests. */
 interface PcRemote {
@@ -145,7 +150,7 @@ class DefaultPcRemote(
         Result.success(value as T)
     } catch (e: RemoteException) {
         val message = if (e.message == "offline") OFFLINE_MESSAGE else e.reply?.userMessage() ?: ErrorMessages.forCode(e.code)
-        Result.failure(RemoteFailure(e.code, message))
+        Result.failure(RemoteFailure(e.code, message, e.reply?.reason))
     } catch (e: kotlinx.coroutines.TimeoutCancellationException) {
         Result.failure(RemoteFailure(ErrorCode.INTERNAL, OFFLINE_MESSAGE))
     }

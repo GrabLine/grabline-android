@@ -250,6 +250,9 @@ class AddViewModel(
         val failure = e as? RemoteFailure
         val message = failure?.userMessage ?: ErrorMessages.forCode(ErrorCode.INTERNAL)
         val reason = when {
+            failure?.reason == "noMedia" -> FailureReason.NO_MEDIA
+            failure?.reason == "drm" -> FailureReason.DRM
+            // Older fakes and messages without a reason: fall back to the text.
             message == ErrorMessages.failedByReason["noMedia"] -> FailureReason.NO_MEDIA
             message.contains("DRM") -> FailureReason.DRM
             else -> FailureReason.OTHER
