@@ -14,6 +14,7 @@ import dev.grabline.app.remote.protocol.ServerHello
 import dev.grabline.app.remote.protocol.Timeouts
 import dev.grabline.app.remote.protocol.VersionCheck
 import dev.grabline.app.remote.protocol.VersionVerdict
+import dev.grabline.app.remote.security.DeviceKeyMissingException
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
@@ -104,8 +105,9 @@ class PcSession(
         }
         val id = nextId()
         authId = id
-        val request = runCatching { auth.authRequest(pc, hello, id) }.getOrElse {
-            finish(SessionEnd.Unreachable("auth signing failed"))
+        val request = runCatching { auth.authRequest(pc, hello, id) }.getOrElse { e ->
+            // A key that is gone can never log in again: same end as a removal. Any other failure is transient.
+            finish(if (e is DeviceKeyMissingException) SessionEnd.PairingRemoved else SessionEnd.Unreachable("auth signing failed"))
             return Result.failure(EndException(ended.await()))
         }
         authSent.set(true)

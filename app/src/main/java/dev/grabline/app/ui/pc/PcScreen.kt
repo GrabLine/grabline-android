@@ -65,6 +65,9 @@ fun PcRoute(remote: PcRemote, pcId: String, onBack: () -> Unit, modifier: Modifi
         onOpenQueue = vm::openDefaultQueue,
         onChooseQueue = vm::chooseDefaultQueue,
         onAskUnpair = vm::askUnpair,
+        onOpenEditAddress = vm::openEditAddress,
+        onAddressText = vm::onAddressText,
+        onSaveAddress = vm::saveAddress,
         onConfirmUnpair = { vm.confirmUnpair(onBack) },
         onDismissDialog = vm::dismissDialog,
         modifier = modifier,
@@ -88,6 +91,9 @@ fun PcScreen(
     onConfirmUnpair: () -> Unit,
     onDismissDialog: () -> Unit,
     modifier: Modifier = Modifier,
+    onOpenEditAddress: () -> Unit = {},
+    onAddressText: (String) -> Unit = {},
+    onSaveAddress: () -> Unit = {},
 ) {
     val pc = state.pc
     Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(bottom = 24.dp)) {
@@ -120,6 +126,9 @@ fun PcScreen(
             OutlinedButton(onRetry, Modifier.padding(16.dp).heightIn(min = 48.dp)) { Text(stringResource(R.string.pc_retry)) }
         }
 
+        TextButton(onOpenEditAddress, Modifier.padding(horizontal = 8.dp).heightIn(min = 48.dp)) {
+            Text(stringResource(R.string.pc_edit_address))
+        }
         HorizontalDivider(Modifier.padding(vertical = 16.dp))
         TextButton(onAskUnpair, Modifier.padding(horizontal = 8.dp).heightIn(min = 48.dp)) {
             Text(stringResource(R.string.pc_remove), color = MaterialTheme.colorScheme.error)
@@ -143,6 +152,7 @@ fun PcScreen(
         )
         PcDialog.SpeedCap -> SpeedCapDialog(state, onCapText, onCapUnit, onCapOff, onSaveCap, onDismissDialog)
         PcDialog.DefaultQueue -> DefaultQueueDialog(state, onChooseQueue, onDismissDialog)
+        PcDialog.EditAddress -> EditAddressDialog(state, onAddressText, onSaveAddress, onDismissDialog)
     }
 }
 
@@ -266,6 +276,31 @@ private fun SpeedCapDialog(
         confirmButton = {
             TextButton(onSave, Modifier.heightIn(min = 48.dp), enabled = !state.busy) { Text(stringResource(R.string.pc_speed_cap_save)) }
         },
+        dismissButton = { TextButton(onDismiss, Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.pc_cancel)) } },
+    )
+}
+
+@Composable
+private fun EditAddressDialog(state: PcUiState, onText: (String) -> Unit, onSave: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.pc_edit_address_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.pc_edit_address_body))
+                OutlinedTextField(
+                    value = state.addressText,
+                    onValueChange = onText,
+                    label = { Text(stringResource(R.string.pc_edit_address_label)) },
+                    isError = state.addressError,
+                    supportingText = if (state.addressError) { { Text(stringResource(R.string.pc_edit_address_error)) } } else null,
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        },
+        confirmButton = { TextButton(onSave, Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.pc_edit_address_save)) } },
         dismissButton = { TextButton(onDismiss, Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.pc_cancel)) } },
     )
 }

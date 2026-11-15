@@ -216,6 +216,7 @@ class AddViewModel(
                     when (result) {
                         is EnqueueResult.Queued -> queued++
                         EnqueueResult.DuplicateShare -> duplicates++
+                        EnqueueResult.PcRemoved -> failed = true
                     }
                 }
             } catch (e: CancellationException) {
@@ -261,7 +262,7 @@ class AddViewModel(
     }
 
     private fun build(e: Env, l: Local, t: Transient): AddUiState {
-        val pcs = e.pcs.map { PcOption(it.pcId, it.name, e.links[it.pcId] is PcLinkState.Online) }
+        val pcs = e.pcs.filter { it.removedAt == null }.map { PcOption(it.pcId, it.name, e.links[it.pcId] is PcLinkState.Online) }
         val ids = pcs.map { it.id }.toSet()
         val pcId = l.pc?.takeIf { it in ids }
             ?: e.prefs.device.takeIf { it in ids }

@@ -8,46 +8,66 @@ import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.PrivateKey
 import java.security.ProviderException
+import java.security.SecureRandom
+import java.security.UnrecoverableKeyException
 import java.security.Signature
 import java.security.spec.ECGenParameterSpec
 
 /** The device key is missing, unusable, or could not be created. Never carries key material. */
-class DeviceKeyException(message: String, cause: Throwable? = null) : GeneralSecurityException(message, cause)
+open class DeviceKeyException(message: String, cause: Throwable? = null) : GeneralSecurityException(message, cause)
+
+/** There is no key under the alias any more (deleted, wiped or invalidated): this phone can never log in again. */
+class DeviceKeyMissingException(message: String = "no device key", cause: Throwable? = null) : DeviceKeyException(message, cause)
 
 /**
- * One signing key per paired PC (PROTOCOL.md section 5.6). The private key never leaves the store;
- * callers only get the public key and signatures.
+ * Signing keys (PROTOCOL.md section 5.6), addressed by keystore alias. Each pairing attempt creates its own key
+ * under a fresh alias ([newAlias]), so a re-pair never overwrites the key of a working pairing. The private key
+ * never leaves the store; callers only get the public key and signatures.
  *
- * `pcId` is always the 22-character base64url id of the PC; anything else is refused.
+ * Aliases are always `grabline-device-<pcId>` (legacy) or `grabline-device-<pcId>-<16 hex>`; anything else is refused.
  */
 interface DeviceKeyStore {
     /**
-     * Creates a new P-256 key for [pcId], replacing any key already stored for it, and returns its
+     * Creates a new P-256 key under [alias], replacing any key already stored there, and returns its
      * public key as SubjectPublicKeyInfo DER (exactly 91 bytes).
      */
     @Throws(DeviceKeyException::class)
-    fun create(pcId: String): ByteArray
+    fun create(alias: String): ByteArray
 
-    /** The public key (91-byte SPKI DER), or null when there is no key for [pcId]. */
-    fun publicKeySpki(pcId: String): ByteArray?
+    /** The public key (91-byte SPKI DER), or null when there is no key under [alias]. */
+    fun publicKeySpki(alias: String): ByteArray?
 
     /** ECDSA P-256 with SHA-256 over [transcript], ASN.1 DER encoded (at most 72 bytes). */
     @Throws(DeviceKeyException::class)
-    fun sign(pcId: String, transcript: ByteArray): ByteArray
+    fun sign(alias: String, transcript: ByteArray): ByteArray
 
     /** Deletes the key. No error when there is none. */
-    fun delete(pcId: String)
+    fun delete(alias: String)
 
     companion object {
         const val ALIAS_PREFIX = "grabline-device-"
         const val SIGNATURE_ALGORITHM = "SHA256withECDSA"
         const val MAX_SIGNATURE_BYTES = 72
         private val PC_ID = Regex("^[A-Za-z0-9_-]{22}$")
+        private val ALIAS = Regex("^grabline-device-[A-Za-z0-9_-]{22}(-[0-9a-f]{16})?$")
+        private val random = SecureRandom()
 
-        /** Keystore alias for [pcId]. Refuses anything that is not a pcId, so an alias can never be steered. */
-        fun alias(pcId: String): String {
+        /** The alias used before per-attempt aliases existed; rows without a `keyAlias` still point here. */
+        fun legacyAlias(pcId: String): String {
             if (!PC_ID.matches(pcId)) throw DeviceKeyException("not a pcId")
             return ALIAS_PREFIX + pcId
+        }
+
+        /** A fresh alias for one pairing attempt with [pcId]: `grabline-device-<pcId>-<16 random hex>`. */
+        fun newAlias(pcId: String): String {
+            val bytes = ByteArray(8).also { random.nextBytes(it) }
+            return legacyAlias(pcId) + "-" + bytes.joinToString("") { "%02x".format(it) }
+        }
+
+        /** Refuses anything that is not one of our aliases, so an alias can never be steered. */
+        fun requireAlias(alias: String): String {
+            if (!ALIAS.matches(alias)) throw DeviceKeyException("not a device key alias")
+            return alias
         }
     }
 }
@@ -82,8 +102,8 @@ object SpkiP256 {
  */
 class AndroidDeviceKeyStore(private val preferStrongBox: Boolean = false) : DeviceKeyStore {
 
-    override fun create(pcId: String): ByteArray {
-        val alias = DeviceKeyStore.alias(pcId)
+    override fun create(alias: String): ByteArray {
+        DeviceKeyStore.requireAlias(alias)
         try {
             deleteAlias(alias)
             val spki = if (preferStrongBox && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -119,16 +139,16 @@ class AndroidDeviceKeyStore(private val preferStrongBox: Boolean = false) : Devi
         return generator.generateKeyPair().public.encoded
     }
 
-    override fun publicKeySpki(pcId: String): ByteArray? = try {
-        keyStore().getCertificate(DeviceKeyStore.alias(pcId))?.publicKey?.encoded?.takeIf { SpkiP256.isValid(it) }
+    override fun publicKeySpki(alias: String): ByteArray? = try {
+        keyStore().getCertificate(DeviceKeyStore.requireAlias(alias))?.publicKey?.encoded?.takeIf { SpkiP256.isValid(it) }
     } catch (_: Exception) {
         null
     }
 
-    override fun sign(pcId: String, transcript: ByteArray): ByteArray {
-        val alias = DeviceKeyStore.alias(pcId)
+    override fun sign(alias: String, transcript: ByteArray): ByteArray {
         try {
-            val key = keyStore().getKey(alias, null) as? PrivateKey ?: throw DeviceKeyException("no device key")
+            DeviceKeyStore.requireAlias(alias)
+            val key = keyStore().getKey(alias, null) as? PrivateKey ?: throw DeviceKeyMissingException()
             val signature = Signature.getInstance(DeviceKeyStore.SIGNATURE_ALGORITHM).run {
                 initSign(key)
                 update(transcript)
@@ -140,14 +160,15 @@ class AndroidDeviceKeyStore(private val preferStrongBox: Boolean = false) : Devi
             return signature
         } catch (e: DeviceKeyException) {
             throw e
+        } catch (e: UnrecoverableKeyException) {
+            throw DeviceKeyMissingException("device key is unusable", e)
         } catch (e: Exception) {
             throw DeviceKeyException("could not sign with the device key", e)
         }
     }
 
-    override fun delete(pcId: String) {
-        val alias = DeviceKeyStore.alias(pcId)
-        runCatching { deleteAlias(alias) }
+    override fun delete(alias: String) {
+        runCatching { deleteAlias(DeviceKeyStore.requireAlias(alias)) }
     }
 
     private fun deleteAlias(alias: String) {

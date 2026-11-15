@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.grabline.app.data.PairedPc
 import dev.grabline.app.remote.PcRemote
+import dev.grabline.app.remote.protocol.ManualPairing
 import dev.grabline.app.remote.protocol.GlobalState
 import dev.grabline.app.remote.protocol.QueueInfo
 import dev.grabline.app.ui.devices.PcStatus
@@ -20,7 +21,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-enum class PcDialog { None, SpeedCap, DefaultQueue, ConfirmUnpair }
+enum class PcDialog { None, SpeedCap, DefaultQueue, ConfirmUnpair, EditAddress }
 
 data class PcUiState(
     /** False until the first PC list arrives; [pc] null after that means the pairing is gone. */
@@ -37,6 +38,8 @@ data class PcUiState(
     val capUnit: SpeedUnit = SpeedUnit.MB,
     val capOff: Boolean = false,
     val capError: Boolean = false,
+    val addressText: String = "",
+    val addressError: Boolean = false,
 ) {
     /** Today's total is only shown when the PC reports it. */
     val todayBytes: Long? get() = global?.todayBytes
@@ -131,6 +134,34 @@ class PcViewModel(private val remote: PcRemote, private val pcId: String) : View
         viewModelScope.launch {
             remote.addPairing(pc.copy(defaultQueueId = queueId))
             local.update { it.copy(dialog = PcDialog.None) }
+        }
+    }
+
+    // Edit address
+
+    fun openEditAddress() {
+        val pc = state.value.pc ?: return
+        val current = pc.lastGoodAddress ?: pc.addresses.firstOrNull().orEmpty()
+        local.update { it.copy(dialog = PcDialog.EditAddress, addressText = if (current.isEmpty()) "" else "$current:${pc.port}", addressError = false) }
+    }
+
+    fun onAddressText(text: String) = local.update { it.copy(addressText = text, addressError = false) }
+
+    /** Validates `host`, `[v6]` or either with `:port`; the new address goes first and becomes the last good one. */
+    fun saveAddress() {
+        val pc = state.value.pc ?: return
+        val text = state.value.addressText.trim()
+        val parsed = ManualPairing.parseAddress(text)
+        if (parsed == null) {
+            local.update { it.copy(addressError = true) }
+            return
+        }
+        val (address, parsedPort) = parsed
+        val explicitPort = text.substringAfterLast(']', text).contains(':')
+        val port = if (explicitPort) parsedPort else pc.port
+        viewModelScope.launch {
+            remote.addPairing(pc.copy(addresses = (listOf(address) + pc.addresses).distinct(), lastGoodAddress = address, port = port))
+            local.update { it.copy(dialog = PcDialog.None, addressError = false) }
         }
     }
 

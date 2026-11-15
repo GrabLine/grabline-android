@@ -101,10 +101,10 @@ class ProofVectorsTest {
 
     @Test
     fun ourSignatureIsDerAndVerifiesWithTheTestPublicKey() {
-        val store = InMemoryDeviceKeyStore().apply { put(v.pcId, v.keyPair) }
-        assertArrayEquals(v.spki, store.publicKeySpki(v.pcId))
+        val store = InMemoryDeviceKeyStore().apply { put(DeviceKeyStore.legacyAlias(v.pcId), v.keyPair) }
+        assertArrayEquals(v.spki, store.publicKeySpki(DeviceKeyStore.legacyAlias(v.pcId)))
         val transcript = AuthTranscript.build(v.nonce, v.pinBytes, v.deviceId)
-        val signature = store.sign(v.pcId, transcript)
+        val signature = store.sign(DeviceKeyStore.legacyAlias(v.pcId), transcript)
         assertEquals("ASN.1 DER SEQUENCE", 0x30, signature[0].toInt())
         assertEquals(signature.size - 2, signature[1].toInt())
         assertTrue(signature.size <= DeviceKeyStore.MAX_SIGNATURE_BYTES)
@@ -113,9 +113,9 @@ class ProofVectorsTest {
 
     @Test
     fun aliasOnlyAcceptsAPcId() {
-        assertEquals("grabline-device-${v.pcId}", DeviceKeyStore.alias(v.pcId))
+        assertEquals("grabline-device-${v.pcId}", DeviceKeyStore.legacyAlias(v.pcId))
         for (bad in listOf("", "short", v.pcId + "A", "../../etc/passwd0000000", "A3D7Za2aw26jbGofVV3ZA=")) {
-            assertThrows(DeviceKeyException::class.java) { DeviceKeyStore.alias(bad) }
+            assertThrows(DeviceKeyException::class.java) { DeviceKeyStore.legacyAlias(bad) }
         }
     }
 

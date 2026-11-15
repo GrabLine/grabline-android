@@ -48,7 +48,7 @@ class ConnectionManagerTest {
         val ctx = ApplicationProvider.getApplicationContext<Context>()
         db = Room.inMemoryDatabaseBuilder(ctx, AppDatabase::class.java).allowMainThreadQueries().build()
         scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-        manager = ConnectionManager(scope, db.pcs(), db.jobs(), fake, auth, onPairingRemoved = { removed += it })
+        manager = ConnectionManager(scope, db.pcs(), db.jobs(), fake, auth, onPairingRemoved = { removed += it.pcId })
     }
 
     @After fun tearDown() {
@@ -146,6 +146,72 @@ class ConnectionManagerTest {
         assertEquals(attempts, fake.attempts.size)
         assertEquals(PcLinkState.PairingRemoved, manager.states.value["pcA"])
         assertEquals(listOf("pcA"), removed.toList())
+        assertTrue("the row stays, marked removed", db.pcs().get("pcA")?.removedAt != null)
+    }
+
+    @Test fun removedStateSurvivesANewConnectionManager() = runBlocking<Unit> {
+        db.pcs().upsert(pc(lastGood = "10.0.0.1"))
+        fake.authMode = FakePc.AuthMode.UNAUTHORIZED_REPLY
+        manager.setWanted(true)
+        waitState("PairingRemoved") { it == PcLinkState.PairingRemoved }
+        eventually(what = "row marked") { db.pcs().get("pcA")?.removedAt }
+        manager.setWanted(false)
+        val attempts = fake.attempts.size
+
+        manager = ConnectionManager(scope, db.pcs(), db.jobs(), fake, auth, onPairingRemoved = { removed += it.pcId })
+        manager.setWanted(true)
+        waitState("PairingRemoved after restart") { it == PcLinkState.PairingRemoved }
+        delay(1_500)
+        assertEquals("no connection loop for a removed PC", attempts, fake.attempts.size)
+        assertTrue(manager.isRemoved("pcA"))
+        val outbox = dev.grabline.app.remote.outbox.Outbox(scope, db.outbox(), manager)
+        assertEquals(dev.grabline.app.remote.outbox.EnqueueResult.PcRemoved, outbox.enqueue("pcA", "https://e.com/a"))
+        assertTrue(db.outbox().pending("pcA").isEmpty())
+    }
+
+    @Test fun rePairingClearsTheRemovedMarkerAndReconnects() = runBlocking<Unit> {
+        db.pcs().upsert(pc(lastGood = "10.0.0.1").copy(removedAt = 5L))
+        manager.setWanted(true)
+        waitState("PairingRemoved") { it == PcLinkState.PairingRemoved }
+        db.pcs().upsert(pc(lastGood = "10.0.0.1").copy(keyAlias = "new", removedAt = null))
+        online()
+    }
+
+    private fun sweeping(vararg swept: String) {
+        manager = ConnectionManager(scope, db.pcs(), db.jobs(), fake, auth, sweeper = AddressSweeper { swept.toList() })
+    }
+
+    @Test fun pinMismatchOnASweptAddressIsNotTerminal() = runBlocking<Unit> { // QA-12
+        db.pcs().upsert(pc(lastGood = "10.0.0.1"))
+        fake.modes["10.0.0.1"] = FakePc.Mode.Unreachable()
+        fake.modes["10.0.0.2"] = FakePc.Mode.Unreachable()
+        fake.modes["10.0.0.50"] = FakePc.Mode.WrongKey
+        fake.authOkAddresses = listOf("10.0.0.51")
+        sweeping("10.0.0.50", "10.0.0.51")
+        manager.setWanted(true)
+        val state = online()
+        assertEquals("10.0.0.51", state.address)
+        assertTrue(fake.attemptsTo("10.0.0.50") >= 1)
+    }
+
+    @Test fun onlyAStrangerOnTheSweepStaysOffline() = runBlocking<Unit> {
+        db.pcs().upsert(pc(lastGood = "10.0.0.1"))
+        fake.modes["10.0.0.1"] = FakePc.Mode.Unreachable()
+        fake.modes["10.0.0.2"] = FakePc.Mode.Unreachable()
+        fake.modes["10.0.0.50"] = FakePc.Mode.WrongKey
+        sweeping("10.0.0.50")
+        manager.setWanted(true)
+        waitState("Offline") { it is PcLinkState.Offline }
+        delay(500)
+        assertTrue(manager.states.value["pcA"] !is PcLinkState.IdentityChanged)
+    }
+
+    @Test fun lastGoodMismatchIsNotTerminalWhileAnotherAddressWorks() = runBlocking<Unit> {
+        db.pcs().upsert(pc(lastGood = "10.0.0.1"))
+        fake.modes["10.0.0.1"] = FakePc.Mode.WrongKey
+        manager.setWanted(true)
+        assertEquals("10.0.0.2", online().address)
+        assertTrue(manager.states.value["pcA"] !is PcLinkState.IdentityChanged)
     }
 
     @Test fun unauthorizedDuringAuthIsPairingRemoved() = runBlocking<Unit> {

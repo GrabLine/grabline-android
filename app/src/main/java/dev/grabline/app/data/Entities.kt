@@ -22,6 +22,10 @@ data class PairedPc(
     val lastSeenAt: Long? = null,
     val defaultQueueId: Int? = null,
     val notifyActivity: Boolean = true,
+    /** Keystore alias of this pairing's device key; null for rows made before aliases (legacy `grabline-device-<pcId>`). */
+    val keyAlias: String? = null,
+    /** Set when the PC said it no longer accepts this phone (QA-06). The row stays so the UI can say so. */
+    val removedAt: Long? = null,
 )
 
 @Entity(

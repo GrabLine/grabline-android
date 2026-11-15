@@ -46,7 +46,7 @@ sealed interface PairResult {
 
     /**
      * `serverProof` verified. The caller stores the pairing (pin = [pin]) and then logs in on [connection]
-     * with [hello] (the same nonce), or closes it. The device key is in the key store under [pcId].
+     * with [hello] (the same nonce), or closes it. The device key is in the key store under [keyAlias].
      */
     class Paired(
         val deviceId: String,
@@ -61,6 +61,8 @@ sealed interface PairResult {
         val protocolVersion: Int,
         val hello: ServerHello,
         val connection: Connection,
+        /** Keystore alias of the device key made for this attempt; stored on the pairing row. */
+        val keyAlias: String,
     ) : PairResult {
         override val userMessage: String? get() = null
         override fun toString(): String = "Paired(deviceId=$deviceId, pcId=$pcId, pcName=$pcName, address=$address, port=$port)"
@@ -251,9 +253,11 @@ class PairingClient(
             val pcId = hello.pcId?.takeIf { isId(it) } ?: return PairResult.Rejected(ErrorCode.INTERNAL)
             if (expectedPcId != null && pcId != expectedPcId) return PairResult.Rejected(ErrorCode.INTERNAL)
 
-            keyFor = pcId
+            // A fresh alias per attempt: a re-pair never touches the key of a pairing that still works.
+            val alias = DeviceKeyStore.newAlias(pcId)
+            keyFor = alias
             val spki = try {
-                withContext(keyDispatcher) { keyStore.create(pcId) }
+                withContext(keyDispatcher) { keyStore.create(alias) }
             } catch (e: CancellationException) {
                 throw e
             } catch (_: Exception) {
@@ -278,7 +282,7 @@ class PairingClient(
             if (!connection.send(frame)) return PairResult.ConnectionLost
 
             val result = withTimeoutOrNull(pairTimeoutMs) {
-                awaitVerdict(connection, hello, pcId, code, nonce, pinBytes, spki, pin, address, knownAddresses, port, onProgress)
+                awaitVerdict(connection, hello, pcId, alias, code, nonce, pinBytes, spki, pin, address, knownAddresses, port, onProgress)
             } ?: PairResult.TimedOut
             keep = result is PairResult.Paired
             return result
@@ -294,6 +298,7 @@ class PairingClient(
         connection: Connection,
         hello: ServerHello,
         pcId: String,
+        keyAlias: String,
         code: String,
         nonce: ByteArray,
         pinBytes: ByteArray,
@@ -323,7 +328,7 @@ class PairingClient(
                         message is ErrorReply && (inbound.id == null || inbound.id == REQUEST_ID) -> return refused(message)
                         message is PairedReply && inbound.id == REQUEST_ID -> {
                             if (VersionCheck.evaluate(inbound) == VersionVerdict.PC_TOO_OLD) return PairResult.PcTooOld
-                            return verify(message, connection, hello, pcId, code, nonce, pinBytes, spki, pin, address, knownAddresses, port, inbound.protocolVersion)
+                            return verify(message, connection, hello, pcId, keyAlias, code, nonce, pinBytes, spki, pin, address, knownAddresses, port, inbound.protocolVersion)
                         }
                         else -> ignored++
                     }
@@ -340,6 +345,7 @@ class PairingClient(
         connection: Connection,
         hello: ServerHello,
         pcId: String,
+        keyAlias: String,
         code: String,
         nonce: ByteArray,
         pinBytes: ByteArray,
@@ -367,6 +373,7 @@ class PairingClient(
             protocolVersion = protocolVersion ?: hello.protocolVersion ?: 0,
             hello = hello,
             connection = connection,
+            keyAlias = keyAlias,
         )
     }
 

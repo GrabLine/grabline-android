@@ -22,12 +22,13 @@ class InMemoryDeviceKeyStore : DeviceKeyStore {
 
     val aliases: Set<String> get() = keys.keys.toSet()
 
-    fun put(pcId: String, pair: KeyPair) {
-        keys[DeviceKeyStore.alias(pcId)] = pair
+    /** Stores [pair] under [alias] (use [DeviceKeyStore.legacyAlias] for a pairing row without a keyAlias). */
+    fun put(alias: String, pair: KeyPair) {
+        keys[DeviceKeyStore.requireAlias(alias)] = pair
     }
 
-    override fun create(pcId: String): ByteArray {
-        val alias = DeviceKeyStore.alias(pcId)
+    override fun create(alias: String): ByteArray {
+        DeviceKeyStore.requireAlias(alias)
         if (failCreate) throw DeviceKeyException("test: cannot create")
         val pair = nextKey
             ?: KeyPairGenerator.getInstance("EC").apply { initialize(ECGenParameterSpec("secp256r1")) }.generateKeyPair()
@@ -36,10 +37,10 @@ class InMemoryDeviceKeyStore : DeviceKeyStore {
         return SpkiP256.require(pair.public.encoded)
     }
 
-    override fun publicKeySpki(pcId: String): ByteArray? = keys[DeviceKeyStore.alias(pcId)]?.public?.encoded
+    override fun publicKeySpki(alias: String): ByteArray? = keys[DeviceKeyStore.requireAlias(alias)]?.public?.encoded
 
-    override fun sign(pcId: String, transcript: ByteArray): ByteArray {
-        val pair = keys[DeviceKeyStore.alias(pcId)] ?: throw DeviceKeyException("no device key")
+    override fun sign(alias: String, transcript: ByteArray): ByteArray {
+        val pair = keys[DeviceKeyStore.requireAlias(alias)] ?: throw DeviceKeyMissingException()
         return Signature.getInstance(DeviceKeyStore.SIGNATURE_ALGORITHM).run {
             initSign(pair.private)
             update(transcript)
@@ -47,7 +48,7 @@ class InMemoryDeviceKeyStore : DeviceKeyStore {
         }
     }
 
-    override fun delete(pcId: String) {
-        keys.remove(DeviceKeyStore.alias(pcId))
+    override fun delete(alias: String) {
+        keys.remove(DeviceKeyStore.requireAlias(alias))
     }
 }

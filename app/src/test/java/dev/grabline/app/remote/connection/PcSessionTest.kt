@@ -8,6 +8,8 @@ import dev.grabline.app.remote.protocol.JobsReply
 import dev.grabline.app.remote.protocol.JobsRequest
 import dev.grabline.app.remote.protocol.PingRequest
 import dev.grabline.app.remote.protocol.PongReply
+import dev.grabline.app.remote.security.DeviceKeyException
+import dev.grabline.app.remote.security.DeviceKeyMissingException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -31,6 +33,16 @@ class PcSessionTest {
     private fun session() = PcSession(pc, "10.0.0.1", fake, auth)
 
     private fun endOf(result: Result<*>) = (result.exceptionOrNull() as PcSession.EndException).end
+
+    @Test fun missingDeviceKeyIsPairingRemoved() = runBlocking<Unit> {
+        val gone = AuthProvider { _, _, _ -> throw DeviceKeyMissingException() }
+        assertEquals(SessionEnd.PairingRemoved, endOf(PcSession(pc, "10.0.0.1", fake, gone).open()))
+    }
+
+    @Test fun otherSigningFailureIsOnlyUnreachable() = runBlocking<Unit> {
+        val broken = AuthProvider { _, _, _ -> throw DeviceKeyException("could not sign") }
+        assertTrue(endOf(PcSession(pc, "10.0.0.1", fake, broken).open()) is SessionEnd.Unreachable)
+    }
 
     @Test fun helloThenAuthOpens() = runBlocking<Unit> {
         val s = session()

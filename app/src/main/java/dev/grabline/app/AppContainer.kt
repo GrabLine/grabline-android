@@ -14,6 +14,7 @@ import dev.grabline.app.remote.PcRemote
 import dev.grabline.app.remote.connection.AuthProvider
 import dev.grabline.app.remote.connection.ConnectionManager
 import dev.grabline.app.remote.connection.OkHttpWireFactory
+import dev.grabline.app.remote.connection.WifiSubnetSweeper
 import dev.grabline.app.remote.outbox.Outbox
 import dev.grabline.app.remote.pairing.OkHttpTransport
 import dev.grabline.app.remote.pairing.PairResult
@@ -50,7 +51,8 @@ class AppContainer(context: Context) {
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     val db: AppDatabase = AppDatabase.get(app)
     val settings = AppSettings(app)
-    private val keyStore = AndroidDeviceKeyStore()
+    // StrongBox when the phone has it; AndroidDeviceKeyStore falls back to the TEE on StrongBoxUnavailableException.
+    private val keyStore = AndroidDeviceKeyStore(preferStrongBox = true)
     private val baseClient = OkHttpClient.Builder().build()
     private val appVersion = BuildConfig.VERSION_NAME
 
@@ -66,15 +68,18 @@ class AppContainer(context: Context) {
             val authenticator = Authenticator(keyStore, appVersion)
             AuthProvider { pc, hello, id -> authenticator.authRequest(pc, hello, id) }
         },
-        onPairingRemoved = { pcId -> runCatching { keyStore.delete(pcId) } },
+        sweeper = WifiSubnetSweeper(app),
+        onPairingRemoved = { pc -> runCatching { keyStore.delete(Authenticator.keyAliasOf(pc)) } },
     )
     val outbox = Outbox(scope, db.outbox(), connections)
-    private val defaultRemote = DefaultPcRemote(db, connections, outbox, deleteKey = { keyStore.delete(it) })
+    private val defaultRemote = DefaultPcRemote(db, connections, outbox, deleteKey = { pc -> keyStore.delete(Authenticator.keyAliasOf(pc)) })
     val remote: PcRemote = defaultRemote
     val pairing: PairingController = KeystorePairingController(
         client = PairingClient(OkHttpTransport(baseClient), keyStore, deviceName(), appVersion),
         remote = remote,
         lastGood = { pcId -> pcId?.let { db.pcs().get(it)?.lastGoodAddress } },
+        previous = { pcId -> db.pcs().get(pcId) },
+        deleteKey = { alias -> keyStore.delete(alias) },
     )
     private val notifier = PcActivityNotifier(app) { pcNotificationsOn }
     @Volatile private var pcNotificationsOn = true
@@ -113,6 +118,10 @@ class KeystorePairingController(
     private val client: PairingClient,
     private val remote: PcRemote,
     private val lastGood: suspend (String?) -> String?,
+    /** The stored pairing for a PC, to retire its key after a re-pair. */
+    private val previous: suspend (String) -> PairedPc? = { null },
+    /** Deletes a device key by alias. */
+    private val deleteKey: suspend (alias: String) -> Unit = {},
     private val clock: () -> Long = System::currentTimeMillis,
 ) : PairingController {
     override fun pair(entry: PairingEntry, deviceName: String): Flow<PairingProgress> = callbackFlow {
@@ -133,6 +142,7 @@ class KeystorePairingController(
         when (result) {
             null -> trySend(PairingProgress.Failed(ErrorMessages.NOT_A_PAIRING_CODE, canRetry = false))
             is PairResult.Paired -> {
+                val old = previous(result.pcId)
                 remote.addPairing(
                     PairedPc(
                         pcId = result.pcId,
@@ -145,8 +155,12 @@ class KeystorePairingController(
                         protocolVersion = result.protocolVersion,
                         pairedAt = clock(),
                         lastSeenAt = clock(),
+                        keyAlias = result.keyAlias,
+                        removedAt = null, // a fresh pairing clears "this PC removed the phone"
                     ),
                 )
+                // The new row is saved: retire the key of the pairing it replaced.
+                old?.let { Authenticator.keyAliasOf(it) }?.takeIf { it != result.keyAlias }?.let { runCatching { deleteKey(it) } }
                 // The connection manager logs in on its own connection.
                 runCatching { result.connection.close() }
                 trySend(PairingProgress.Paired(result.pcName))

@@ -76,8 +76,8 @@ class DefaultPcRemote(
     private val db: AppDatabase,
     private val connections: ConnectionManager,
     private val outbox: Outbox,
-    /** Deletes the device key for a PC (remote/security). */
-    private val deleteKey: suspend (pcId: String) -> Unit,
+    /** Deletes the device key of a pairing (remote/security). */
+    private val deleteKey: suspend (pc: PairedPc) -> Unit,
 ) : PcRemote {
     override val pcs: Flow<List<PairedPc>> = db.pcs().observeAll()
     override val linkStates: StateFlow<Map<String, PcLinkState>> = connections.states
@@ -135,11 +135,12 @@ class DefaultPcRemote(
     }
 
     override suspend fun unpair(pcId: String) {
+        val pc = db.pcs().get(pcId)
         runCatching { connections.request(pcId) { id -> UnpairRequest(id) } }
         connections.forget(pcId)
         db.jobs().deleteForPc(pcId)
         db.pcs().delete(pcId)
-        runCatching { deleteKey(pcId) }
+        if (pc != null) runCatching { deleteKey(pc) }
     }
 
     override suspend fun dismissFailed(itemId: Long) = db.outbox().delete(itemId)

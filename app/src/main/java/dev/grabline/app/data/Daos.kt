@@ -34,6 +34,9 @@ interface PairedPcDao {
     @Query("UPDATE paired_pcs SET lastGoodAddress = :address WHERE pcId = :pcId")
     suspend fun updateLastGood(pcId: String, address: String)
 
+    @Query("UPDATE paired_pcs SET removedAt = :at WHERE pcId = :pcId")
+    suspend fun markRemoved(pcId: String, at: Long)
+
     @Query("UPDATE paired_pcs SET lastSeenAt = :at WHERE pcId = :pcId")
     suspend fun touchSeen(pcId: String, at: Long)
 }

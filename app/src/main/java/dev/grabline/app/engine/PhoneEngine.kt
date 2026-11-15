@@ -1,0 +1,64 @@
+package dev.grabline.app.engine
+
+import kotlinx.coroutines.flow.Flow
+
+/**
+ * The phone's own download engine (Phase 2). Contract shared by the engine
+ * (package engine), background work (package engine.work) and the UI.
+ *
+ * Rules it keeps (SPEC "Rules the engine must keep" 1-10): identity encoding,
+ * Content-Range checks, If-Range with strong validators, 416 = file changed,
+ * 429/503/403-after-data = halve connections, jittered retry budget, unique
+ * names at add time, free-space check (no-space is permanent), temp name then
+ * rename after the size check, cancel removes all scratch files.
+ */
+interface PhoneEngine {
+    /** Every phone job, newest first. */
+    val jobs: Flow<List<PhoneJob>>
+
+    /** Add a link. Picks a unique name in the target folder at add time (rule 7). */
+    suspend fun add(request: PhoneAddRequest): PhoneJob
+
+    suspend fun pause(jobId: Long)
+    suspend fun resume(jobId: Long)
+    /** Cancel removes partial and scratch files (rule 10); the row stays as cancelled. */
+    suspend fun cancel(jobId: Long)
+    suspend fun retry(jobId: Long)
+    /** Remove from the list; a finished file stays on disk. */
+    suspend fun remove(jobId: Long)
+    suspend fun pauseAll()
+    suspend fun resumeAll()
+    /** "Download now anyway" for a job held by Wi-Fi only (overrides once). */
+    suspend fun allowMobileData(jobId: Long)
+}
+
+data class PhoneAddRequest(
+    val url: String,
+    val title: String? = null,
+    /** SAF tree URI string, or null for Downloads/GrabLine through MediaStore. */
+    val folderUri: String? = null,
+    /** Phase 3: video quality label; Phase 2 ignores it. */
+    val quality: String? = null,
+)
+
+enum class PhoneJobStatus { QUEUED, DOWNLOADING, PAUSED, WAITING_NETWORK, WAITING_WIFI, WAITING_CHARGING, COMPLETED, FAILED, CANCELLED }
+
+data class PhoneJob(
+    val id: Long,
+    val url: String,
+    val name: String,
+    val status: PhoneJobStatus,
+    val downloaded: Long,
+    val total: Long?,
+    val speed: Long,
+    val etaSeconds: Long?,
+    val connections: Int,
+    /** Plain-words notice ("This server can't resume; it will restart if interrupted"). */
+    val notice: String?,
+    /** Plain-words error when FAILED (SPEC "Error states and edge cases"). */
+    val error: String?,
+    /** content:// URI of the finished file, for Open and Share. */
+    val fileUri: String?,
+    val createdAt: Long,
+    val finishedAt: Long?,
+)

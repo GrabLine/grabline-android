@@ -79,8 +79,8 @@ class ConnectionManager(
     private val factory: WireFactory,
     private val auth: AuthProvider,
     private val sweeper: AddressSweeper? = null,
-    /** Called when a PC removed this phone: delete its key (remote/security). */
-    private val onPairingRemoved: suspend (pcId: String) -> Unit = {},
+    /** Called when a PC removed this phone: delete its key (remote/security). The row stays, marked removed. */
+    private val onPairingRemoved: suspend (pc: PairedPc) -> Unit = {},
     private val clock: () -> Long = System::currentTimeMillis,
 ) {
     private val _states = MutableStateFlow<Map<String, PcLinkState>>(emptyMap())
@@ -99,6 +99,7 @@ class ConnectionManager(
     private val sessions = ConcurrentHashMap<String, PcSession>()
     private val loops = ConcurrentHashMap<String, CoroutineJob>()
     private val wakeups = ConcurrentHashMap<String, MutableSharedFlow<Unit>>()
+    private val lastSweep = ConcurrentHashMap<String, Long>()
     private val lock = Mutex()
     @Volatile private var wanted = false
     private var watcher: CoroutineJob? = null
@@ -127,6 +128,10 @@ class ConnectionManager(
         if (pcId == null) wakeups.values.forEach { it.tryEmit(Unit) } else wakeups[pcId]?.tryEmit(Unit)
     }
 
+    /** True when this PC said it no longer accepts this phone (row marked removed, or just learned in this run). */
+    suspend fun isRemoved(pcId: String): Boolean =
+        _states.value[pcId] == PcLinkState.PairingRemoved || pcs.get(pcId)?.removedAt != null
+
     fun isOnline(pcId: String): Boolean = sessions[pcId]?.isEnded == false && _states.value[pcId] is PcLinkState.Online
 
     /** Send one request to a PC. Throws [RemoteException] (code INTERNAL "offline" when not connected). */
@@ -150,7 +155,15 @@ class ConnectionManager(
         val ids = list.map { it.pcId }.toSet()
         (loops.keys - ids).forEach { forget(it) }
         for (pc in list) {
-            if (loops.containsKey(pc.pcId)) continue
+            if (pc.removedAt != null) {
+                // The PC removed this phone: keep the row, show "Pair again", never connect.
+                loops.remove(pc.pcId)?.cancel()
+                sessions.remove(pc.pcId)?.close()
+                _global.update { it - pc.pcId }
+                setState(pc.pcId, PcLinkState.PairingRemoved)
+                continue
+            }
+            if (loops[pc.pcId]?.isActive == true) continue
             val wake = MutableSharedFlow<Unit>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
             wakeups[pc.pcId] = wake
             loops[pc.pcId] = scope.launch { runLoop(pc.pcId, wake) }
@@ -161,6 +174,7 @@ class ConnectionManager(
         var failures = 0
         while (wanted) {
             val pc = pcs.get(pcId) ?: return
+            if (pc.removedAt != null) { setState(pcId, PcLinkState.PairingRemoved); return }
             setState(pcId, PcLinkState.Connecting)
             val session = connect(pc)
             if (session == null) {
@@ -174,7 +188,7 @@ class ConnectionManager(
             val end = runSession(pc, session)
             sessions.remove(pcId, session)
             when (end) {
-                is SessionEnd.PairingRemoved -> { pairingRemoved(pcId); return }
+                is SessionEnd.PairingRemoved -> { pairingRemoved(pc); return }
                 is SessionEnd.IdentityChanged -> { setState(pcId, PcLinkState.IdentityChanged); return }
                 is SessionEnd.PcTooOld -> { setState(pcId, PcLinkState.PcTooOld); return }
                 is SessionEnd.PhoneTooOld -> { setState(pcId, PcLinkState.PhoneTooOld); return }
@@ -206,17 +220,31 @@ class ConnectionManager(
 
     // -------------------------------------------------------------- connecting
 
-    /** PROTOCOL.md section 11: last good first, then the others in parallel, then a sweep. */
+    /**
+     * PROTOCOL.md section 11: last good first, then the others in parallel, then a sweep of the Wi-Fi subnet.
+     * A different key at the last good address is remembered and becomes [PcLinkState.IdentityChanged] only when
+     * no other candidate connected; a different key at any other address (a swept stranger) is just a miss.
+     */
     private suspend fun connect(pc: PairedPc): PcSession? {
         val known = (listOfNotNull(pc.lastGoodAddress) + pc.addresses).distinct()
+        var lastGoodMismatch = false
         known.firstOrNull()?.let { first ->
-            tryOne(pc, first)?.let { return it }
+            val isLastGood = pc.lastGoodAddress == first
+            tryOne(pc, first, onMismatch = { if (isLastGood) lastGoodMismatch = true })?.let { return it }
         }
         if (terminal(pc.pcId)) return null
         tryMany(pc, known.drop(1))?.let { return it }
         if (terminal(pc.pcId)) return null
-        val swept = sweeper?.candidates(known)?.filterNot { it in known }.orEmpty()
-        return swept.chunked(32).firstNotNullOfOrNull { batch -> tryMany(pc, batch, timeoutMs = 400) }
+        val now = clock()
+        val sweepDue = sweeper != null && now - (lastSweep[pc.pcId] ?: (Long.MIN_VALUE / 2)) >= SWEEP_INTERVAL_MS
+        if (sweepDue) {
+            lastSweep[pc.pcId] = now
+            val swept = sweeper?.candidates(known)?.filterNot { it in known }.orEmpty()
+            swept.chunked(32).firstNotNullOfOrNull { batch -> tryMany(pc, batch, timeoutMs = 400) }?.let { return it }
+            if (terminal(pc.pcId)) return null
+        }
+        if (lastGoodMismatch) setState(pc.pcId, PcLinkState.IdentityChanged)
+        return null
     }
 
     private suspend fun tryMany(pc: PairedPc, addresses: List<String>, timeoutMs: Long = 2_000): PcSession? {
@@ -230,7 +258,12 @@ class ConnectionManager(
         }
     }
 
-    private suspend fun tryOne(pc: PairedPc, address: String, timeoutMs: Long = 2_000): PcSession? {
+    private suspend fun tryOne(
+        pc: PairedPc,
+        address: String,
+        timeoutMs: Long = 2_000,
+        onMismatch: () -> Unit = {},
+    ): PcSession? {
         val session = PcSession(pc, address, factory, auth)
         val result = session.open(timeoutMs)
         val ok = result.getOrNull()
@@ -239,8 +272,8 @@ class ConnectionManager(
             return session
         }
         when ((result.exceptionOrNull() as? PcSession.EndException)?.end) {
-            SessionEnd.PairingRemoved -> pairingRemoved(pc.pcId)
-            SessionEnd.IdentityChanged -> setState(pc.pcId, PcLinkState.IdentityChanged)
+            SessionEnd.PairingRemoved -> pairingRemoved(pc)
+            SessionEnd.IdentityChanged -> onMismatch()
             SessionEnd.PcTooOld -> setState(pc.pcId, PcLinkState.PcTooOld)
             SessionEnd.PhoneTooOld -> setState(pc.pcId, PcLinkState.PhoneTooOld)
             else -> Unit
@@ -251,11 +284,13 @@ class ConnectionManager(
     private suspend fun onAuthenticated(pc: PairedPc, session: PcSession, ok: AuthOkReply) {
         sessions.put(pc.pcId, session)?.takeIf { it !== session }?.close()
         val now = clock()
+        // Merge into the current row, not the snapshot this attempt started from (a re-pair may have replaced it).
+        val current = pcs.get(pc.pcId) ?: return
         pcs.upsert(
-            pc.copy(
-                name = ok.pcName.ifBlank { pc.name },
-                addresses = ok.addresses.ifEmpty { pc.addresses },
-                port = ok.port.takeIf { it > 0 } ?: pc.port,
+            current.copy(
+                name = ok.pcName.ifBlank { current.name },
+                addresses = ok.addresses.ifEmpty { current.addresses },
+                port = ok.port.takeIf { it > 0 } ?: current.port,
                 lastGoodAddress = session.address,
                 lastSeenAt = now,
                 pcAppVersion = ok.appVersion,
@@ -371,14 +406,26 @@ class ConnectionManager(
         else -> null
     }
 
-    private suspend fun pairingRemoved(pcId: String) {
-        setState(pcId, PcLinkState.PairingRemoved)
-        sessions.remove(pcId)?.close()
-        runCatching { onPairingRemoved(pcId) }
-        jobs.deleteForPc(pcId)
+    /**
+     * The PC refused this phone for good (QA-06): show "Pair again", drop the key and cached jobs, and keep the row
+     * marked removed so the state survives a restart. Ignored when a re-pair already replaced the pairing this
+     * session was opened for (its old device record being revoked is expected).
+     */
+    private suspend fun pairingRemoved(pc: PairedPc) {
+        val current = pcs.get(pc.pcId) ?: return
+        if (current.deviceId != pc.deviceId || current.keyAlias != pc.keyAlias) return
+        setState(pc.pcId, PcLinkState.PairingRemoved)
+        sessions.remove(pc.pcId)?.close()
+        runCatching { onPairingRemoved(current) }
+        jobs.deleteForPc(pc.pcId)
+        pcs.markRemoved(pc.pcId, clock())
     }
 
     private fun setState(pcId: String, state: PcLinkState) {
         _states.update { it + (pcId to state) }
+    }
+
+    private companion object {
+        const val SWEEP_INTERVAL_MS = 60_000L
     }
 }

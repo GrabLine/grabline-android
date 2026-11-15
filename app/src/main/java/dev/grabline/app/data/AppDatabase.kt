@@ -6,6 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
@@ -20,9 +22,17 @@ class Converters {
         Json.decodeFromString(ListSerializer(String.serializer()), value)
 }
 
+/** v1 -> v2: per-pairing key alias and the "PC removed this phone" marker. */
+val MIGRATION_1_2 = object : Migration(1, 2) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE paired_pcs ADD COLUMN keyAlias TEXT")
+        db.execSQL("ALTER TABLE paired_pcs ADD COLUMN removedAt INTEGER")
+    }
+}
+
 @Database(
     entities = [PairedPc::class, PcJob::class, OutboxItem::class],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -40,7 +50,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "grabline.db",
-                ).build().also { instance = it }
+                ).addMigrations(MIGRATION_1_2).build().also { instance = it }
             }
     }
 }

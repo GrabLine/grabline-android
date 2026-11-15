@@ -260,7 +260,7 @@ class OutboxTest {
     // ---- DefaultPcRemote
 
     private fun remote(keys: MutableList<String> = CopyOnWriteArrayList()) =
-        DefaultPcRemote(db, manager, outbox) { keys += it }
+        DefaultPcRemote(db, manager, outbox) { keys += it.pcId }
 
     @Test fun backgroundKeepsConnectionsWhileItemsPendingAndStopsOtherwise() = runBlocking<Unit> {
         db.pcs().upsert(pc())

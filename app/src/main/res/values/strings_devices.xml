@@ -80,6 +80,12 @@
     <string name="pc_remove_body">Unpairing can\'t be undone from the phone. To use %1$s again you will need to pair again with a new code.</string>
     <string name="pc_remove_confirm">Remove</string>
     <string name="pc_cancel">Cancel</string>
+    <string name="pc_edit_address">Edit address</string>
+    <string name="pc_edit_address_title">Edit address</string>
+    <string name="pc_edit_address_body">Type your PC\'s address on this network, for example 192.168.1.20 or 192.168.1.20:47821.</string>
+    <string name="pc_edit_address_label">PC address</string>
+    <string name="pc_edit_address_error">That address doesn\'t look right. Try something like 192.168.1.20</string>
+    <string name="pc_edit_address_save">Save</string>
     <string name="pc_offline_tips_title">Things to check</string>
     <string name="pc_tip_wifi">Your phone and PC are on the same Wi-Fi.</string>
     <string name="pc_tip_awake">Your PC is awake.</string>

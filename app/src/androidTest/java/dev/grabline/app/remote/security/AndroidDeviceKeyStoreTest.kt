@@ -22,8 +22,9 @@ import org.junit.runner.RunWith
 /** Needs a device or emulator: the key lives in AndroidKeyStore. */
 @RunWith(AndroidJUnit4::class)
 class AndroidDeviceKeyStoreTest {
-    private val pcId = "A3D7Za2aw26jbGofVV3ZAQ"
-    private val otherPcId = "KsucBZHeyJguN6H0BzJQiw"
+    /** These are keystore aliases now: one legacy-style, one fresh per-attempt alias. */
+    private val pcId = DeviceKeyStore.legacyAlias("A3D7Za2aw26jbGofVV3ZAQ")
+    private val otherPcId = DeviceKeyStore.newAlias("KsucBZHeyJguN6H0BzJQiw")
     private val store = AndroidDeviceKeyStore()
     private val transcript = ByteArray(103) { it.toByte() }
 
@@ -50,14 +51,14 @@ class AndroidDeviceKeyStoreTest {
         assertEquals(91, spki.size)
         assertTrue(SpkiP256.isValid(spki))
         assertArrayEquals(spki, store.publicKeySpki(pcId))
-        assertTrue(androidKeyStore().containsAlias("grabline-device-$pcId"))
+        assertTrue(androidKeyStore().containsAlias(pcId))
         assertNull(store.publicKeySpki(otherPcId))
     }
 
     @Test
     fun privateKeyIsNotExportableAndOnlySigns() {
         store.create(pcId)
-        val key = androidKeyStore().getKey("grabline-device-$pcId", null) as PrivateKey
+        val key = androidKeyStore().getKey(pcId, null) as PrivateKey
         assertNull("no key material leaves the keystore", key.encoded)
         val info = KeyFactory.getInstance(key.algorithm, "AndroidKeyStore").getKeySpec(key, KeyInfo::class.java)
         assertEquals(KeyProperties.PURPOSE_SIGN, info.purposes)
@@ -92,7 +93,7 @@ class AndroidDeviceKeyStoreTest {
         store.create(pcId)
         store.delete(pcId)
         assertNull(store.publicKeySpki(pcId))
-        assertFalse(androidKeyStore().containsAlias("grabline-device-$pcId"))
+        assertFalse(androidKeyStore().containsAlias(pcId))
         assertThrows(DeviceKeyException::class.java) { store.sign(pcId, transcript) }
         store.delete(pcId) // no error when there is none
     }

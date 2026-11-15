@@ -21,7 +21,7 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class AuthenticatorTest {
     private val v = Vectors
-    private val keys = InMemoryDeviceKeyStore().apply { put(v.pcId, v.keyPair) }
+    private val keys = InMemoryDeviceKeyStore().apply { put(DeviceKeyStore.legacyAlias(v.pcId), v.keyPair) }
     private val pc = PairedPc(
         pcId = v.pcId,
         name = "Study PC",
@@ -67,6 +67,18 @@ class AuthenticatorTest {
         val otherPin = pc.copy(fingerprint = TestCerts.selfSigned().pin)
         assertFalse(verifies(v.hex(v.transcriptHex), auth.authRequest(otherPin, hello).signature))
         assertTrue(verifies(v.hex(v.transcriptHex), auth.authRequest(pc, hello).signature))
+    }
+
+    @Test
+    fun signsWithTheRowsKeyAliasAndFallsBackToTheLegacyOne() = runTest {
+        val alias = DeviceKeyStore.newAlias(v.pcId)
+        val store = InMemoryDeviceKeyStore().apply { put(alias, v.keyPair) }
+        val auth = authenticator(store)
+        assertTrue(verifies(v.hex(v.transcriptHex), auth.authRequest(pc.copy(keyAlias = alias), hello).signature))
+        // a row without keyAlias looks for the legacy alias, which this store does not have
+        assertEquals(AuthStep.Stop(AuthOutcome.PairingRemoved), auth.onHello(pc, hello))
+        val thrown = runCatching { auth.authRequest(pc, hello) }.exceptionOrNull()
+        assertTrue(thrown is DeviceKeyMissingException)
     }
 
     @Test

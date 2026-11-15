@@ -11,6 +11,7 @@ import dev.grabline.app.remote.protocol.PairingUri
 import dev.grabline.app.remote.protocol.PairingUriResult
 import dev.grabline.app.remote.protocol.ProtocolCodec
 import dev.grabline.app.remote.protocol.RequestResult
+import dev.grabline.app.remote.security.DeviceKeyStore
 import dev.grabline.app.remote.security.InMemoryDeviceKeyStore
 import dev.grabline.app.remote.security.Pin
 import dev.grabline.app.remote.security.PinMismatchException
@@ -151,12 +152,13 @@ class PairingClientTest {
         assertNull("the socket stays open for auth", pc.closedWith)
         assertEquals(TrustMode.Pinned(qr.pin), transport.attempts.single().second)
 
-        assertEquals(setOf("grabline-device-${v.pcId}"), keys.aliases)
+        assertEquals(setOf(ok.keyAlias), keys.aliases)
+        assertTrue(Regex("grabline-device-${v.pcId}-[0-9a-f]{16}").matches(ok.keyAlias))
         val request = sentPair(pc.sent.single())
         assertEquals("pair-1", request.id)
         assertEquals(6, request.protocolVersion)
         assertEquals("Pixel 8", request.deviceName)
-        val spki = keys.publicKeySpki(v.pcId)!!
+        val spki = keys.publicKeySpki(ok.keyAlias)!!
         assertEquals(Base64Url.encode(spki), request.publicKey)
         assertEquals(Base64Url.encode(PairingProofs.codeProof(v.code, v.nonce, v.pinBytes, spki)), request.codeProof)
         assertFalse("the code is never sent", pc.sent.single().contains(v.code))
@@ -206,6 +208,30 @@ class PairingClientTest {
         assertEquals("PC declined", result.userMessage)
         assertEquals(1, keys.created)
         assertNothingLeft(pc)
+    }
+
+    @Test
+    fun failedRePairKeepsTheKeyOfTheWorkingPairing() = runTest {
+        val old = DeviceKeyStore.legacyAlias(v.pcId)
+        keys.put(old, v.keyPair)
+        val pc = honestPc {
+            push(v.message("pair.event.pending.json"))
+            push(withId("pair.reply.denied.json"))
+            pushClose(4403)
+        }
+        assertEquals(PairResult.PcDeclined, client(FakeTransport { pc }).pair(qr))
+        assertEquals("only the failed attempt's key goes", setOf(old), keys.aliases)
+        assertNotNull(keys.publicKeySpki(old))
+    }
+
+    @Test
+    fun eachAttemptUsesAFreshAlias() = runTest {
+        val first = honestPc { push(paired(it)) }
+        val a = client(FakeTransport { first }).pair(qr) as PairResult.Paired
+        val second = honestPc { push(paired(it)) }
+        val b = client(FakeTransport { second }).pair(qr) as PairResult.Paired
+        assertTrue(a.keyAlias != b.keyAlias)
+        assertEquals(setOf(a.keyAlias, b.keyAlias), keys.aliases)
     }
 
     @Test

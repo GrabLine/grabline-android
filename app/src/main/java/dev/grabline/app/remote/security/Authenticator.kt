@@ -81,7 +81,7 @@ class Authenticator(
         val nonce = requireNotNull(hello.nonceBytes()) { "hello has no usable nonce" }
         val pin = requireNotNull(Pin.bytes(pc.fingerprint)) { "stored pin is malformed" }
         val transcript = AuthTranscript.build(nonce, pin, pc.deviceId)
-        val signature = withContext(keyDispatcher) { keyStore.sign(pc.pcId, transcript) }
+        val signature = withContext(keyDispatcher) { keyStore.sign(keyAliasOf(pc), transcript) }
         if (signature.isEmpty() || signature.size > DeviceKeyStore.MAX_SIGNATURE_BYTES) {
             throw DeviceKeyException("unexpected signature size")
         }
@@ -106,7 +106,7 @@ class Authenticator(
         } catch (_: DeviceKeyException) {
             // A key that no longer exists means this phone can never log in to that PC again: same end as a
             // removal. A key that exists but failed to sign this once keeps the pairing.
-            val gone = withContext(keyDispatcher) { runCatching { keyStore.publicKeySpki(pc.pcId) }.getOrNull() } == null
+            val gone = withContext(keyDispatcher) { runCatching { keyStore.publicKeySpki(keyAliasOf(pc)) }.getOrNull() } == null
             AuthStep.Stop(if (gone) AuthOutcome.PairingRemoved else AuthOutcome.Failed(ErrorCode.INTERNAL))
         } catch (_: IllegalArgumentException) {
             AuthStep.Stop(AuthOutcome.Failed(ErrorCode.INTERNAL))
@@ -143,6 +143,9 @@ class Authenticator(
     }
 
     companion object {
+        /** The key this pairing signs with: its own alias, or the legacy per-PC alias for rows made before aliases. */
+        fun keyAliasOf(pc: PairedPc): String = pc.keyAlias ?: DeviceKeyStore.legacyAlias(pc.pcId)
+
         const val DEFAULT_REQUEST_ID = "auth-1"
     }
 }

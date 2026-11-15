@@ -24,6 +24,8 @@ sealed interface EnqueueResult {
     data class Queued(val requestId: String) : EnqueueResult
     /** The same link for the same PC was shared moments ago (QA-15): dropped. */
     data object DuplicateShare : EnqueueResult
+    /** The PC removed this phone: nothing is queued; the user has to pair again. */
+    data object PcRemoved : EnqueueResult
 }
 
 /**
@@ -60,6 +62,7 @@ class Outbox(
         queueId: Int? = null,
         folderId: String? = null,
     ): EnqueueResult {
+        if (connections.isRemoved(pcId)) return EnqueueResult.PcRemoved
         val now = clock()
         if (dao.recentSame(pcId, url, now - DUPLICATE_WINDOW_MS) != null) return EnqueueResult.DuplicateShare
         val requestId = newRequestId()
