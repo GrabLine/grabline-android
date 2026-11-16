@@ -60,6 +60,13 @@ interface PcRemote {
         folderId: String? = null,
     ): EnqueueResult
 
+    /**
+     * "Send to PC" for a phone download: queue its link for [pcId] like a share, and remember that phone job so it is
+     * cancelled (partial file deleted) once the PC confirms it has the link (QA-38).
+     */
+    suspend fun sendFromPhone(pcId: String, phoneJobId: Long, url: String, title: String?, quality: String?): EnqueueResult =
+        send(pcId, url, title, quality)
+
     suspend fun control(pcId: String, jobId: Long, action: String): Result<Job?>
     suspend fun global(pcId: String, action: String, bytesPerSecond: Long? = null): Result<GlobalState>
     suspend fun queues(pcId: String): Result<QueuesReply>
@@ -109,6 +116,9 @@ class DefaultPcRemote(
         queueId: Int?,
         folderId: String?,
     ): EnqueueResult = outbox.enqueue(pcId, url, title, quality, queueId, folderId)
+
+    override suspend fun sendFromPhone(pcId: String, phoneJobId: Long, url: String, title: String?, quality: String?): EnqueueResult =
+        outbox.enqueue(pcId, url, title, quality, afterInsert = { requestId -> db.phoneJobs().setSendRequest(phoneJobId, requestId) })
 
     override suspend fun control(pcId: String, jobId: Long, action: String): Result<Job?> = call {
         (connections.request(pcId) { id -> ControlRequest(id, jobId, action) }.message as? OkReply)?.job

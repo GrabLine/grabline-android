@@ -122,6 +122,12 @@ fun AddSheetRoute(
             onChangeFolder = pickFolder,
             onUpdateEngine = vm::updateEngine,
             onSelectQuality = vm::selectQuality,
+            onSelectFormat = vm::selectFormat,
+            onSelectSubtitles = vm::selectSubtitles,
+            onClipStart = vm::setClipStart,
+            onClipEnd = vm::setClipEnd,
+            onStartLater = vm::setStartLater,
+            onChecksum = vm::setChecksum,
             onSelectQueue = vm::selectQueue,
             onSelectFolder = vm::selectFolder,
             onToggleLinks = vm::toggleLinks,
@@ -147,6 +153,12 @@ fun AddSheetContent(
     onSelectPhone: () -> Unit = {},
     onChangeFolder: () -> Unit = {},
     onUpdateEngine: () -> Unit = {},
+    onSelectFormat: (String?) -> Unit = {},
+    onSelectSubtitles: (String?) -> Unit = {},
+    onClipStart: (String) -> Unit = {},
+    onClipEnd: (String) -> Unit = {},
+    onStartLater: (Long?) -> Unit = {},
+    onChecksum: (String) -> Unit = {},
 ) {
     val context = LocalContext.current
     Column(
@@ -244,6 +256,12 @@ fun AddSheetContent(
             }
         }
 
+        if (state.showQuality) {
+            MoreFormats(state, context, onSelectFormat, onSelectSubtitles, onClipStart, onClipEnd)
+        }
+        if (state.showChecksum) ChecksumField(state, onChecksum)
+        if (state.canStartLater) StartLaterRow(state.startAt, onStartLater)
+
         if (state.queues.isNotEmpty()) {
             val default = stringResource(R.string.add_queue_default)
             val items = listOf<Pair<Int?, String>>(null to default) + state.queues.map { it.id.toInt() to it.name }
@@ -265,7 +283,15 @@ fun AddSheetContent(
             enabled = state.canStart && !state.sending,
             modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).semantics { contentDescription = startDesc },
         ) {
-            Text(stringResource(if (state.sending) R.string.add_sending else R.string.add_start_now))
+            Text(
+                stringResource(
+                    when {
+                        state.sending -> R.string.add_sending
+                        state.startAt != null -> R.string.add_start_later_button
+                        else -> R.string.add_start_now
+                    },
+                ),
+            )
         }
         state.notice?.let {
             Text(
@@ -411,7 +437,7 @@ private fun QualityChip(wire: String, selected: Boolean, size: Long?, context: C
 }
 
 @Composable
-private fun Menu(title: String, current: String, items: List<String>, onPick: (Int) -> Unit) {
+internal fun Menu(title: String, current: String, items: List<String>, onPick: (Int) -> Unit) {
     var open by remember { mutableStateOf(false) }
     val desc = stringResource(R.string.add_menu_description, title, current)
     Section(title) {

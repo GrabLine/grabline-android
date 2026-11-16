@@ -20,6 +20,9 @@ interface PhoneEngine {
     /** Add a link. Picks a unique name in the target folder at add time (rule 7). */
     suspend fun add(request: PhoneAddRequest): PhoneJob
 
+    /** Copy a finished PC file to this phone as a background job of kind "transfer". */
+    suspend fun addTransfer(request: TransferAddRequest): PhoneJob = throw UnsupportedOperationException("no transfers")
+
     suspend fun pause(jobId: Long)
     suspend fun resume(jobId: Long)
     /** Cancel removes partial and scratch files (rule 10); the row stays as cancelled. */
@@ -36,6 +39,17 @@ interface PhoneEngine {
     val video: VideoEngine? get() = null
 }
 
+/** A "Copy to this phone" request: PC job [remoteJobId] on [pcId]. */
+data class TransferAddRequest(
+    val pcId: String,
+    val remoteJobId: Long,
+    val name: String,
+    /** The job's source link (kept for Details). */
+    val url: String,
+    val size: Long? = null,
+    val folderUri: String? = null,
+)
+
 data class PhoneAddRequest(
     val url: String,
     val title: String? = null,
@@ -43,6 +57,20 @@ data class PhoneAddRequest(
     val folderUri: String? = null,
     /** Video quality wire value (best, 1080p, mp3...); null for files. A video link without one downloads as Best. */
     val quality: String? = null,
+    /** "Start later": epoch millis before which the job waits; null = start now. */
+    val startAt: Long? = null,
+    /** A pasted SHA-256 (already normalised) to check the finished file against; the result is advisory. */
+    val sha256: String? = null,
+    /** Video only: a yt-dlp format selector from "More formats"; overrides the quality preset's selector. */
+    val formatSpec: String? = null,
+    /** Video only: subtitle language to fetch and embed. */
+    val subtitleLang: String? = null,
+    /** Video only: keep just this part, in seconds from the start. */
+    val clipStartSec: Long? = null,
+    val clipEndSec: Long? = null,
+    /** Set when the link came from a PC's outbox: the PC and item, so an item offered again is not added twice. */
+    val pcId: String? = null,
+    val outboxItemId: Long? = null,
 )
 
 enum class PhoneJobStatus { QUEUED, DOWNLOADING, PAUSED, WAITING_NETWORK, WAITING_WIFI, WAITING_CHARGING, COMPLETED, FAILED, CANCELLED }
@@ -66,6 +94,12 @@ data class PhoneJob(
     val createdAt: Long,
     val finishedAt: Long?,
     val isVideo: Boolean = false,
+    /** A copy of a file from a PC (shown on the Transfers screen and its notification channel). */
+    val isTransfer: Boolean = false,
+    /** Epoch millis the job is waiting for ("Start later"), or null. */
+    val startAt: Long? = null,
+    /** "verified", "mismatch" or null (no checksum asked for). Advisory: the file is kept either way. */
+    val checksum: String? = null,
 ) {
     /** Failed because the site changed: offer "Update the video engine?" (only when the setting asks). */
     val needsEngineUpdate: Boolean get() = status == PhoneJobStatus.FAILED && error == dev.grabline.app.engine.video.VideoText.SITE_CHANGED

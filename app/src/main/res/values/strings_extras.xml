@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Add sheet: more formats, subtitles, clip, checksum, start later -->
+    <string name="add_more_formats">More formats</string>
+    <string name="add_more_formats_hide">Fewer formats</string>
+    <string name="add_more_formats_description">Show every format the site offers, with resolution, codec and size</string>
+    <string name="add_format_audio_only">Audio only</string>
+    <string name="add_subtitles">Subtitles</string>
+    <string name="add_subtitles_none">No subtitles</string>
+    <string name="add_clip_title">Keep only part of the video</string>
+    <string name="add_clip_start">From (m:ss)</string>
+    <string name="add_clip_end">To (m:ss)</string>
+    <string name="add_clip_hint">Leave both empty to keep the whole video</string>
+    <string name="add_clip_error">Use a time like 1:30, and make the end later than the start</string>
+    <string name="add_checksum_label">SHA-256 checksum (optional)</string>
+    <string name="add_checksum_hint">Paste it to check the file when it finishes</string>
+    <string name="add_checksum_error">That isn\'t a SHA-256 checksum. It has 64 characters, 0-9 and a-f</string>
+    <string name="add_start_later">Start later</string>
+    <string name="add_start_later_description">Start later at a chosen time</string>
+    <string name="add_start_later_at">Starts at %1$s</string>
+    <string name="add_start_later_change">Change</string>
+    <string name="add_start_later_pick">Start at</string>
+    <string name="add_start_later_set">Set</string>
+    <string name="add_start_later_cancel">Cancel</string>
+    <string name="add_start_later_button">Start later</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">The newest active downloads, with Paste link and Pause all</string>
+    <string name="widget_title">GrabLine</string>
+    <string name="widget_empty">No active downloads</string>
+    <string name="widget_paste">Paste link</string>
+    <string name="widget_paste_description">Paste the copied link into GrabLine</string>
+    <string name="widget_pause_all">Pause all</string>
+    <string name="widget_pause_all_description">Pause all active downloads</string>
+    <string name="widget_row_percent">%1$s, %2$d%%</string>
+    <string name="widget_row_unknown">%1$s, downloading</string>
+
+    <!-- Quick Settings tile -->
+    <string name="tile_label">GrabLine</string>
+    <plurals name="tile_active">
+        <item quantity="one">%1$d active</item>
+        <item quantity="other">%1$d active</item>
+    </plurals>
+    <string name="tile_idle">Add a link</string>
+    <string name="quick_add_nothing_copied">Copy a link first, then try again</string>
+</resources>

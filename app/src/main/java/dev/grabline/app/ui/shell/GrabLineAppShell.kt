@@ -58,6 +58,10 @@ import dev.grabline.app.ui.downloads.detailsRowKey
 import dev.grabline.app.ui.entry.IncomingRequest
 import dev.grabline.app.ui.pc.PcRoute
 import dev.grabline.app.ui.settings.SettingsRoute
+import dev.grabline.app.ui.transfers.TransfersRoute
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import dev.grabline.app.ui.welcome.WelcomeScreen
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -66,6 +70,7 @@ object Routes {
     const val DOWNLOADS = "downloads"
     const val DEVICES = "devices"
     const val SETTINGS = "settings"
+    const val TRANSFERS = "transfers"
     const val DETAILS = "details/{pcId}/{jobId}"
     const val PC = "pc/{pcId}"
 
@@ -75,11 +80,14 @@ object Routes {
 
 private data class Tab(val route: String, val labelRes: Int, @DrawableRes val iconRes: Int)
 
-private val tabs = listOf(
+private val baseTabs = listOf(
     Tab(Routes.DOWNLOADS, R.string.tab_downloads, R.drawable.ic_tab_downloads),
     Tab(Routes.DEVICES, R.string.tab_devices, R.drawable.ic_tab_devices),
     Tab(Routes.SETTINGS, R.string.tab_settings, R.drawable.ic_tab_settings),
 )
+
+/** Transfers sits after Devices and is hidden from navigation while nothing is copying or kept (SPEC screens). */
+private val transfersTab = Tab(Routes.TRANSFERS, R.string.tab_transfers, R.drawable.ic_tab_transfers)
 
 private val WideBreakpoint = 600.dp
 
@@ -124,6 +132,10 @@ fun GrabLineAppShell(
         else -> Unit
     }
 
+    val hasTransfers by remember(phone) {
+        phone?.jobs?.map { jobs -> jobs.any { it.isTransfer } }?.distinctUntilChanged() ?: flowOf(false)
+    }.collectAsState(initial = false)
+    val tabs = remember(hasTransfers) { if (hasTransfers) baseTabs.take(2) + transfersTab + baseTabs.drop(2) else baseTabs }
     val navController = rememberNavController()
     val backStack by navController.currentBackStackEntryAsState()
     val destination = backStack?.destination
@@ -302,6 +314,7 @@ fun GrabLineAppShell(
                     composable(Routes.PC, arguments = listOf(navArgument("pcId") { type = NavType.StringType })) { entry ->
                         PcRoute(remote, entry.arguments?.getString("pcId").orEmpty(), onBack = { navController.popBackStack() })
                     }
+                    composable(Routes.TRANSFERS) { TransfersRoute(phone) }
                     composable(Routes.SETTINGS) { SettingsRoute(settings, onPairPc = { select(Routes.DEVICES) }) }
                 }
             }

@@ -44,6 +44,9 @@ class Outbox(
     private val connections: ConnectionManager,
     private val clock: () -> Long = System::currentTimeMillis,
 ) {
+    /** Called after an item was delivered (the PC replied `queued`) and removed. */
+    @Volatile var deliveredListener: (suspend (OutboxItem) -> Unit)? = null
+
     private val sendLock = Mutex()
     private var worker: Job? = null
 
@@ -61,6 +64,8 @@ class Outbox(
         quality: String? = null,
         queueId: Int? = null,
         folderId: String? = null,
+        /** Runs after the item is stored and before the first send, with its requestId. */
+        afterInsert: (suspend (requestId: String) -> Unit)? = null,
     ): EnqueueResult {
         if (connections.isRemoved(pcId)) return EnqueueResult.PcRemoved
         val now = clock()
@@ -78,6 +83,7 @@ class Outbox(
                 createdAt = now,
             ),
         )
+        afterInsert?.invoke(requestId)
         connections.retryNow(pcId)
         scope.launch { flush(pcId) }
         return EnqueueResult.Queued(requestId)
@@ -113,7 +119,10 @@ class Outbox(
                     return@withLock
                 }
                 when (outcome) {
-                    Outcome.Delivered -> dao.markDelivered(item.id)
+                    Outcome.Delivered -> {
+                        dao.markDelivered(item.id)
+                        deliveredListener?.let { runCatching { it(item) } }
+                    }
                     is Outcome.Refused -> dao.markFailed(item.id, outcome.code.wire)
                     is Outcome.Retry -> {
                         dao.markRetry(item.id, outcome.reason)

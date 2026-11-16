@@ -8,6 +8,7 @@ import dev.grabline.app.remote.protocol.AuthOkReply
 import dev.grabline.app.remote.protocol.ErrorCode
 import dev.grabline.app.remote.protocol.GlobalState
 import dev.grabline.app.remote.protocol.GlobalUpdatedEvent
+import dev.grabline.app.remote.protocol.Feature
 import dev.grabline.app.remote.protocol.Inbound
 import dev.grabline.app.remote.protocol.Job
 import dev.grabline.app.remote.protocol.JobAddedEvent
@@ -139,6 +140,20 @@ class ConnectionManager(
         val session = sessions[pcId]?.takeIf { !it.isEnded }
             ?: throw RemoteException(ErrorCode.INTERNAL, message = "offline")
         return session.request(build)
+    }
+
+    /**
+     * A second authenticated connection for `fetch` (PROTOCOL.md 13), independent of whether the app wants live
+     * connections: a transfer keeps running in the background. Null when no address answers or the PC refuses us.
+     */
+    suspend fun openTransfer(pcId: String): TransferChannel? {
+        val pc = pcs.get(pcId)?.takeIf { it.removedAt == null } ?: return null
+        val live = sessions[pcId]?.takeIf { !it.isEnded }?.address
+        for (address in (listOfNotNull(live, pc.lastGoodAddress) + pc.addresses).distinct()) {
+            val session = PcSession(pc, address, factory, auth)
+            if (session.open(2_000).isSuccess) return session
+        }
+        return null
     }
 
     /** The PC was unpaired or removed locally: stop its loop. */
@@ -316,7 +331,9 @@ class ConnectionManager(
             }
         }
         try {
-            val subscribed = session.request { id -> SubscribeRequest(id, listOf("jobs", "global")) }
+            val outbox = (_states.value[pc.pcId] as? PcLinkState.Online)?.features?.contains(Feature.OUTBOX) == true
+            val topics = if (outbox) listOf("jobs", "global", "outbox") else listOf("jobs", "global")
+            val subscribed = session.request { id -> SubscribeRequest(id, topics) }
             (subscribed.message as? SubscribedReply)?.state?.let { state -> _global.update { it + (pc.pcId to state) } }
             reload(pc.pcId, session, cache)
         } catch (_: RemoteException) {
@@ -389,6 +406,7 @@ class ConnectionManager(
         speed = speed,
         etaSeconds = eta,
         queueId = queueId?.toInt(),
+        fetchable = fetchable,
         createdAt = createdAt,
         finishedAt = finishedAt,
         error = error,

@@ -20,7 +20,15 @@ import dev.grabline.app.engine.work.NetworkMonitor
 import dev.grabline.app.notify.PcActivityNotifier
 import dev.grabline.app.notify.PhoneJobNotifier
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
+import dev.grabline.app.widget.ActiveDownloads
+import dev.grabline.app.widget.ActiveItem
+import dev.grabline.app.widget.WidgetRenderer
+import dev.grabline.app.widget.WidgetState
 import dev.grabline.app.remote.DefaultPcRemote
 import dev.grabline.app.remote.PcRemote
 import dev.grabline.app.remote.connection.AuthProvider
@@ -28,6 +36,11 @@ import dev.grabline.app.remote.connection.ConnectionManager
 import dev.grabline.app.remote.connection.OkHttpWireFactory
 import dev.grabline.app.remote.connection.WifiSubnetSweeper
 import dev.grabline.app.remote.outbox.Outbox
+import dev.grabline.app.remote.connection.TransferConnector
+import dev.grabline.app.remote.transfer.FetchClient
+import dev.grabline.app.remote.transfer.PcOutboxPuller
+import dev.grabline.app.remote.transfer.SendToPcLink
+import dev.grabline.app.engine.PhoneAddRequest
 import dev.grabline.app.remote.pairing.OkHttpTransport
 import dev.grabline.app.remote.pairing.PairResult
 import dev.grabline.app.remote.pairing.PairingClient
@@ -72,8 +85,13 @@ class AppContainer(context: Context) {
     val video = YoutubeDlVideoEngine(app)
     val phone: DownloadEngine = DownloadEngine(
         db.phoneJobs(), engineClient, AndroidPhoneStorage(app), AppEngineSettings(settings), scope, video = video,
+        transfers = FetchClient(TransferConnector { pcId -> connections.openTransfer(pcId) }),
     )
     val batteryTip = BatteryTip.create(app)
+    /** Active downloads across the phone and every reachable PC, for the widget and the Quick Settings tile. */
+    val activeDownloads: StateFlow<List<ActiveItem>> by lazy {
+        ActiveDownloads.flow(phone, remote).stateIn(scope, SharingStarted.Eagerly, emptyList())
+    }
     val scheduler = DownloadScheduler(app) { ProcessLifecycleOwner.get().lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED) }
     private val phoneNotifier = PhoneJobNotifier(app)
 
@@ -93,6 +111,21 @@ class AppContainer(context: Context) {
         onPairingRemoved = { pc -> runCatching { keyStore.delete(Authenticator.keyAliasOf(pc)) } },
     )
     val outbox = Outbox(scope, db.outbox(), connections)
+    private val sendLink = SendToPcLink(db.phoneJobs()) { phoneJobId -> phone.cancel(phoneJobId) }
+    /** The folder new phone jobs from a PC land in: a picked tree, or null for Downloads/GrabLine. */
+    suspend fun saveFolderUri(): String? = settings.observe(AppSettings.SAVE_FOLDER).first().takeIf { it.startsWith("content:") }
+    private val pcOutbox = PcOutboxPuller(
+        scope, connections,
+        held = { pcId, itemId -> db.phoneJobs().byOutboxItem(pcId, itemId) != null },
+        save = { pcId, item ->
+            phone.add(
+                PhoneAddRequest(
+                    url = item.url, title = item.title, folderUri = saveFolderUri(), quality = item.quality,
+                    pcId = pcId, outboxItemId = item.itemId,
+                ),
+            )
+        },
+    )
     private val defaultRemote = DefaultPcRemote(db, connections, outbox, deleteKey = { pc -> keyStore.delete(Authenticator.keyAliasOf(pc)) })
     val remote: PcRemote = defaultRemote
     val pairing: PairingController = KeystorePairingController(
@@ -106,6 +139,8 @@ class AppContainer(context: Context) {
     @Volatile private var pcNotificationsOn = true
 
     fun start() {
+        outbox.deliveredListener = sendLink::onDelivered
+        pcOutbox.start()
         outbox.start()
         // yt-dlp, Python and FFmpeg unpack once, off the main thread; video downloads wait for it.
         scope.launch { runCatching { video.ensureReady() } }
@@ -130,6 +165,16 @@ class AppContainer(context: Context) {
         ChargingMonitor(app, phone).start()
         scope.launch { phone.hasRunnableWork().collect { if (it) scheduler.ensureRunning() } }
         scope.launch { phone.jobs.collect { phoneNotifier.onJobs(it) } }
+        // "Start later": wake the app when the earliest waiting job is due.
+        scope.launch { phone.nextStartAt().collect { at -> if (at != null) scheduler.scheduleAt(at) } }
+        // Home-screen widget: at most every 30 s while the app is closed, closely while it is open.
+        scope.launch {
+            activeDownloads.collect { items ->
+                WidgetState.items = items
+                WidgetRenderer.push(app, items)
+                delay(ActiveDownloads.updateIntervalMs(ProcessLifecycleOwner.get().lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)))
+            }
+        }
         ProcessLifecycleOwner.get().lifecycle.addObserver(object : DefaultLifecycleObserver {
             override fun onStart(owner: LifecycleOwner) {
                 remote.setForeground(true)

@@ -44,6 +44,8 @@ data class DownloadsUiState(
 
 sealed interface DownloadMessage {
     data class Error(val text: String) : DownloadMessage
+    /** A short confirmation chosen by the screen (translated there). */
+    data class Note(val note: DetailsNote) : DownloadMessage
     /** Show "Cancelled X" with Undo; [id] goes to [DownloadsViewModel.undo]. */
     data class UndoOffer(val id: Long, val action: RowAction, val count: Int, val name: String) : DownloadMessage
 }

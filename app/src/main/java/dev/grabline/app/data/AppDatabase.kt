@@ -56,9 +56,33 @@ val MIGRATION_3_4 = object : Migration(3, 4) {
     }
 }
 
+/** v4 -> v5: start-later time, pasted checksum and its result, and video options (format, subtitles, clip). */
+val MIGRATION_4_5 = object : Migration(4, 5) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN startAt INTEGER")
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN expectedSha256 TEXT")
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN checksumState TEXT")
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN formatSpec TEXT")
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN subLang TEXT")
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN clipStartSec INTEGER")
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN clipEndSec INTEGER")
+    }
+}
+
+/** v5 -> v6: transfers and PC outbox links on phone jobs, the send-to-PC marker, and `fetchable` on cached PC jobs. */
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN pcId TEXT")
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN remoteJobId INTEGER")
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN outboxItemId INTEGER")
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN sendRequestId TEXT")
+        db.execSQL("ALTER TABLE pc_jobs ADD COLUMN fetchable INTEGER NOT NULL DEFAULT 0")
+    }
+}
+
 @Database(
     entities = [PairedPc::class, PcJob::class, OutboxItem::class, PhoneJobRow::class, PhoneSegmentRow::class],
-    version = 4,
+    version = 6,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -77,7 +101,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "grabline.db",
-                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4).build().also { instance = it }
+                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6).build().also { instance = it }
             }
     }
 }

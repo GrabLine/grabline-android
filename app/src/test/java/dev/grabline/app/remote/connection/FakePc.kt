@@ -31,11 +31,15 @@ class FakePc(val pcId: String = "pcA", val pcName: String = "Study PC") : WireFa
     @Volatile var authOkAddresses: List<String> = listOf("10.0.0.1", "10.0.0.2")
     @Volatile var authOkPort = 47821
     @Volatile var authOkName = pcName
+    @Volatile var authOkFeatures: List<String> = listOf("jobs", "control", "global")
 
     /** type -> (request id, request body) -> reply frames; null = stay silent. */
     val handlers = ConcurrentHashMap<String, (String, JsonObject) -> List<String>?>()
     /** Pages answered by the default `jobs` handler: cursor "N" selects page N. */
     @Volatile var jobPages: List<List<String>> = listOf(emptyList())
+
+    /** Like [handlers] but with the connection, so a handler can stream binary frames or drop the link. Checked first. */
+    val connHandlers = ConcurrentHashMap<String, (Conn, String, JsonObject) -> List<String>?>()
 
     val attempts = CopyOnWriteArrayList<String>()
     val conns = CopyOnWriteArrayList<Conn>()
@@ -85,7 +89,7 @@ class FakePc(val pcId: String = "pcA", val pcName: String = "Study PC") : WireFa
 
     fun authOk(id: String) =
         """{"id":"$id","type":"authOk","protocolVersion":6,"pcId":"$pcId","pcName":"$authOkName","appVersion":"1.4.0","appRunning":true,"serverTime":1,""" +
-            """"addresses":[${authOkAddresses.joinToString(",") { "\"$it\"" }}],"port":$authOkPort,"features":["jobs","control","global"]}"""
+            """"addresses":[${authOkAddresses.joinToString(",") { "\"$it\"" }}],"port":$authOkPort,"features":[${authOkFeatures.joinToString(",") { "\"$it\"" }}]}"""
 
     fun error(id: String, code: String) = """{"id":"$id","type":"error","protocolVersion":6,"code":"$code","message":"x"}"""
 
@@ -110,6 +114,8 @@ class FakePc(val pcId: String = "pcA", val pcName: String = "Study PC") : WireFa
 
         fun push(frame: String) = exec.execute { if (!closed) listener.onText(frame) }
 
+        fun pushBinary(bytes: ByteArray) = exec.execute { if (!closed) listener.onBinary(bytes) }
+
         fun closeFromPc(code: Int) = exec.execute {
             if (!closed) {
                 closed = true
@@ -126,7 +132,7 @@ class FakePc(val pcId: String = "pcA", val pcName: String = "Study PC") : WireFa
         private fun handle(text: String) {
             if (closed) return
             val body = json.parseToJsonElement(text).jsonObject
-            val id = body["id"]?.jsonPrimitive?.content ?: return
+            val id = body["id"]?.jsonPrimitive?.content ?: return // notifications (fetchAck) are only recorded
             val type = body["type"]!!.jsonPrimitive.content
             if (type == "auth") {
                 when (authMode) {
@@ -139,7 +145,8 @@ class FakePc(val pcId: String = "pcA", val pcName: String = "Study PC") : WireFa
                 }
                 return
             }
-            handlers[type]?.invoke(id, body)?.forEach { listener.onText(it) }
+            val replies = connHandlers[type]?.invoke(this, id, body) ?: handlers[type]?.invoke(id, body)
+            replies?.forEach { listener.onText(it) }
         }
     }
 }

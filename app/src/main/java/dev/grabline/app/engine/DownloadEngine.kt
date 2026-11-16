@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
 
@@ -54,6 +55,8 @@ class DownloadEngine(
     backoffBaseMs: Long = 1000,
     random: Random = Random.Default,
     override val video: VideoEngine? = null,
+    /** Copies files from a PC for jobs of kind "transfer"; null where transfers are not wired. */
+    private val transfers: dev.grabline.app.remote.transfer.FetchClient? = null,
 ) : PhoneEngine {
     private val constraints = MutableStateFlow(EngineConstraints())
     private val speeds = MutableStateFlow<Map<Long, Long>>(emptyMap())
@@ -72,7 +75,10 @@ class DownloadEngine(
 
     /** True while some job is queued or downloading (background work uses it to decide whether to schedule). */
     fun hasRunnableWork(): Flow<Boolean> =
-        dao.observeCount(listOf(S_QUEUED, S_DOWNLOADING)).map { it > 0 }.distinctUntilChanged()
+        dao.observeDueCount(listOf(S_QUEUED, S_DOWNLOADING)).map { it > 0 }.distinctUntilChanged()
+
+    /** The earliest "Start later" time still waiting, so the scheduler can wake the app then. */
+    fun nextStartAt(): Flow<Long?> = dao.observeEarliestStart().distinctUntilChanged()
 
     fun setNetworkState(wifi: Boolean, metered: Boolean, connected: Boolean) {
         constraints.update { it.copy(wifi = wifi, metered = metered, connected = connected) }
@@ -94,10 +100,15 @@ class DownloadEngine(
                     val cfg = settings.current()
                     bucket.bytesPerSecond = cfg.speedLimitKbps.coerceAtLeast(0) * 1024L
                     val room = cfg.downloadsAtOnce.coerceAtLeast(1) - runners.size
-                    val queued = dao.withStatus(listOf(S_QUEUED)).filter { !runners.containsKey(it.id) }
+                    val now = clock()
+                    val waiting = dao.withStatus(listOf(S_QUEUED)).filter { !runners.containsKey(it.id) }
+                    val queued = waiting.filter { StartLater.isDue(it.startAt, now) }
                     for (row in queued.take(room.coerceAtLeast(0))) start(row.id, cfg)
                     if (runners.isEmpty() && queued.isEmpty()) break
-                    wake.receive()
+                    // A "Start later" job that comes due while others run is picked up at its time.
+                    val upcoming = StartLater.earliestPending(waiting.map { it.startAt }, now)
+                    if (upcoming != null) withTimeoutOrNull(StartLater.delayMs(upcoming, now).coerceAtLeast(1)) { wake.receive() }
+                    else wake.receive()
                 }
             }
         } finally {
@@ -110,10 +121,17 @@ class DownloadEngine(
 
     private suspend fun CoroutineScope.start(id: Long, cfg: EngineConfig) {
         if (dao.setStatusIf(id, listOf(S_QUEUED), S_DOWNLOADING) == 0) return
-        val isVideo = dao.get(id)?.kind == PhoneJobRow.KIND_VIDEO
+        dao.clearSchedule(id)
+        val kind = dao.get(id)?.kind
+        val isVideo = kind == PhoneJobRow.KIND_VIDEO
+        val isTransfer = kind == PhoneJobRow.KIND_TRANSFER
         val job = launch(ioDispatcher, start = CoroutineStart.LAZY) {
             val engine = video
-            if (isVideo && engine != null) VideoRunner(env, engine, id, cfg).run() else JobRunner(env, id, cfg).run()
+            val fetcher = transfers
+            if (isTransfer) {
+                if (fetcher != null) TransferRunner(env, fetcher, id).run()
+                else dao.moveIf(id, listOf("DOWNLOADING"), "FAILED", null, TransferText.REFUSED)
+            } else if (isVideo && engine != null) VideoRunner(env, engine, id, cfg).run() else JobRunner(env, id, cfg).run()
         }
         runners[id] = job
         job.invokeOnCompletion {
@@ -172,6 +190,9 @@ class DownloadEngine(
                         url = url, name = fileNameFor(request.title, url), folderUri = request.folderUri,
                         status = if (refusal != null) PhoneJobStatus.FAILED.name else S_QUEUED, error = refusal,
                         quality = request.quality ?: "best", kind = PhoneJobRow.KIND_VIDEO, createdAt = now,
+                        startAt = request.startAt, notice = scheduledNotice(request.startAt, now), expectedSha256 = request.sha256,
+                        formatSpec = request.formatSpec, subLang = request.subtitleLang,
+                        clipStartSec = request.clipStartSec, clipEndSec = request.clipEndSec,
                     ),
                 )
             }
@@ -182,12 +203,34 @@ class DownloadEngine(
                 PhoneJobRow(
                     url = url, name = uniqueName(fileNameFor(request.title, url), taken), folderUri = request.folderUri,
                     status = S_QUEUED, quality = request.quality, createdAt = now,
+                    startAt = request.startAt, notice = scheduledNotice(request.startAt, now), expectedSha256 = request.sha256,
+                ),
+            )
+        }
+        if (request.pcId != null) dao.setSource(id, request.pcId, request.outboxItemId)
+        reevaluate()
+        return toJob(dao.get(id)!!, 0)
+    }
+
+    override suspend fun addTransfer(request: TransferAddRequest): PhoneJob {
+        val id = addMutex.withLock {
+            dao.activeTransfer(request.pcId, request.remoteJobId)?.let { return@withLock it.id }
+            val taken = storage.existingNames(request.folderUri) +
+                dao.all().filter { it.folderUri == request.folderUri && it.status !in DONE }.map { it.name }
+            dao.insert(
+                PhoneJobRow(
+                    url = request.url, name = uniqueName(fileNameFor(request.name, request.url), taken), folderUri = request.folderUri,
+                    status = S_QUEUED, total = request.size, kind = PhoneJobRow.KIND_TRANSFER,
+                    pcId = request.pcId, remoteJobId = request.remoteJobId, createdAt = clock(),
                 ),
             )
         }
         reevaluate()
         return toJob(dao.get(id)!!, 0)
     }
+
+    private fun scheduledNotice(startAt: Long?, now: Long): String? =
+        startAt?.takeIf { it > now }?.let { StartLater.notice(it, now) }
 
     override suspend fun pause(jobId: Long) {
         stopRunner(jobId)
@@ -246,7 +289,8 @@ class DownloadEngine(
             downloaded = r.downloaded, total = r.total, speed = speed,
             etaSeconds = if (speed > 0 && remaining != null) (remaining / speed).coerceAtLeast(0) else null,
             connections = r.connections, notice = r.notice, error = r.error, fileUri = r.fileUri,
-            createdAt = r.createdAt, finishedAt = r.finishedAt, isVideo = r.kind == PhoneJobRow.KIND_VIDEO,
+            createdAt = r.createdAt, finishedAt = r.finishedAt, isVideo = r.kind == PhoneJobRow.KIND_VIDEO, isTransfer = r.kind == PhoneJobRow.KIND_TRANSFER,
+            startAt = r.startAt?.takeIf { r.status == S_QUEUED || r.status in WAITING_NAMES }, checksum = r.checksumState,
         )
     }
 
@@ -257,6 +301,7 @@ class DownloadEngine(
         val S_FAILED = PhoneJobStatus.FAILED.name
         val S_CANCELLED = PhoneJobStatus.CANCELLED.name
         val S_COMPLETED = PhoneJobStatus.COMPLETED.name
+        val WAITING_NAMES = setOf("WAITING_NETWORK", "WAITING_WIFI", "WAITING_CHARGING")
         val WAITING = setOf(PhoneJobStatus.WAITING_NETWORK, PhoneJobStatus.WAITING_WIFI, PhoneJobStatus.WAITING_CHARGING)
         /** Jobs the engine still wants to run: queued, downloading or held by a constraint. */
         val ACTIVE = listOf(S_QUEUED, S_DOWNLOADING) + WAITING.map { it.name }

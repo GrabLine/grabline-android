@@ -39,10 +39,33 @@ data class PhoneJobRow(
     val finishedAt: Long? = null,
     /** "file" (the segment engine) or "video" (yt-dlp + FFmpeg). Added in schema 4. */
     val kind: String = KIND_FILE,
+    /** The PC this job came from (a transfer, or a link from the PC's outbox). Added in schema 6. */
+    val pcId: String? = null,
+    /** For a transfer: the PC job being copied. */
+    val remoteJobId: Long? = null,
+    /** The PC outbox item this job was made from, so a re-offered item is not added twice. */
+    val outboxItemId: Long? = null,
+    /** Set while "Send to PC" waits for the PC to confirm; the job is cancelled once it has. */
+    val sendRequestId: String? = null,
+    /** Epoch millis before which the job must not start ("Start later"); null = no wait. Added in schema 5. */
+    val startAt: Long? = null,
+    /** SHA-256 the user pasted (lower-case hex), checked when the job completes. */
+    val expectedSha256: String? = null,
+    /** Result of that check: "verified", "mismatch", or null when none was asked for. */
+    val checksumState: String? = null,
+    /** yt-dlp format selector picked under "More formats"; null = the quality preset decides. */
+    val formatSpec: String? = null,
+    /** Subtitle language to fetch and embed (video jobs). */
+    val subLang: String? = null,
+    /** Clip to keep, in seconds from the start of the video (video jobs). */
+    val clipStartSec: Long? = null,
+    val clipEndSec: Long? = null,
 ) {
     companion object {
         const val KIND_FILE = "file"
         const val KIND_VIDEO = "video"
+        /** A copy of a finished PC file (PROTOCOL.md 13). */
+        const val KIND_TRANSFER = "transfer"
     }
 }
 
@@ -85,6 +108,21 @@ interface PhoneJobDao {
     @Query("SELECT COUNT(*) FROM phone_jobs WHERE status IN (:statuses)")
     fun observeCount(statuses: List<String>): Flow<Int>
 
+    /** Jobs that can run now: not waiting for a "Start later" time that has not come. */
+    @Query("SELECT COUNT(*) FROM phone_jobs WHERE status IN (:statuses) AND (startAt IS NULL OR startAt <= CAST(strftime('%s','now') AS INTEGER) * 1000)")
+    fun observeDueCount(statuses: List<String>): Flow<Int>
+
+    /** The earliest "Start later" time among queued jobs, for the scheduler's wake-up. */
+    @Query("SELECT MIN(startAt) FROM phone_jobs WHERE status IN ('QUEUED','WAITING_NETWORK','WAITING_WIFI','WAITING_CHARGING') AND startAt IS NOT NULL")
+    fun observeEarliestStart(): Flow<Long?>
+
+    /** The job started: forget its wait and the "Starts at" notice. */
+    @Query("UPDATE phone_jobs SET startAt = NULL, notice = CASE WHEN notice LIKE 'Starts %' THEN NULL ELSE notice END WHERE id = :id AND startAt IS NOT NULL")
+    suspend fun clearSchedule(id: Long)
+
+    @Query("UPDATE phone_jobs SET checksumState = :state, notice = :notice WHERE id = :id")
+    suspend fun setChecksum(id: Long, state: String, notice: String)
+
     @Insert
     suspend fun insert(row: PhoneJobRow): Long
 
@@ -122,6 +160,25 @@ interface PhoneJobDao {
 
     @Query("UPDATE phone_jobs SET downloaded = :downloaded, connections = :connections, connectionCap = :cap WHERE id = :id")
     suspend fun saveProgress(id: Long, downloaded: Long, connections: Int, cap: Int?)
+
+    @Query("UPDATE phone_jobs SET pcId = :pcId, outboxItemId = :itemId WHERE id = :id")
+    suspend fun setSource(id: Long, pcId: String, itemId: Long?)
+
+    @Query("SELECT * FROM phone_jobs WHERE pcId = :pcId AND outboxItemId = :itemId LIMIT 1")
+    suspend fun byOutboxItem(pcId: String, itemId: Long): PhoneJobRow?
+
+    @Query("SELECT * FROM phone_jobs WHERE sendRequestId = :requestId")
+    suspend fun bySendRequest(requestId: String): List<PhoneJobRow>
+
+    @Query("UPDATE phone_jobs SET sendRequestId = :requestId WHERE id = :id")
+    suspend fun setSendRequest(id: Long, requestId: String?)
+
+    /** A copy of this PC file that is still running or waiting (a second tap on "Copy" does not start another). */
+    @Query("SELECT * FROM phone_jobs WHERE kind = 'transfer' AND pcId = :pcId AND remoteJobId = :remoteJobId AND status NOT IN ('COMPLETED', 'FAILED', 'CANCELLED') LIMIT 1")
+    suspend fun activeTransfer(pcId: String, remoteJobId: Long): PhoneJobRow?
+
+    @Query("UPDATE phone_jobs SET downloaded = :downloaded, total = :total, etag = :etag WHERE id = :id")
+    suspend fun saveTransfer(id: Long, downloaded: Long, total: Long?, etag: String?)
 
     @Query("SELECT * FROM phone_segments WHERE jobId = :jobId ORDER BY start")
     suspend fun segments(jobId: Long): List<PhoneSegmentRow>

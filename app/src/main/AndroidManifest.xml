@@ -36,6 +36,10 @@
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop">
+            <!-- Long press on the Quick Settings tile opens the app. -->
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -64,6 +68,14 @@
                 <data android:mimeType="application/x-bittorrent" />
             </intent-filter>
         </activity>
+        <!-- The small Add sheet the Quick Settings tile and the widget open; it reads the clipboard once it has focus. -->
+        <activity
+            android:name=".ui.add.QuickAddActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:theme="@style/Theme.GrabLine.QuickAdd" />
         <!-- ZXing's scanner follows the phone's orientation instead of forcing landscape. -->
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
@@ -86,6 +98,30 @@
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
+        <receiver
+            android:name=".widget.DownloadsWidgetProvider"
+            android:exported="true"
+            android:label="@string/tile_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/downloads_widget_info" />
+        </receiver>
+        <receiver
+            android:name=".widget.WidgetActionReceiver"
+            android:exported="false" />
+        <service
+            android:name=".tile.DownloadsTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_notify_download"
+            android:label="@string/tile_label"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
         <receiver
             android:name=".notify.NotificationActionReceiver"
             android:exported="false" />

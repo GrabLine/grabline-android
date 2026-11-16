@@ -20,6 +20,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.withTimeout
@@ -62,7 +64,7 @@ class PcSession(
     val address: String,
     private val factory: WireFactory,
     private val auth: AuthProvider,
-) {
+) : TransferChannel {
     private val ids = AtomicLong(0)
     private val pending = ConcurrentHashMap<String, CompletableDeferred<Inbound.Reply>>()
     private val opened = CompletableDeferred<Result<AuthOkReply>>()
@@ -76,11 +78,18 @@ class PcSession(
         extraBufferCapacity = 256,
         onBufferOverflow = BufferOverflow.DROP_OLDEST,
     )
-    val events: SharedFlow<ServerEvent> = _events
+    override val events: SharedFlow<ServerEvent> = _events
+
+    private val _frames = Channel<ByteArray>(Channel.UNLIMITED)
+    /** Binary frames (file chunks) in arrival order; closed when the session ends. The PC window bounds the backlog. */
+    override val frames: ReceiveChannel<ByteArray> = _frames
+
+    /** Send a request that has no reply (`fetchAck`). False when the socket is gone. */
+    override fun notify(request: Request): Boolean = !ended.isCompleted && socket?.send(ProtocolCodec.encode(request)) == true
 
     /** Completes when the session ends, with the reason. */
-    suspend fun awaitEnd(): SessionEnd = ended.await()
-    val isEnded: Boolean get() = ended.isCompleted
+    override suspend fun awaitEnd(): SessionEnd = ended.await()
+    override val isEnded: Boolean get() = ended.isCompleted
 
     private fun nextId(): String = "r" + ids.incrementAndGet()
 
@@ -122,7 +131,7 @@ class PcSession(
     }
 
     /** Send a request and wait for its reply. Error replies throw [RemoteException]. */
-    suspend fun request(build: (String) -> Request): Inbound.Reply {
+    override suspend fun request(build: (String) -> Request): Inbound.Reply {
         if (ended.isCompleted) throw RemoteException(ErrorCode.INTERNAL, message = "offline")
         val id = nextId()
         val request = build(id)
@@ -147,7 +156,9 @@ class PcSession(
         }
     }
 
-    fun close(code: Int = 1000) {
+    override fun close() = close(1000)
+
+    fun close(code: Int) {
         socket?.close(code, "")
         finish(SessionEnd.Closed(code, 0))
     }
@@ -156,6 +167,7 @@ class PcSession(
         if (!ended.complete(end)) return
         if (!opened.isCompleted) opened.complete(Result.failure(EndException(end)))
         helloDeferred.complete(null)
+        _frames.close()
         val error = RemoteException(ErrorCode.INTERNAL, message = "connection lost")
         pending.values.forEach { it.completeExceptionally(error) }
         pending.clear()
@@ -170,6 +182,10 @@ class PcSession(
                 is Inbound.Event -> _events.tryEmit(inbound.message)
                 is Inbound.Malformed, is Inbound.TooLarge -> Unit // dropped; never crash
             }
+        }
+
+        override fun onBinary(bytes: ByteArray) {
+            if (authSent.get()) _frames.trySend(bytes)
         }
 
         override fun onClosed(code: Int, reason: String) {

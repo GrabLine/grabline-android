@@ -47,6 +47,10 @@ data class DownloadRow(
     val connections: Int = 0,
     /** content:// URI of a finished phone file, for Open and Share. */
     val fileUri: String? = null,
+    /** PC rows: the PC would let this phone copy the finished file (`fetchable`). */
+    val fetchable: Boolean = false,
+    /** Phone rows: this is a copy from a PC (Transfers screen). */
+    val isTransfer: Boolean = false,
 ) {
     val isPhone: Boolean get() = device is Device.Phone
     val waiting: Boolean
@@ -124,6 +128,7 @@ fun phoneRow(j: PhoneJob) = DownloadRow(
     notice = j.notice?.takeIf { it.isNotBlank() },
     connections = j.connections,
     fileUri = j.fileUri,
+    isTransfer = j.isTransfer,
 )
 
 fun statusOf(wire: String): RowStatus = when (JobStatus.fromWire(wire)) {
@@ -158,6 +163,7 @@ fun toRow(item: PcJobWithPc, link: PcLinkState?): DownloadRow {
         queueId = j.queueId?.toLong(),
         offline = offline,
         lastSeenAt = if (offline) seen else null,
+        fetchable = j.fetchable,
     )
 }
 

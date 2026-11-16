@@ -468,10 +468,13 @@ internal class JobRunner(private val env: Env, private val id: Long, private val
         // Rule 9: the size check comes before the file takes its real name.
         if (raf.length() != size) throw Permanent(EngineText.UNEXPECTED)
         val scratch = env.storage.scratchFile(id)
+        // Optional SHA-256 check: advisory, the file is kept either way.
+        val checksum = dao.get(id)?.expectedSha256?.let { runCatching { Checksum.verify(scratch, it) }.getOrNull() }
         val uri = env.storage.publish(job.folderUri, dao.get(id)?.name ?: job.name, scratch)
         withContext(NonCancellable) {
             if (dao.complete(id, uri, size, env.clock()) > 0) {
                 dao.deleteSegments(id)
+                if (checksum != null) dao.setChecksum(id, checksum, Checksum.noticeFor(checksum).orEmpty())
             }
         }
     }

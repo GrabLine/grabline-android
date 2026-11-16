@@ -16,7 +16,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import dev.grabline.app.ui.downloads.DetailsNote
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -90,10 +95,12 @@ fun DownloadDetailsRoute(
     modifier: Modifier = Modifier,
     phone: PhoneEngine? = null,
 ) {
+    val context = LocalContext.current
+    val saveFolder: suspend () -> String? = remember { { (context.applicationContext as? GrabLineApp)?.container?.saveFolderUri() } }
     val vm: DownloadDetailsViewModel = viewModel(
         key = "details:$pcId:$jobId",
         factory = viewModelFactory {
-            initializer { DownloadDetailsViewModel(remote, pcId, jobId, createSavedStateHandle(), phone = phone) }
+            initializer { DownloadDetailsViewModel(remote, pcId, jobId, createSavedStateHandle(), phone = phone, saveFolder = saveFolder) }
         },
     )
     val state by vm.state.collectAsStateWithLifecycle()
@@ -106,6 +113,9 @@ fun DownloadDetailsRoute(
         onUndo = vm::undo,
         onBack = onBack,
         modifier = modifier,
+        onCopyToPhone = vm::copyToPhone,
+        onDownloadHere = vm::downloadHere,
+        onSendToPc = vm::sendToPc,
     )
 }
 
@@ -140,6 +150,9 @@ fun DownloadDetailsScreen(
     onUndo: (Long) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    onCopyToPhone: () -> Unit = {},
+    onDownloadHere: () -> Unit = {},
+    onSendToPc: (pcId: String) -> Unit = {},
 ) {
     val context = LocalContext.current
     val host = remember { SnackbarHostState() }
@@ -155,6 +168,16 @@ fun DownloadDetailsScreen(
                 host.currentSnackbarData?.dismiss()
                 when (m) {
                     is DownloadMessage.Error -> host.showSnackbar(m.text)
+                    is DownloadMessage.Note -> host.showSnackbar(
+                        context.getString(
+                            when (m.note) {
+                                DetailsNote.CopyStarted -> R.string.note_copy_started
+                                DetailsNote.SendingToPc -> R.string.note_sending_to_pc
+                                DetailsNote.AlreadySending -> R.string.note_already_sending
+                                DetailsNote.MovedToPhone -> R.string.note_moved_to_phone
+                            },
+                        ),
+                    )
                     is DownloadMessage.UndoOffer -> {
                         val text = context.getString(
                             if (m.action == RowAction.Cancel) R.string.undo_cancelled_one else R.string.undo_removed_one,
@@ -195,6 +218,7 @@ fun DownloadDetailsScreen(
                 val noApp = stringResource(R.string.file_no_app)
                 DetailsBody(
                     row, state, onAction,
+                    onCopyToPhone = onCopyToPhone, onDownloadHere = onDownloadHere, onSendToPc = onSendToPc,
                     onCopy = { clipboard.setText(AnnotatedString(row.url)); scope.launch { host.showSnackbar(copied) } },
                     onOpen = { if (!FileActions.open(context, row.fileUri)) scope.launch { host.showSnackbar(noApp) } },
                     onShare = { if (!FileActions.share(context, row.fileUri, row.name)) scope.launch { host.showSnackbar(noApp) } },
@@ -213,9 +237,16 @@ private fun DetailsBody(
     onCopy: () -> Unit,
     onOpen: () -> Unit,
     onShare: () -> Unit,
+    onCopyToPhone: () -> Unit = {},
+    onDownloadHere: () -> Unit = {},
+    onSendToPc: (pcId: String) -> Unit = {},
 ) {
     val context = LocalContext.current
+    var choosingPc by remember { mutableStateOf(false) }
     val statuses = AndroidStatusStrings(context)
+    if (choosingPc) {
+        ChoosePcDialog(state.sendTargets, onPick = { choosingPc = false; onSendToPc(it) }, onDismiss = { choosingPc = false })
+    }
     Column(
         Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -301,12 +332,43 @@ private fun DetailsBody(
                 Button(onClick = onOpen, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.action_open_file)) }
                 OutlinedButton(onClick = onShare, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.action_share_file)) }
             }
+            if (state.canCopyToPhone) {
+                Button(onClick = onCopyToPhone, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.action_copy_to_phone)) }
+            }
+            if (state.canDownloadHere) {
+                OutlinedButton(onClick = onDownloadHere, enabled = !state.removing, modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.action_download_here))
+                }
+            }
+            if (state.sendTargets.isNotEmpty()) {
+                OutlinedButton(
+                    onClick = { if (state.sendTargets.size == 1) onSendToPc(state.sendTargets.first().pcId) else choosingPc = true },
+                    modifier = Modifier.heightIn(min = 48.dp),
+                ) { Text(stringResource(R.string.action_send_to_pc)) }
+            }
             OutlinedButton(onClick = onCopy, modifier = Modifier.heightIn(min = 48.dp)) {
                 Icon(DownloadIcons.Copy, contentDescription = null, modifier = Modifier.size(18.dp))
                 Text(stringResource(R.string.action_copy_link), modifier = Modifier.padding(start = 8.dp))
             }
         }
     }
+}
+
+@Composable
+private fun ChoosePcDialog(targets: List<PcChoice>, onPick: (String) -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.send_to_pc_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                targets.forEach { t ->
+                    TextButton(onClick = { onPick(t.pcId) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text(t.name) }
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = { TextButton(onClick = onDismiss, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.action_cancel)) } },
+    )
 }
 
 @Composable

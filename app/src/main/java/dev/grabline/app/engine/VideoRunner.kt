@@ -72,6 +72,10 @@ internal class VideoRunner(
             dir = dir,
             processId = "job-$id",
             retries = cfg.autoRetry,
+            formatSpec = job.formatSpec,
+            subtitleLang = job.subLang,
+            clipStartSec = job.clipStartSec,
+            clipEndSec = job.clipEndSec,
         )
         val files = try {
             download(request)
@@ -110,6 +114,7 @@ internal class VideoRunner(
         val taken = env.storage.existingNames(folderUri).toMutableSet()
         var first: String? = null
         var firstSize = 0L
+        var checksum: String? = null
         for (file in files) {
             val name = uniqueName(fileNameFor(file.name, file.name), taken)
             taken += name
@@ -117,11 +122,16 @@ internal class VideoRunner(
             if (first == null) {
                 first = uri
                 firstSize = file.length()
+                checksum = dao.get(id)?.expectedSha256?.let { runCatching { Checksum.verify(file, it) }.getOrNull() }
                 dao.rename(id, name)
             }
         }
         val uri = first ?: throw VideoException(VideoFailure.UNEXPECTED, VideoText.UNEXPECTED)
-        withContext(NonCancellable) { dao.complete(id, uri, firstSize, env.clock()) }
+        withContext(NonCancellable) {
+            if (dao.complete(id, uri, firstSize, env.clock()) > 0 && checksum != null) {
+                dao.setChecksum(id, checksum, Checksum.noticeFor(checksum).orEmpty())
+            }
+        }
     }
 
     private suspend fun fail(text: String) {

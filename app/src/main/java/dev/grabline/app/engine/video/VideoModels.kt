@@ -51,6 +51,21 @@ object VideoPresets {
 
 data class QualityOption(val wire: String, val sizeBytes: Long?)
 
+/** One raw yt-dlp format, for "More formats". [vcodec]/[acodec] are yt-dlp's codec strings ("avc1.640028"); null when absent. */
+data class VideoFormat(
+    val id: String,
+    val ext: String?,
+    val height: Int?,
+    val width: Int? = null,
+    val fps: Double? = null,
+    val vcodec: String? = null,
+    val acodec: String? = null,
+    val sizeBytes: Long? = null,
+)
+
+/** A subtitle track the site offers; [auto] marks machine-made captions. */
+data class SubtitleTrack(val lang: String, val name: String?, val auto: Boolean = false)
+
 data class VideoAnalysis(
     val title: String?,
     val durationSeconds: Long?,
@@ -59,6 +74,9 @@ data class VideoAnalysis(
     val qualities: List<QualityOption>,
     val isPlaylist: Boolean = false,
     val playlistCount: Int? = null,
+    /** Every usable video or audio format, as yt-dlp lists them. Empty for playlists. */
+    val formats: List<VideoFormat> = emptyList(),
+    val subtitles: List<SubtitleTrack> = emptyList(),
 )
 
 /** Why a video job or analysis failed. */
@@ -73,6 +91,13 @@ data class VideoDownload(
     val processId: String,
     /** yt-dlp retries per request; -1 = unlimited. */
     val retries: Int,
+    /** A format selector chosen under "More formats"; replaces the preset's selector. */
+    val formatSpec: String? = null,
+    /** Subtitle language to fetch and embed. */
+    val subtitleLang: String? = null,
+    /** Keep only this part of the video (seconds); either end may be open. */
+    val clipStartSec: Long? = null,
+    val clipEndSec: Long? = null,
 )
 
 /** Whole-job progress. [total] is an estimate while yt-dlp is still choosing streams. */
@@ -191,7 +216,7 @@ object VideoArgs {
         val preset = VideoPresets.forWire(request.quality)
         val retries = if (request.retries < 0) "infinite" else request.retries.toString()
         return buildList {
-            add("-f"); add(preset.formatSpec)
+            add("-f"); add(request.formatSpec?.takeIf { it.isNotBlank() } ?: preset.formatSpec)
             add("-o"); add("${request.dir.path.replace('\\', '/')}/%(title).120B.%(ext)s")
             add("--windows-filenames")
             add("--newline")
@@ -208,9 +233,19 @@ object VideoArgs {
             } else {
                 add("--merge-output-format"); add("mp4")
             }
+            request.subtitleLang?.takeIf { it.isNotBlank() }?.let { lang ->
+                add("--write-subs"); add("--write-auto-subs"); add("--sub-langs"); add(lang); add("--embed-subs")
+            }
+            clipSection(request.clipStartSec, request.clipEndSec)?.let { add("--download-sections"); add(it); add("--force-keyframes-at-cuts") }
             // Title, artist and the other tags go into the file (QA-34).
             add("--embed-metadata"); add("--add-metadata")
         }
+    }
+
+    /** yt-dlp's `--download-sections` value for a clip ("*60-150", "*60-inf", "*0-150"), or null for the whole video. */
+    fun clipSection(startSec: Long?, endSec: Long?): String? {
+        if (startSec == null && endSec == null) return null
+        return "*${startSec ?: 0}-${endSec?.toString() ?: "inf"}"
     }
 }
 
@@ -277,6 +312,8 @@ object AnalysisParser {
             return VideoAnalysis(title, duration, uploader, generic, isPlaylist = true, playlistCount = entries?.size)
         }
         val formats = (root["formats"] as? JsonArray).orEmpty().mapNotNull { it as? JsonObject }
+        val raw = rawFormats(formats)
+        val subtitles = subtitleTracks(root)
         val video = formats.filter { f ->
             (!f.isNone("vcodec") && f.str("vcodec") != "images") ||
                 ((f["vcodec"] == null || f["vcodec"] is JsonNull) && f.num("height") != null && f.str("ext") in VIDEO_EXTS)
@@ -299,6 +336,31 @@ object AnalysisParser {
         options += QualityOption("mp3", audioSize)
         options += QualityOption("m4a", audioSize)
         options += QualityOption("flac", null)
-        return VideoAnalysis(title, duration, uploader, options)
+        return VideoAnalysis(title, duration, uploader, options, formats = raw, subtitles = subtitles)
     }
+
+    /** Playable formats only: storyboards and image sheets are not downloads. */
+    private fun rawFormats(formats: List<JsonObject>): List<VideoFormat> = formats.mapNotNull { f ->
+        val id = f.str("format_id") ?: return@mapNotNull null
+        val ext = f.str("ext")
+        if (f.str("vcodec") == "images" || ext == "mhtml" || f.str("format_note")?.contains("storyboard", true) == true) return@mapNotNull null
+        val v = f.str("vcodec")?.takeIf { it != "none" }
+        val a = f.str("acodec")?.takeIf { it != "none" }
+        if (v == null && a == null && f.num("height") == null) return@mapNotNull null
+        VideoFormat(id, ext, f.num("height")?.toInt(), f.num("width")?.toInt(), f.num("fps"), v, a, f.size())
+    }
+
+    private fun subtitleTracks(root: JsonObject): List<SubtitleTrack> {
+        fun read(key: String, auto: Boolean): List<SubtitleTrack> = (root[key] as? JsonObject).orEmpty().map { (lang, tracks) ->
+            val name = ((tracks as? JsonArray)?.firstOrNull() as? JsonObject)?.str("name")
+            SubtitleTrack(lang, name, auto)
+        }
+        val manual = read("subtitles", false).filter { it.lang != "live_chat" }
+        val have = manual.map { it.lang }.toSet()
+        // Captions the site wrote come first; machine captions only for languages without one, and only the few common ones.
+        val auto = read("automatic_captions", true).filter { it.lang !in have && it.lang in COMMON_AUTO }
+        return manual.sortedBy { it.lang } + auto.sortedBy { it.lang }
+    }
+
+    private val COMMON_AUTO = setOf("en", "es", "fr", "de", "pt", "it", "ru", "ja", "ko", "zh", "hi", "ar", "tr")
 }

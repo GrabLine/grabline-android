@@ -72,7 +72,9 @@ class ActiveNotifications(context: Context, private val throttle: ProgressThrott
 
     private fun child(job: PhoneJob): Notification {
         val total = job.total ?: 0L
-        val b = NotificationCompat.Builder(context, NotificationChannels.ACTIVE_DOWNLOADS)
+        // A copy from a PC uses its own channel ("Transfers": silent, with Cancel).
+        val channel = if (job.isTransfer) NotificationChannels.TRANSFERS else NotificationChannels.ACTIVE_DOWNLOADS
+        val b = NotificationCompat.Builder(context, channel)
             .setSmallIcon(R.drawable.ic_notify_download)
             .setContentTitle(job.name)
             .setGroup(GROUP)

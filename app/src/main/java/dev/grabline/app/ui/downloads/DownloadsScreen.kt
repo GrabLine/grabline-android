@@ -150,6 +150,7 @@ fun DownloadsScreen(
                 host.currentSnackbarData?.dismiss()
                 when (m) {
                     is DownloadMessage.Error -> host.showSnackbar(m.text)
+                    is DownloadMessage.Note -> Unit
                     is DownloadMessage.UndoOffer -> {
                         val res = context.resources
                         val text = when {

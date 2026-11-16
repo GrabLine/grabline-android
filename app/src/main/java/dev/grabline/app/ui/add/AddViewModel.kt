@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.grabline.app.data.AppSettings
 import dev.grabline.app.data.Setting
+import dev.grabline.app.engine.Checksum
+import dev.grabline.app.engine.video.SubtitleTrack
 import dev.grabline.app.engine.PhoneAddRequest
 import dev.grabline.app.engine.PhoneEngine
 import dev.grabline.app.engine.video.DrmGuard
@@ -44,7 +46,14 @@ enum class FailureReason { NO_MEDIA, DRM, SITE_CHANGED, OTHER }
 sealed interface AnalysisUi {
     data object Idle : AnalysisUi
     data object Loading : AnalysisUi
-    data class Ready(val title: String?, val sizes: Map<String, Long?>, val playlistCount: Int? = null) : AnalysisUi
+    data class Ready(
+        val title: String?,
+        val sizes: Map<String, Long?>,
+        val playlistCount: Int? = null,
+        /** "More formats" rows: raw formats on the phone, the PC analysis rows for a PC. */
+        val formats: List<FormatRow> = emptyList(),
+        val subtitles: List<SubtitleTrack> = emptyList(),
+    ) : AnalysisUi
     data class Failed(val message: String, val reason: FailureReason) : AnalysisUi
 }
 
@@ -88,6 +97,25 @@ data class AddUiState(
     val phoneAddCount: Int = 0,
     /** A DRM service on this phone: the plain-words refusal, shown instead of the options. */
     val blockedMessage: String? = null,
+    /** "More formats" rows to show (empty until analysis is ready). */
+    val formatRows: List<FormatRow> = emptyList(),
+    /** The row picked under "More formats", or null to use the quality chip. */
+    val formatId: String? = null,
+    val subtitleOptions: List<SubtitleTrack> = emptyList(),
+    val subtitleLang: String? = null,
+    /** Clip trim boxes as typed (phone video only). */
+    val clipStart: String = "",
+    val clipEnd: String = "",
+    val clipValid: Boolean = true,
+    /** "Start later" is offered for the phone only: protocol 6 has no scheduled start. */
+    val canStartLater: Boolean = false,
+    /** The chosen start time (epoch millis), or null for "start now". */
+    val startAt: Long? = null,
+    /** The pasted checksum as typed, and whether it is acceptable (blank is fine). */
+    val checksum: String = "",
+    val checksumValid: Boolean = true,
+    val showChecksum: Boolean = false,
+    val showClip: Boolean = false,
 ) {
     val selectedPc: PcOption? get() = pcs.firstOrNull { it.id == selectedPcId }
 }
@@ -158,7 +186,24 @@ class AddViewModel(
         Local(links, title, pc, quality, t[0] as Int, t[1] as String?, t[2] as Boolean, t[3] as String?)
     }
 
-    val state: StateFlow<AddUiState> = combine(env, local, transient) { e, l, t -> build(e, l, t) }
+    private data class Extras(
+        val formatId: String?,
+        val subLang: String?,
+        val clipStart: String,
+        val clipEnd: String,
+        val startAt: Long?,
+        val checksum: String,
+    )
+
+    private val extras = combine(
+        handle.getStateFlow<String?>(FORMAT, null),
+        handle.getStateFlow<String?>(SUBS, null),
+        combine(handle.getStateFlow(CLIP_START, ""), handle.getStateFlow(CLIP_END, "")) { a, b -> a to b },
+        handle.getStateFlow(LATER, -1L),
+        handle.getStateFlow(SHA, ""),
+    ) { f, sub, clip, later, sha -> Extras(f, sub, clip.first, clip.second, later.takeIf { it > 0 }, sha) }
+
+    val state: StateFlow<AddUiState> = combine(env, local, transient, extras) { e, l, t, x -> build(e, l, t, x) }
         .stateIn(viewModelScope, SharingStarted.Eagerly, AddUiState())
 
     init {
@@ -172,7 +217,10 @@ class AddViewModel(
                 if (target.pcId == PHONE_ID) {
                     val ui = try {
                         val a = phone?.video?.analyze(target.url) ?: return@collectLatest
-                        AnalysisUi.Ready(a.title, a.qualities.associate { it.wire to it.sizeBytes }, a.playlistCount.takeIf { a.isPlaylist })
+                        AnalysisUi.Ready(
+                            a.title, a.qualities.associate { it.wire to it.sizeBytes }, a.playlistCount.takeIf { a.isPlaylist },
+                            formats = FormatMapping.fromVideo(a.formats), subtitles = a.subtitles,
+                        )
                     } catch (e: CancellationException) {
                         throw e
                     } catch (e: VideoException) {
@@ -247,7 +295,20 @@ class AddViewModel(
         }
     }
 
-    fun selectQuality(wire: String) { handle[QUALITY] = wire }
+    fun selectQuality(wire: String) { handle[QUALITY] = wire; handle[FORMAT] = null }
+
+    /** A row under "More formats"; picking the same row again goes back to the chips. */
+    fun selectFormat(id: String?) {
+        val row = (state.value.analysis as? AnalysisUi.Ready)?.formats?.firstOrNull { it.id == id }
+        handle[FORMAT] = if (row == null || handle.get<String?>(FORMAT) == id) null else id
+        row?.presetWire?.takeIf { it in state.value.qualityOptions }?.let { handle[QUALITY] = it }
+    }
+    fun selectSubtitles(lang: String?) { handle[SUBS] = lang }
+    fun setClipStart(text: String) { handle[CLIP_START] = text.take(10) }
+    fun setClipEnd(text: String) { handle[CLIP_END] = text.take(10) }
+    /** Epoch millis from StartLater.nextOccurrence, or null for "start now". */
+    fun setStartLater(startAt: Long?) { handle[LATER] = startAt ?: -1L }
+    fun setChecksum(text: String) { handle[SHA] = text.take(200) }
     fun selectQueue(id: Int?) { handle[QUEUE] = id ?: -1 }
     fun selectFolder(id: String?) { handle[FOLDER] = id }
     fun toggleLinks() { handle[EXPANDED] = !(handle.get<Boolean>(EXPANDED) ?: false) }
@@ -321,8 +382,20 @@ class AddViewModel(
                 for (link in s.links) {
                     val kind = LinkKind.classify(link)
                     if (kind == LinkKind.PAGE) continue
-                    val quality = if (kind == LinkKind.VIDEO) s.quality else null
-                    engine.add(PhoneAddRequest(url = link, title = title, folderUri = folderUri, quality = quality))
+                    val video = kind == LinkKind.VIDEO
+                    val quality = if (video) s.quality else null
+                    val spec = if (video) s.formatId?.let { id -> s.formatRows.firstOrNull { it.id == id }?.spec } else null
+                    engine.add(
+                        PhoneAddRequest(
+                            url = link, title = title, folderUri = folderUri, quality = quality,
+                            startAt = s.startAt,
+                            sha256 = if (single) Checksum.normalize(s.checksum) else null,
+                            formatSpec = spec,
+                            subtitleLang = if (video) s.subtitleLang else null,
+                            clipStartSec = if (video) ClipTime.parse(s.clipStart) else null,
+                            clipEndSec = if (video) ClipTime.parse(s.clipEnd) else null,
+                        ),
+                    )
                     added++
                 }
             } catch (e: CancellationException) {
@@ -346,7 +419,7 @@ class AddViewModel(
 
     private fun analysisReady(reply: AnalysisReply): AnalysisUi {
         val sizes = reply.qualities.associate { it.label.lowercase() to it.sizeBytes }
-        return AnalysisUi.Ready(reply.title, sizes)
+        return AnalysisUi.Ready(reply.title, sizes, formats = FormatMapping.fromPc(reply.qualities, ALL_QUALITIES))
     }
 
     private fun videoReason(f: VideoFailure) = when (f) {
@@ -370,7 +443,7 @@ class AddViewModel(
         return AnalysisUi.Failed(message, reason)
     }
 
-    private fun build(e: Env, l: Local, t: Transient): AddUiState {
+    private fun build(e: Env, l: Local, t: Transient, x: Extras): AddUiState {
         val pcs = e.pcs.filter { it.removedAt == null }.map { PcOption(it.pcId, it.name, e.links[it.pcId] is PcLinkState.Online) }
         val phoneOk = phone != null
         val valid = pcs.map { it.id }.toSet() + listOfNotNull(PHONE_ID.takeIf { phoneOk })
@@ -414,6 +487,14 @@ class AddViewModel(
         val folderId = l.folder?.takeIf { id -> folders.any { it.id == id } }
 
         val single = l.links.size == 1
+        val ready = analysis as? AnalysisUi.Ready
+        val formatRows = ready?.formats.orEmpty()
+        val formatId = x.formatId?.takeIf { id -> formatRows.any { it.id == id } }
+        val subtitleLang = x.subLang?.takeIf { lang -> ready?.subtitles.orEmpty().any { it.lang == lang } }
+        val phoneVideo = isPhone && hasVideo && !notDownloadable
+        val clipValid = ClipTime.isValid(x.clipStart, x.clipEnd)
+        val checksumValid = Checksum.isAcceptable(x.checksum)
+        val showChecksum = isPhone && single && !allPages && !notDownloadable
         val target = when {
             pcId != null && online && single && kinds[0] == LinkKind.VIDEO -> AnalyzeTarget(pcId, l.links[0], t.retry)
             isPhone && phone?.video != null && single && kinds[0] == LinkKind.VIDEO && blocked == null ->
@@ -439,7 +520,8 @@ class AddViewModel(
             queueId = queueId,
             folderId = folderId,
             notDownloadable = notDownloadable,
-            canStart = if (isPhone) phoneAdds > 0 && !notDownloadable else pc != null && !notDownloadable && l.links.isNotEmpty(),
+            canStart = if (isPhone) phoneAdds > 0 && !notDownloadable && (!phoneVideo || clipValid) && (!showChecksum || checksumValid)
+            else pc != null && !notDownloadable && l.links.isNotEmpty(),
             sending = t.sending,
             notice = t.notice,
             sent = t.sent,
@@ -450,6 +532,19 @@ class AddViewModel(
             phoneFolder = l.phoneFolder ?: e.prefs.folder,
             phoneAddCount = phoneAdds,
             blockedMessage = blocked,
+            formatRows = formatRows,
+            formatId = formatId,
+            subtitleOptions = if (isPhone) ready?.subtitles.orEmpty() else emptyList(),
+            subtitleLang = if (isPhone) subtitleLang else null,
+            clipStart = x.clipStart,
+            clipEnd = x.clipEnd,
+            clipValid = clipValid,
+            canStartLater = isPhone && phoneAdds > 0 && !notDownloadable,
+            startAt = if (isPhone) x.startAt else null,
+            checksum = x.checksum,
+            checksumValid = checksumValid,
+            showChecksum = showChecksum,
+            showClip = phoneVideo,
         )
     }
 
@@ -469,6 +564,12 @@ class AddViewModel(
         const val FOLDER = "add_folder"
         const val EXPANDED = "add_expanded"
         const val PHONE_FOLDER = "add_phone_folder"
+        const val FORMAT = "add_format"
+        const val SUBS = "add_subs"
+        const val CLIP_START = "add_clip_start"
+        const val CLIP_END = "add_clip_end"
+        const val LATER = "add_later"
+        const val SHA = "add_sha"
 
         /** The last PC a link was sent to ("" = none yet). */
         val LAST_PC = Setting(stringPreferencesKey("add_last_pc"), "")

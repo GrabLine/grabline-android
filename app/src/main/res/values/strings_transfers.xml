@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Cross-device actions on the Details screen -->
+    <string name="action_copy_to_phone">Copy to this phone</string>
+    <string name="action_download_here">Download on this phone instead</string>
+    <string name="action_send_to_pc">Send to PC</string>
+    <string name="send_to_pc_title">Send to which PC?</string>
+    <string name="note_copy_started">Copying to this phone. Follow it under Transfers</string>
+    <string name="note_sending_to_pc">Sending to your PC. It leaves this phone once your PC has it</string>
+    <string name="note_already_sending">Already on its way to your PC</string>
+    <string name="note_moved_to_phone">Now downloading on this phone</string>
+
+    <!-- Transfers screen (files copying from a PC) -->
+    <string name="tab_transfers">Transfers</string>
+    <string name="transfers_title">Transfers</string>
+    <string name="transfers_empty">Nothing is copying from your PC</string>
+    <string name="transfers_cancel">Cancel</string>
+    <string name="transfers_cancel_description">Cancel copying %1$s</string>
+    <string name="transfers_open">Open</string>
+    <string name="transfers_open_description">Open %1$s</string>
+    <string name="transfers_progress_description">%1$s, %2$s</string>
+</resources>

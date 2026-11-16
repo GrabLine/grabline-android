@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.content.ContextCompat
+import dev.grabline.app.engine.StartLater
 
 /** Process-wide flag the foreground service sets, so a second start is a no-op. */
 internal object RunState {
@@ -56,10 +57,21 @@ class DownloadScheduler(context: Context, private val appVisible: () -> Boolean)
         jobs.schedule(info)
     }
 
+    /** Wakes the app at [startAt] for a "Start later" job. Replaces an earlier wake-up; survives a reboot. */
+    fun scheduleAt(startAt: Long, now: Long = System.currentTimeMillis()) {
+        val info = JobInfo.Builder(JOB_LATER, component())
+            .setMinimumLatency(StartLater.delayMs(startAt, now).coerceAtLeast(1))
+            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+            .setPersisted(true)
+            .build()
+        runCatching { jobs.schedule(info) }
+    }
+
     private fun component() = ComponentName(app, DownloadJobService::class.java)
 
     companion object {
         const val JOB_USER = 7101
         const val JOB_BACKGROUND = 7102
+        const val JOB_LATER = 7103
     }
 }

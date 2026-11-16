@@ -56,6 +56,8 @@ data class PcJob(
     val finishedAt: Long? = null,
     val error: String? = null,
     val updatedAt: Long,
+    /** The PC would accept `fetch` for this job (added in schema 5). */
+    val fetchable: Boolean = false,
 )
 
 object OutboxState {
