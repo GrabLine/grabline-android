@@ -41,6 +41,7 @@ enum class LinkKind(val label: String) {
         fun classify(link: String): LinkKind {
             val t = link.trim()
             if (t.startsWith("magnet:", ignoreCase = true)) return MAGNET
+            if (t.startsWith(dev.grabline.app.engine.torrent.TorrentRouting.FILE_PREFIX, ignoreCase = true)) return TORRENT
             val m = urlParts.find(t) ?: return PAGE
             val host = m.groupValues[1].lowercase().removeSuffix(".")
             val path = m.groupValues[2]

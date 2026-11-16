@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dev.grabline.app.engine.PhoneAddRequest
 import dev.grabline.app.engine.PhoneEngine
 import dev.grabline.app.engine.TransferAddRequest
+import dev.grabline.app.engine.torrent.TorrentRouting
 import dev.grabline.app.remote.outbox.EnqueueResult
 import dev.grabline.app.ui.downloads.DetailsNote
 import dev.grabline.app.remote.PcRemote
@@ -104,7 +105,7 @@ class DownloadDetailsViewModel(
             row = row.copy(status = RowStatus.Cancelled, speed = 0, etaSeconds = null)
         }
         if (found != null) lastRow = found
-        val phoneLive = row != null && row.isPhone && !row.isTransfer &&
+        val phoneLive = row != null && row.isPhone && !row.isTransfer && !row.url.startsWith(TorrentRouting.FILE_PREFIX) &&
             row.status in setOf(RowStatus.Queued, RowStatus.Downloading, RowStatus.Paused, RowStatus.WaitingNetwork, RowStatus.WaitingWifi, RowStatus.WaitingCharging, RowStatus.Failed)
         val pcRow = row != null && !row.isPhone && !row.offline && phone != null
         DetailsUiState(
@@ -133,6 +134,21 @@ class DownloadDetailsViewModel(
         if (action == RowAction.Remove) removeAsked = true
         val id = controls.request(action, listOf(Target(targetPcId, jobId, row.name))) ?: return
         messageChannel.trySend(DownloadMessage.UndoOffer(id, action, 1, row.name))
+    }
+
+    fun setSequential(on: Boolean) {
+        val engine = phone ?: return
+        if (onPhone) viewModelScope.launch { engine.setTorrentSequential(jobId, on) }
+    }
+
+    fun setFileSelected(index: Int, selected: Boolean) {
+        val engine = phone ?: return
+        if (onPhone) viewModelScope.launch { engine.setTorrentFileSelected(jobId, index, selected) }
+    }
+
+    fun stopSeeding() {
+        val engine = phone ?: return
+        if (onPhone) viewModelScope.launch { engine.stopSeeding(jobId) }
     }
 
     /** "Copy to this phone": a background transfer; it shows on the Transfers screen. */

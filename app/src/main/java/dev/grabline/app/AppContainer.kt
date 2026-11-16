@@ -11,6 +11,7 @@ import dev.grabline.app.data.PairedPc
 import dev.grabline.app.engine.AndroidPhoneStorage
 import dev.grabline.app.engine.AppEngineSettings
 import dev.grabline.app.engine.DownloadEngine
+import dev.grabline.app.engine.torrent.TorrentEngine
 import dev.grabline.app.engine.video.YoutubeDlVideoEngine
 import androidx.lifecycle.Lifecycle
 import dev.grabline.app.engine.work.BatteryTip
@@ -65,6 +66,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 
 /** Fallback when the PC gives no reason (PROTOCOL.md 16 `failed` default). */
@@ -86,6 +88,8 @@ class AppContainer(context: Context) {
     val phone: DownloadEngine = DownloadEngine(
         db.phoneJobs(), engineClient, AndroidPhoneStorage(app), AppEngineSettings(settings), scope, video = video,
         transfers = FetchClient(TransferConnector { pcId -> connections.openTransfer(pcId) }),
+        torrents = TorrentEngine(),
+        torrentFiles = { uri -> readTorrentFile(app, uri) },
     )
     val batteryTip = BatteryTip.create(app)
     /** Active downloads across the phone and every reachable PC, for the widget and the Quick Settings tile. */
@@ -111,7 +115,7 @@ class AppContainer(context: Context) {
         onPairingRemoved = { pc -> runCatching { keyStore.delete(Authenticator.keyAliasOf(pc)) } },
     )
     val outbox = Outbox(scope, db.outbox(), connections)
-    private val sendLink = SendToPcLink(db.phoneJobs()) { phoneJobId -> phone.cancel(phoneJobId) }
+    private val sendLink = SendToPcLink(db.phoneJobs(), { requestId -> db.outbox().countByRequestId(requestId) > 0 }) { phoneJobId -> phone.cancel(phoneJobId) }
     /** The folder new phone jobs from a PC land in: a picked tree, or null for Downloads/GrabLine. */
     suspend fun saveFolderUri(): String? = settings.observe(AppSettings.SAVE_FOLDER).first().takeIf { it.startsWith("content:") }
     private val pcOutbox = PcOutboxPuller(
@@ -140,6 +144,8 @@ class AppContainer(context: Context) {
 
     fun start() {
         outbox.deliveredListener = sendLink::onDelivered
+        // QA-38: a "Send to PC" the PC already took, whose phone job survived a process death, is cancelled now.
+        scope.launch { runCatching { sendLink.recover() } }
         pcOutbox.start()
         outbox.start()
         // yt-dlp, Python and FFmpeg unpack once, off the main thread; video downloads wait for it.
@@ -252,4 +258,23 @@ class KeystorePairingController(
         is PairResult.BadCode, PairResult.PcNotFound, PairResult.TimedOut, PairResult.ConnectionLost -> true
         else -> false
     }
+}
+
+private const val MAX_TORRENT_FILE_BYTES = 8 * 1024 * 1024
+
+/** The bytes of a .torrent file the app was handed (content:// or file://); null when unreadable or too large. */
+private suspend fun readTorrentFile(context: Context, uri: String): ByteArray? = withContext(Dispatchers.IO) {
+    runCatching {
+        context.contentResolver.openInputStream(android.net.Uri.parse(uri))?.use { input ->
+            val out = java.io.ByteArrayOutputStream()
+            val buffer = ByteArray(16 * 1024)
+            while (true) {
+                val n = input.read(buffer)
+                if (n < 0) break
+                out.write(buffer, 0, n)
+                if (out.size() > MAX_TORRENT_FILE_BYTES) return@runCatching null
+            }
+            out.toByteArray()
+        }
+    }.getOrNull()
 }

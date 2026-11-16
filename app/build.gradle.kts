@@ -95,6 +95,10 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.youtubedl.library)
     implementation(libs.youtubedl.ffmpeg)
+    implementation(libs.libtorrent4j)
+    implementation(libs.libtorrent4j.arm64)
+    implementation(libs.libtorrent4j.arm)
+    implementation(libs.libtorrent4j.amd64)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)

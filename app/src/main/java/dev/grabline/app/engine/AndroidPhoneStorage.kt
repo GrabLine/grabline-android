@@ -62,6 +62,21 @@ class AndroidPhoneStorage(context: Context) : PhoneStorage {
         }
     }
 
+    override suspend fun publishIn(folderUri: String?, subDir: String, name: String, scratch: File): String = withContext(Dispatchers.IO) {
+        if (subDir.isEmpty()) return@withContext publish(folderUri, name, scratch)
+        try {
+            when {
+                folderUri != null -> publishSaf(Uri.parse(folderUri), name, scratch, subDir.split('/'))
+                Build.VERSION.SDK_INT >= 29 -> publishMediaStore(name, scratch, "$RELATIVE/$subDir")
+                else -> publishLegacy(name, scratch, File(legacyDir(), subDir))
+            }
+        } catch (e: SecurityException) {
+            throw FolderUnavailableException(e)
+        } catch (e: FileNotFoundException) {
+            throw FolderUnavailableException(e)
+        }
+    }
+
     private fun mime(name: String): String =
         MimeTypeMap.getSingleton().getMimeTypeFromExtension(name.substringAfterLast('.', "").lowercase())
             ?: "application/octet-stream"
@@ -86,12 +101,12 @@ class AndroidPhoneStorage(context: Context) : PhoneStorage {
     }
 
     @RequiresApi(29)
-    private fun publishMediaStore(name: String, scratch: File): String {
+    private fun publishMediaStore(name: String, scratch: File, relative: String = RELATIVE): String {
         val resolver = app.contentResolver
         val values = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, mime(name))
-            put(MediaStore.MediaColumns.RELATIVE_PATH, RELATIVE)
+            put(MediaStore.MediaColumns.RELATIVE_PATH, relative)
             put(MediaStore.MediaColumns.IS_PENDING, 1)
         }
         val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values) ?: throw FolderUnavailableException()
@@ -109,8 +124,7 @@ class AndroidPhoneStorage(context: Context) : PhoneStorage {
     @Suppress("DEPRECATION")
     private fun legacyDir() = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "GrabLine")
 
-    private fun publishLegacy(name: String, scratch: File): String {
-        val dir = legacyDir()
+    private fun publishLegacy(name: String, scratch: File, dir: File = legacyDir()): String {
         if (!dir.isDirectory && !dir.mkdirs()) throw FolderUnavailableException()
         val target = File(dir, uniqueName(name, dir.list()?.toSet().orEmpty()))
         val part = File(dir, "${target.name}.part")
@@ -136,9 +150,34 @@ class AndroidPhoneStorage(context: Context) : PhoneStorage {
         return out
     }
 
-    private fun publishSaf(tree: Uri, name: String, scratch: File): String {
+    /** The sub-folder [parts] under [parent], created as needed. */
+    private fun safFolder(parent: Uri, parts: List<String>): Uri {
+        var current = parent
+        for (part in parts.filter { it.isNotEmpty() }) {
+            val id = DocumentsContract.getDocumentId(current)
+            val children = DocumentsContract.buildChildDocumentsUriUsingTree(current, id)
+            var found: Uri? = null
+            app.contentResolver.query(
+                children, arrayOf(DocumentsContract.Document.COLUMN_DOCUMENT_ID, DocumentsContract.Document.COLUMN_DISPLAY_NAME, DocumentsContract.Document.COLUMN_MIME_TYPE),
+                null, null, null,
+            )?.use { c ->
+                while (c.moveToNext()) {
+                    if (c.getString(1) == part && c.getString(2) == DocumentsContract.Document.MIME_TYPE_DIR) {
+                        found = DocumentsContract.buildDocumentUriUsingTree(current, c.getString(0))
+                        break
+                    }
+                }
+            }
+            current = found ?: DocumentsContract.createDocument(app.contentResolver, current, DocumentsContract.Document.MIME_TYPE_DIR, part)
+                ?: throw FolderUnavailableException()
+        }
+        return current
+    }
+
+    private fun publishSaf(tree: Uri, name: String, scratch: File, subDirs: List<String> = emptyList()): String {
         val resolver = app.contentResolver
-        val doc = DocumentsContract.createDocument(resolver, safParent(tree), mime(name), name)
+        val parent = if (subDirs.isEmpty()) safParent(tree) else safFolder(safParent(tree), subDirs)
+        val doc = DocumentsContract.createDocument(resolver, parent, mime(name), name)
             ?: throw FolderUnavailableException()
         try {
             copy(scratch, resolver.openOutputStream(doc) ?: throw FolderUnavailableException())

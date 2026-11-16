@@ -55,6 +55,7 @@ import dev.grabline.app.ui.devices.PairingController
 import dev.grabline.app.ui.downloads.DownloadsRoute
 import dev.grabline.app.ui.downloads.PHONE_ID
 import dev.grabline.app.ui.downloads.detailsRowKey
+import dev.grabline.app.engine.torrent.TorrentRouting
 import dev.grabline.app.ui.entry.IncomingRequest
 import dev.grabline.app.ui.pc.PcRoute
 import dev.grabline.app.ui.settings.SettingsRoute
@@ -146,11 +147,13 @@ fun GrabLineAppShell(
     var addOpen by rememberSaveable { mutableStateOf(false) }
     var addLinks by rememberSaveable { mutableStateOf(listOf<String>()) }
     var addTitle by rememberSaveable { mutableStateOf<String?>(null) }
+    var addTorrentUri by rememberSaveable { mutableStateOf<String?>(null) }
     var selectedJob by rememberSaveable { mutableStateOf<String?>(null) }
 
-    fun openAdd(links: List<String>, title: String?) {
+    fun openAdd(links: List<String>, title: String?, torrentUri: String? = null) {
         addLinks = links
         addTitle = title
+        addTorrentUri = torrentUri
         addOpen = true
     }
 
@@ -164,12 +167,15 @@ fun GrabLineAppShell(
 
     // Shares, magnet links and "Open with GrabLine".
     val request by incoming.collectAsState()
-    val torrentLater = stringResource(R.string.shell_torrent_file_later)
     LaunchedEffect(request) {
         val r = request ?: return@LaunchedEffect
         onIncomingHandled()
         if (r.links.isNotEmpty()) openAdd(r.links, r.sourceTitle)
-        else if (r.torrentFile != null) snackbar.showSnackbar(torrentLater)
+        else if (r.torrentFile != null) {
+            // A shared .torrent file: the Add sheet opens with it, for this phone.
+            val name = r.torrentFile.displayName?.takeIf { it.isNotBlank() } ?: "file.torrent"
+            openAdd(listOf(TorrentRouting.FILE_PREFIX + name), r.sourceTitle, r.torrentFile.uri)
+        }
     }
 
     // A notification was tapped: open that job (side pane above 600 dp).
@@ -325,6 +331,7 @@ fun GrabLineAppShell(
                 settings = settings,
                 initialLinks = addLinks,
                 sourceTitle = addTitle,
+                torrentFileUri = addTorrentUri,
                 phone = phone,
                 onDismiss = { addOpen = false },
                 onSent = { message -> scope.launch { snackbar.showSnackbar(message) } },

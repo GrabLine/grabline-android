@@ -48,7 +48,7 @@ class Migration56Test {
         raw.close()
 
         val db = Room.databaseBuilder(ctx, AppDatabase::class.java, "migration-56.db")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
             .allowMainThreadQueries().build()
         try {
             assertFalse("cached PC jobs are not fetchable until the PC says so", db.jobs().observeForPc("p").first().single().fetchable)

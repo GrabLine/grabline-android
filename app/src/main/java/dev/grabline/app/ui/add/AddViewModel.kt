@@ -10,6 +10,7 @@ import dev.grabline.app.engine.Checksum
 import dev.grabline.app.engine.video.SubtitleTrack
 import dev.grabline.app.engine.PhoneAddRequest
 import dev.grabline.app.engine.PhoneEngine
+import dev.grabline.app.engine.torrent.TorrentRouting
 import dev.grabline.app.engine.video.DrmGuard
 import dev.grabline.app.engine.video.VideoException
 import dev.grabline.app.engine.video.VideoFailure
@@ -97,6 +98,8 @@ data class AddUiState(
     val phoneAddCount: Int = 0,
     /** A DRM service on this phone: the plain-words refusal, shown instead of the options. */
     val blockedMessage: String? = null,
+    /** A shared .torrent file with a PC chosen: PCs only take magnet and web links, so say so. */
+    val torrentFileNeedsPhone: Boolean = false,
     /** "More formats" rows to show (empty until analysis is ready). */
     val formatRows: List<FormatRow> = emptyList(),
     /** The row picked under "More formats", or null to use the quality chip. */
@@ -265,8 +268,9 @@ class AddViewModel(
     }
 
     /** Set the shared links once; a restored instance keeps its own. */
-    fun init(links: List<String>, sourceTitle: String?) {
+    fun init(links: List<String>, sourceTitle: String?, torrentFileUri: String? = null) {
         if (!handle.get<ArrayList<String>>(LINKS).isNullOrEmpty()) return
+        handle[TORRENT_URI] = torrentFileUri
         handle[LINKS] = ArrayList(links)
         handle[TITLE] = sourceTitle
     }
@@ -331,6 +335,8 @@ class AddViewModel(
                 for (link in s.links) {
                     val kind = LinkKind.classify(link)
                     if (kind == LinkKind.PAGE) continue
+                    // A .torrent file can only be downloaded on this phone; PCs get magnet and web links.
+                    if (link.startsWith(TorrentRouting.FILE_PREFIX)) continue
                     val result = remote.send(
                         pcId = pc.id,
                         url = link,
@@ -384,10 +390,13 @@ class AddViewModel(
                     if (kind == LinkKind.PAGE) continue
                     val video = kind == LinkKind.VIDEO
                     val quality = if (video) s.quality else null
+                    val torrentFile = link.startsWith(TorrentRouting.FILE_PREFIX)
                     val spec = if (video) s.formatId?.let { id -> s.formatRows.firstOrNull { it.id == id }?.spec } else null
                     engine.add(
                         PhoneAddRequest(
-                            url = link, title = title, folderUri = folderUri, quality = quality,
+                            url = link, title = if (torrentFile) null else title, folderUri = folderUri, quality = quality,
+                            torrentFileUri = if (torrentFile) handle.get<String?>(TORRENT_URI) else null,
+                            torrentFileName = if (torrentFile) link.removePrefix(TorrentRouting.FILE_PREFIX) else null,
                             startAt = s.startAt,
                             sha256 = if (single) Checksum.normalize(s.checksum) else null,
                             formatSpec = spec,
@@ -448,7 +457,9 @@ class AddViewModel(
         val phoneOk = phone != null
         val valid = pcs.map { it.id }.toSet() + listOfNotNull(PHONE_ID.takeIf { phoneOk })
         val rule = l.links.firstOrNull()?.let { RulesCodec.decode(e.prefs.rules)[RuleRouting.typeOf(it)] }
+        val hasTorrentFile = l.links.any { it.startsWith(TorrentRouting.FILE_PREFIX) }
         val chosen = l.pc?.takeIf { it in valid }
+            ?: PHONE_ID.takeIf { phoneOk && hasTorrentFile }
             ?: rule?.takeIf { it in valid }
             ?: e.prefs.device.takeIf { it in valid }
             ?: e.prefs.lastPc.takeIf { it in valid }
@@ -521,7 +532,8 @@ class AddViewModel(
             folderId = folderId,
             notDownloadable = notDownloadable,
             canStart = if (isPhone) phoneAdds > 0 && !notDownloadable && (!phoneVideo || clipValid) && (!showChecksum || checksumValid)
-            else pc != null && !notDownloadable && l.links.isNotEmpty(),
+            else pc != null && !notDownloadable && l.links.any { !it.startsWith(TorrentRouting.FILE_PREFIX) },
+            torrentFileNeedsPhone = !isPhone && hasTorrentFile,
             sending = t.sending,
             notice = t.notice,
             sent = t.sent,
@@ -569,6 +581,7 @@ class AddViewModel(
         const val CLIP_START = "add_clip_start"
         const val CLIP_END = "add_clip_end"
         const val LATER = "add_later"
+        const val TORRENT_URI = "add_torrent_uri"
         const val SHA = "add_sha"
 
         /** The last PC a link was sent to ("" = none yet). */

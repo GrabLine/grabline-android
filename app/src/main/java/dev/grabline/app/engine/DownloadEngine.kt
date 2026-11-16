@@ -2,6 +2,14 @@ package dev.grabline.app.engine
 
 import dev.grabline.app.data.PhoneJobDao
 import dev.grabline.app.data.PhoneJobRow
+import dev.grabline.app.engine.torrent.LinkRoute
+import dev.grabline.app.engine.torrent.NetworkHold
+import dev.grabline.app.engine.torrent.SeedRules
+import dev.grabline.app.engine.torrent.StoredFiles
+import dev.grabline.app.engine.torrent.TorrentBackend
+import dev.grabline.app.engine.torrent.TorrentRouting
+import dev.grabline.app.engine.torrent.TorrentRunner
+import dev.grabline.app.engine.torrent.TorrentText
 import dev.grabline.app.engine.video.DrmGuard
 import dev.grabline.app.engine.video.VideoEngine
 import dev.grabline.app.ui.entry.LinkKind
@@ -57,11 +65,17 @@ class DownloadEngine(
     override val video: VideoEngine? = null,
     /** Copies files from a PC for jobs of kind "transfer"; null where transfers are not wired. */
     private val transfers: dev.grabline.app.remote.transfer.FetchClient? = null,
+    /** Runs jobs of kind "torrent" (libtorrent4j); null where there is none. */
+    private val torrents: TorrentBackend? = null,
+    /** Reads the bytes of a .torrent file handed to the app (a content:// URI); null where files cannot be read. */
+    private val torrentFiles: (suspend (uri: String) -> ByteArray?)? = null,
 ) : PhoneEngine {
     private val constraints = MutableStateFlow(EngineConstraints())
     private val speeds = MutableStateFlow<Map<Long, Long>>(emptyMap())
     private val bucket = TokenBucket(clock)
     private val runners = ConcurrentHashMap<Long, Job>()
+    /** Finished torrents that are uploading ("Seed after download"); they do not use a download slot. */
+    private val seeders = ConcurrentHashMap<Long, Job>()
     private val wake = Channel<Unit>(Channel.CONFLATED)
     private val addMutex = Mutex()
     private val runMutex = Mutex()
@@ -75,7 +89,9 @@ class DownloadEngine(
 
     /** True while some job is queued or downloading (background work uses it to decide whether to schedule). */
     fun hasRunnableWork(): Flow<Boolean> =
-        dao.observeDueCount(listOf(S_QUEUED, S_DOWNLOADING)).map { it > 0 }.distinctUntilChanged()
+        combine(dao.observeDueCount(listOf(S_QUEUED, S_DOWNLOADING)), dao.observeSeedingCount(), constraints) { due, seeding, c ->
+            due > 0 || (seeding > 0 && torrents != null && !NetworkHold.seedBlocked(settings.current(), c))
+        }.distinctUntilChanged()
 
     /** The earliest "Start later" time still waiting, so the scheduler can wake the app then. */
     fun nextStartAt(): Flow<Long?> = dao.observeEarliestStart().distinctUntilChanged()
@@ -104,7 +120,9 @@ class DownloadEngine(
                     val waiting = dao.withStatus(listOf(S_QUEUED)).filter { !runners.containsKey(it.id) }
                     val queued = waiting.filter { StartLater.isDue(it.startAt, now) }
                     for (row in queued.take(room.coerceAtLeast(0))) start(row.id, cfg)
-                    if (runners.isEmpty() && queued.isEmpty()) break
+                    val seedable = if (torrents != null && !NetworkHold.seedBlocked(cfg, constraints.value)) dao.seedingJobs().filter { !seeders.containsKey(it.id) } else emptyList()
+                    for (row in seedable) startSeeder(row.id)
+                    if (runners.isEmpty() && queued.isEmpty() && seeders.isEmpty()) break
                     // A "Start later" job that comes due while others run is picked up at its time.
                     val upcoming = StartLater.earliestPending(waiting.map { it.startAt }, now)
                     if (upcoming != null) withTimeoutOrNull(StartLater.delayMs(upcoming, now).coerceAtLeast(1)) { wake.receive() }
@@ -125,10 +143,15 @@ class DownloadEngine(
         val kind = dao.get(id)?.kind
         val isVideo = kind == PhoneJobRow.KIND_VIDEO
         val isTransfer = kind == PhoneJobRow.KIND_TRANSFER
+        val isTorrent = kind == PhoneJobRow.KIND_TORRENT
         val job = launch(ioDispatcher, start = CoroutineStart.LAZY) {
             val engine = video
             val fetcher = transfers
-            if (isTransfer) {
+            val bt = torrents
+            if (isTorrent) {
+                if (bt != null) TorrentRunner(env, bt, id, settings).run()
+                else dao.moveIf(id, listOf("DOWNLOADING"), "FAILED", null, TorrentText.UNAVAILABLE)
+            } else if (isTransfer) {
                 if (fetcher != null) TransferRunner(env, fetcher, id).run()
                 else dao.moveIf(id, listOf("DOWNLOADING"), "FAILED", null, TransferText.REFUSED)
             } else if (isVideo && engine != null) VideoRunner(env, engine, id, cfg).run() else JobRunner(env, id, cfg).run()
@@ -141,16 +164,24 @@ class DownloadEngine(
         job.start()
     }
 
-    private suspend fun stopRunner(id: Long) {
-        runners[id]?.cancelAndJoin()
+    private fun CoroutineScope.startSeeder(id: Long) {
+        val backend = torrents ?: return
+        val job = launch(ioDispatcher, start = CoroutineStart.LAZY) { TorrentRunner(env, backend, id, settings).seed() }
+        seeders[id] = job
+        job.invokeOnCompletion {
+            seeders.remove(id, job)
+            wake.trySend(Unit)
+        }
+        job.start()
     }
 
-    private fun blockFor(row: PhoneJobRow, cfg: EngineConfig, c: EngineConstraints): PhoneJobStatus? = when {
-        !c.connected -> PhoneJobStatus.WAITING_NETWORK
-        cfg.onlyWifi && !row.mobileOverride && (!c.wifi || c.metered) -> PhoneJobStatus.WAITING_WIFI
-        cfg.onlyCharging && !c.charging -> PhoneJobStatus.WAITING_CHARGING
-        else -> null
+    private suspend fun stopRunner(id: Long) {
+        runners[id]?.cancelAndJoin()
+        seeders[id]?.cancelAndJoin()
     }
+
+    private fun blockFor(row: PhoneJobRow, cfg: EngineConfig, c: EngineConstraints): PhoneJobStatus? =
+        NetworkHold.block(row.kind, cfg, c, row.mobileOverride)
 
     /** Moves jobs in and out of the waiting states to match settings and constraints. */
     private suspend fun reevaluate() = evalMutex.withLock {
@@ -166,12 +197,18 @@ class DownloadEngine(
                 dao.setStatusIf(row.id, listOf(row.status), S_QUEUED)
             }
         }
+        // Seeding uploads: stop when mobile data is off-limits; the run loop starts it again on Wi-Fi.
+        if (NetworkHold.seedBlocked(cfg, c)) seeders.keys.toList().forEach { seeders[it]?.cancelAndJoin() }
         wake.trySend(Unit)
     }
 
     override suspend fun add(request: PhoneAddRequest): PhoneJob {
         val id = addMutex.withLock {
             val now = clock()
+            val route = if (request.torrentFileUri != null) LinkRoute.TORRENT_FILE else TorrentRouting.route(request.url)
+            if (route == LinkRoute.MAGNET || route == LinkRoute.TORRENT_URL || route == LinkRoute.TORRENT_FILE) {
+                return@withLock addTorrent(request, route, now)
+            }
             if (request.url.trim().toHttpUrlOrNull() == null) {
                 return@withLock dao.insert(
                     PhoneJobRow(
@@ -210,6 +247,66 @@ class DownloadEngine(
         if (request.pcId != null) dao.setSource(id, request.pcId, request.outboxItemId)
         reevaluate()
         return toJob(dao.get(id)!!, 0)
+    }
+
+    /** A magnet link, a .torrent link or a .torrent file: a job of kind "torrent" (the runner reads the metadata). */
+    private suspend fun addTorrent(request: PhoneAddRequest, route: LinkRoute, now: Long): Long {
+        val display = request.title?.takeIf { it.isNotBlank() } ?: request.torrentFileName
+        val url = if (route == LinkRoute.TORRENT_FILE) TorrentRouting.FILE_PREFIX + (display ?: "file.torrent") else request.url.trim()
+        val name = display?.removeSuffix(".torrent")?.let { fileNameFor(it, it) }
+            ?: magnetName(url) ?: fileNameFor(null, url).removeSuffix(".torrent").ifBlank { "torrent" }
+        var bytes: ByteArray? = null
+        var failure: String? = if (torrents == null) TorrentText.UNAVAILABLE else null
+        if (failure == null && route == LinkRoute.TORRENT_FILE) {
+            bytes = request.torrentFileUri?.let { runCatching { torrentFiles?.invoke(it) }.getOrNull() }
+            if (bytes == null || bytes.isEmpty() || bytes[0] != 'd'.code.toByte()) failure = TorrentText.NOT_A_TORRENT
+        }
+        val id = dao.insert(
+            PhoneJobRow(
+                url = url, name = name, folderUri = request.folderUri,
+                status = if (failure != null) PhoneJobStatus.FAILED.name else S_QUEUED, error = failure, kind = PhoneJobRow.KIND_TORRENT,
+                createdAt = now, startAt = request.startAt, notice = scheduledNotice(request.startAt, now),
+            ),
+        )
+        if (bytes != null && failure == null) {
+            // A shared content:// URI stops being readable, so the bytes live with the job.
+            val dir = storage.scratchDir(id)
+            dir.mkdirs()
+            java.io.File(dir, "source.torrent").writeBytes(bytes)
+        }
+        return id
+    }
+
+    /** The "dn" (display name) of a magnet link, if it has one. */
+    private fun magnetName(url: String): String? {
+        if (!url.startsWith("magnet:", ignoreCase = true)) return null
+        val dn = url.substringAfter('?').split('&').firstOrNull { it.startsWith("dn=") }?.substring(3) ?: return null
+        val decoded = runCatching { java.net.URLDecoder.decode(dn, "UTF-8") }.getOrNull()?.takeIf { it.isNotBlank() } ?: return null
+        return fileNameFor(decoded, decoded)
+    }
+
+    override suspend fun setTorrentSequential(jobId: Long, on: Boolean) {
+        if (dao.get(jobId)?.kind == PhoneJobRow.KIND_TORRENT) dao.setSequential(jobId, on)
+    }
+
+    override suspend fun setTorrentFileSelected(jobId: Long, index: Int, selected: Boolean) {
+        val row = dao.get(jobId)?.takeIf { it.kind == PhoneJobRow.KIND_TORRENT } ?: return
+        val files = StoredFiles.decode(row.torrentFiles)
+        if (index !in files.indices || row.status == S_COMPLETED) return
+        val wanted = StoredFiles.wanted(row.fileMask, files.size).toMutableList()
+        wanted[index] = selected
+        if (wanted.none { it }) return // at least one file stays selected
+        dao.setFileMask(jobId, StoredFiles.mask(wanted))
+    }
+
+    override suspend fun stopSeeding(jobId: Long) {
+        val row = dao.get(jobId) ?: return
+        if (!row.seeding) return
+        dao.stopSeeding(jobId)
+        seeders[jobId]?.cancelAndJoin()
+        row.infoHash?.let { torrents?.remove(it, deleteFiles = true) }
+        storage.deleteScratch(jobId)
+        wake.trySend(Unit)
     }
 
     override suspend fun addTransfer(request: TransferAddRequest): PhoneJob {
@@ -263,6 +360,7 @@ class DownloadEngine(
     override suspend fun remove(jobId: Long) {
         stopRunner(jobId)
         val row = dao.get(jobId) ?: return
+        if (row.seeding) stopSeeding(jobId)
         if (row.status != S_COMPLETED) storage.deleteScratch(jobId)
         dao.delete(jobId)
         wake.trySend(Unit)
@@ -291,6 +389,15 @@ class DownloadEngine(
             connections = r.connections, notice = r.notice, error = r.error, fileUri = r.fileUri,
             createdAt = r.createdAt, finishedAt = r.finishedAt, isVideo = r.kind == PhoneJobRow.KIND_VIDEO, isTransfer = r.kind == PhoneJobRow.KIND_TRANSFER,
             startAt = r.startAt?.takeIf { r.status == S_QUEUED || r.status in WAITING_NAMES }, checksum = r.checksumState,
+            torrent = if (r.kind != PhoneJobRow.KIND_TORRENT) null else {
+                val files = StoredFiles.decode(r.torrentFiles)
+                val wanted = StoredFiles.wanted(r.fileMask, files.size)
+                TorrentDetails(
+                    peers = r.peers, uploaded = r.uploaded, ratio = SeedRules.ratio(r.uploaded, r.total ?: files.sumOf { it.size }),
+                    sequential = r.sequential, seeding = r.seeding,
+                    files = files.mapIndexed { i, f -> TorrentFileView(i, f.path, f.size, wanted[i]) },
+                )
+            },
         )
     }
 

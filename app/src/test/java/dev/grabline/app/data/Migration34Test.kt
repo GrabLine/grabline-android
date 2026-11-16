@@ -39,7 +39,7 @@ class Migration34Test {
         raw.close()
 
         val db = Room.databaseBuilder(ctx, AppDatabase::class.java, "migration-34.db")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6).allowMainThreadQueries().build()
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7).allowMainThreadQueries().build()
         try {
             val dao = db.phoneJobs()
             assertEquals("existing jobs stay file jobs", PhoneJobRow.KIND_FILE, dao.all().single().kind)

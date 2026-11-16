@@ -107,6 +107,10 @@ interface OutboxDao {
     @Query("SELECT * FROM outbox WHERE pcId = :pcId AND url = :url AND state IN ('pending','sending') AND createdAt >= :since LIMIT 1")
     suspend fun recentSame(pcId: String, url: String, since: Long): OutboxItem?
 
+    /** How many outbox rows carry this requestId (0 once the PC took the link and the row was deleted). */
+    @Query("SELECT COUNT(*) FROM outbox WHERE requestId = :requestId")
+    suspend fun countByRequestId(requestId: String): Int
+
     @Query("SELECT DISTINCT pcId FROM outbox WHERE state = 'pending'")
     fun observePendingPcs(): Flow<List<String>>
 

@@ -116,6 +116,9 @@ fun DownloadDetailsRoute(
         onCopyToPhone = vm::copyToPhone,
         onDownloadHere = vm::downloadHere,
         onSendToPc = vm::sendToPc,
+        onSequential = vm::setSequential,
+        onFileSelected = vm::setFileSelected,
+        onStopSeeding = vm::stopSeeding,
     )
 }
 
@@ -153,6 +156,9 @@ fun DownloadDetailsScreen(
     onCopyToPhone: () -> Unit = {},
     onDownloadHere: () -> Unit = {},
     onSendToPc: (pcId: String) -> Unit = {},
+    onSequential: (Boolean) -> Unit = {},
+    onFileSelected: (Int, Boolean) -> Unit = { _, _ -> },
+    onStopSeeding: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val host = remember { SnackbarHostState() }
@@ -219,6 +225,7 @@ fun DownloadDetailsScreen(
                 DetailsBody(
                     row, state, onAction,
                     onCopyToPhone = onCopyToPhone, onDownloadHere = onDownloadHere, onSendToPc = onSendToPc,
+                    onSequential = onSequential, onFileSelected = onFileSelected, onStopSeeding = onStopSeeding,
                     onCopy = { clipboard.setText(AnnotatedString(row.url)); scope.launch { host.showSnackbar(copied) } },
                     onOpen = { if (!FileActions.open(context, row.fileUri)) scope.launch { host.showSnackbar(noApp) } },
                     onShare = { if (!FileActions.share(context, row.fileUri, row.name)) scope.launch { host.showSnackbar(noApp) } },
@@ -240,6 +247,9 @@ private fun DetailsBody(
     onCopyToPhone: () -> Unit = {},
     onDownloadHere: () -> Unit = {},
     onSendToPc: (pcId: String) -> Unit = {},
+    onSequential: (Boolean) -> Unit = {},
+    onFileSelected: (Int, Boolean) -> Unit = { _, _ -> },
+    onStopSeeding: () -> Unit = {},
 ) {
     val context = LocalContext.current
     var choosingPc by remember { mutableStateOf(false) }
@@ -306,6 +316,7 @@ private fun DetailsBody(
                 Field(stringResource(R.string.detail_time_left)) { Text(timeLeftText(context, it), style = MonoNumbers) }
             }
         }
+        row.torrent?.let { TorrentSection(row, it, onSequential, onFileSelected, onStopSeeding) }
         Field(stringResource(R.string.detail_source)) { SelectionContainer { Text(row.url) } }
         Field(stringResource(R.string.detail_destination)) {
             if (row.isPhone) Text(stringResource(R.string.detail_saved_on_phone))

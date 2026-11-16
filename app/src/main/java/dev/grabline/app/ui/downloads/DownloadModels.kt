@@ -51,6 +51,8 @@ data class DownloadRow(
     val fetchable: Boolean = false,
     /** Phone rows: this is a copy from a PC (Transfers screen). */
     val isTransfer: Boolean = false,
+    /** Phone torrent jobs: peers, ratio, files, sequential and seeding state. */
+    val torrent: dev.grabline.app.engine.TorrentDetails? = null,
 ) {
     val isPhone: Boolean get() = device is Device.Phone
     val waiting: Boolean
@@ -129,6 +131,7 @@ fun phoneRow(j: PhoneJob) = DownloadRow(
     connections = j.connections,
     fileUri = j.fileUri,
     isTransfer = j.isTransfer,
+    torrent = j.torrent,
 )
 
 fun statusOf(wire: String): RowStatus = when (JobStatus.fromWire(wire)) {

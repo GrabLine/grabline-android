@@ -60,12 +60,30 @@ data class PhoneJobRow(
     /** Clip to keep, in seconds from the start of the video (video jobs). */
     val clipStartSec: Long? = null,
     val clipEndSec: Long? = null,
+    /** Torrent jobs (added in schema 7): peers connected now (or last seen). */
+    val peers: Int = 0,
+    /** Torrent jobs: bytes uploaded so far, for the seeding ratio. */
+    val uploaded: Long = 0,
+    /** Torrent jobs: download pieces in order (for playing while it downloads). */
+    val sequential: Boolean = false,
+    /** Torrent jobs: JSON list of the files (`[{"n":"a/b.mkv","s":123}]`), known once the metadata arrived. */
+    val torrentFiles: String? = null,
+    /** Torrent jobs: one character per file, 1 = download it, 0 = skip it; null = all. */
+    val fileMask: String? = null,
+    /** Torrent jobs: the info hash (lower-case hex), once known. */
+    val infoHash: String? = null,
+    /** Torrent jobs: true while the finished torrent is seeding. */
+    val seeding: Boolean = false,
+    /** Torrent jobs: epoch millis seeding began; the "for 1 hour" rule counts from here. */
+    val seedStartedAt: Long? = null,
 ) {
     companion object {
         const val KIND_FILE = "file"
         const val KIND_VIDEO = "video"
         /** A copy of a finished PC file (PROTOCOL.md 13). */
         const val KIND_TRANSFER = "transfer"
+        /** A magnet link or .torrent through libtorrent4j (schema 7). */
+        const val KIND_TORRENT = "torrent"
     }
 }
 
@@ -152,6 +170,34 @@ interface PhoneJobDao {
     @Query("UPDATE phone_jobs SET downloaded = :downloaded, total = :total, connections = 1 WHERE id = :id AND status = 'DOWNLOADING'")
     suspend fun saveVideoProgress(id: Long, downloaded: Long, total: Long?)
 
+    /** Torrent progress: wanted bytes done of wanted bytes (null until the metadata arrived). */
+    @Query("UPDATE phone_jobs SET downloaded = :downloaded, total = :total, peers = :peers, uploaded = :uploaded, connections = :peers WHERE id = :id AND status = 'DOWNLOADING'")
+    suspend fun saveTorrentProgress(id: Long, downloaded: Long, total: Long?, peers: Int, uploaded: Long)
+
+    @Query("UPDATE phone_jobs SET infoHash = :hash, torrentFiles = :files, name = :name WHERE id = :id")
+    suspend fun saveTorrentMeta(id: Long, hash: String, files: String, name: String)
+
+    @Query("UPDATE phone_jobs SET sequential = :on WHERE id = :id")
+    suspend fun setSequential(id: Long, on: Boolean)
+
+    @Query("UPDATE phone_jobs SET fileMask = :mask WHERE id = :id")
+    suspend fun setFileMask(id: Long, mask: String?)
+
+    @Query("UPDATE phone_jobs SET seeding = 1, seedStartedAt = :now, peers = 0 WHERE id = :id AND status = 'COMPLETED'")
+    suspend fun startSeeding(id: Long, now: Long): Int
+
+    @Query("UPDATE phone_jobs SET seeding = 0, peers = 0, connections = 0 WHERE id = :id")
+    suspend fun stopSeeding(id: Long)
+
+    @Query("UPDATE phone_jobs SET peers = :peers, uploaded = :uploaded, connections = :peers WHERE id = :id AND seeding = 1")
+    suspend fun saveSeedProgress(id: Long, peers: Int, uploaded: Long)
+
+    @Query("SELECT * FROM phone_jobs WHERE seeding = 1 ORDER BY id")
+    suspend fun seedingJobs(): List<PhoneJobRow>
+
+    @Query("SELECT COUNT(*) FROM phone_jobs WHERE seeding = 1")
+    fun observeSeedingCount(): Flow<Int>
+
     @Query("UPDATE phone_jobs SET name = :name WHERE id = :id")
     suspend fun rename(id: Long, name: String)
 
@@ -169,6 +215,10 @@ interface PhoneJobDao {
 
     @Query("SELECT * FROM phone_jobs WHERE sendRequestId = :requestId")
     suspend fun bySendRequest(requestId: String): List<PhoneJobRow>
+
+    /** Phone jobs waiting for a PC to confirm "Send to PC". */
+    @Query("SELECT * FROM phone_jobs WHERE sendRequestId IS NOT NULL")
+    suspend fun withSendRequest(): List<PhoneJobRow>
 
     @Query("UPDATE phone_jobs SET sendRequestId = :requestId WHERE id = :id")
     suspend fun setSendRequest(id: Long, requestId: String?)

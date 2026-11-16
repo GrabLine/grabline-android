@@ -80,6 +80,8 @@ fun AddSheetRoute(
     initialLinks: List<String>,
     sourceTitle: String?,
     onDismiss: () -> Unit,
+    /** A .torrent file handed to the app (content:// URI); [initialLinks] then holds its placeholder link. */
+    torrentFileUri: String? = null,
     onSent: (String) -> Unit = {},
     onPairClick: () -> Unit = {},
     phone: PhoneEngine? = null,
@@ -90,7 +92,7 @@ fun AddSheetRoute(
             initializer { AddViewModel(remote, settings, createSavedStateHandle(), phone) }
         },
     )
-    LaunchedEffect(initialLinks, sourceTitle) { vm.init(initialLinks, sourceTitle) }
+    LaunchedEffect(initialLinks, sourceTitle) { vm.init(initialLinks, sourceTitle, torrentFileUri) }
     val state by vm.state.collectAsState()
 
     val context = LocalContext.current
@@ -180,6 +182,9 @@ fun AddSheetContent(
         }
         LinkSummary(state, onToggleLinks)
 
+        if (state.torrentFileNeedsPhone) {
+            Text(stringResource(R.string.add_torrent_file_phone_only), style = MaterialTheme.typography.bodyMedium)
+        }
         if (state.notDownloadable) {
             Text(state.blockedMessage ?: stringResource(R.string.add_not_downloadable), style = MaterialTheme.typography.bodyLarge)
             val openDesc = stringResource(R.string.add_open_in_browser_description)

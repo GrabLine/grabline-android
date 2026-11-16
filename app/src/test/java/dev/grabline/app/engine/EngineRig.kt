@@ -38,7 +38,7 @@ class FakeStorage(private val dir: File) : PhoneStorage {
     val published = ConcurrentHashMap<String, ByteArray>()
     val preexisting = CopyOnWriteArrayList<String>()
     override fun scratchFile(jobId: Long) = File(dir, "job-$jobId.part")
-    override fun deleteScratch(jobId: Long) { scratchFile(jobId).delete() }
+    override fun deleteScratch(jobId: Long) { scratchFile(jobId).delete(); scratchDir(jobId).deleteRecursively() }
     override fun freeBytes(folderUri: String?) = free
     override suspend fun existingNames(folderUri: String?): Set<String> = (preexisting + published.keys).toSet()
     override suspend fun publish(folderUri: String?, name: String, scratch: File): String {

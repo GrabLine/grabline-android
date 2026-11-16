@@ -123,7 +123,6 @@ private fun SettingsMain(
         scope.launch { settings.set(setting, value) }
     }
 
-    val later = stringResource(R.string.coming_later)
     var message by remember { mutableStateOf("") }
     var confirmReset by remember { mutableStateOf(false) }
 
@@ -275,7 +274,7 @@ private fun SettingsMain(
             )
         }
 
-        SettingsGroup(stringResource(R.string.group_torrents), later) {
+        SettingsGroup(stringResource(R.string.group_torrents)) {
             ChoiceRow(
                 stringResource(R.string.setting_seed),
                 listOf(
@@ -283,9 +282,9 @@ private fun SettingsMain(
                     "ratio1" to stringResource(R.string.seed_ratio),
                     "hour1" to stringResource(R.string.seed_hour),
                 ),
-                seed, { put(AppSettings.SEED_AFTER_DOWNLOAD, it) }, enabled = false,
+                seed, { put(AppSettings.SEED_AFTER_DOWNLOAD, it) },
             )
-            SwitchRow(stringResource(R.string.setting_torrent_data), torrentData, { put(AppSettings.TORRENTS_ON_MOBILE_DATA, it) }, enabled = false)
+            SwitchRow(stringResource(R.string.setting_torrent_data), torrentData, { put(AppSettings.TORRENTS_ON_MOBILE_DATA, it) })
         }
 
         SettingsGroup(stringResource(R.string.group_pcs)) {

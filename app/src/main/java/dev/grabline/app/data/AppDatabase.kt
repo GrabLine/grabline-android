@@ -80,9 +80,23 @@ val MIGRATION_5_6 = object : Migration(5, 6) {
     }
 }
 
+/** v6 -> v7: torrent jobs (peers, upload counter, sequential, file list and selection, info hash, seeding). */
+val MIGRATION_6_7 = object : Migration(6, 7) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN peers INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN uploaded INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN sequential INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN torrentFiles TEXT")
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN fileMask TEXT")
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN infoHash TEXT")
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN seeding INTEGER NOT NULL DEFAULT 0")
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN seedStartedAt INTEGER")
+    }
+}
+
 @Database(
     entities = [PairedPc::class, PcJob::class, OutboxItem::class, PhoneJobRow::class, PhoneSegmentRow::class],
-    version = 6,
+    version = 7,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -101,7 +115,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "grabline.db",
-                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6).build().also { instance = it }
+                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7).build().also { instance = it }
             }
     }
 }

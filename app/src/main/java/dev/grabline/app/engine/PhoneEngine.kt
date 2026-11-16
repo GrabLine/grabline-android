@@ -35,6 +35,13 @@ interface PhoneEngine {
     /** "Download now anyway" for a job held by Wi-Fi only (overrides once). */
     suspend fun allowMobileData(jobId: Long)
 
+    /** Torrent jobs: download pieces in order (for playing while it downloads). */
+    suspend fun setTorrentSequential(jobId: Long, on: Boolean) {}
+    /** Torrent jobs: include or skip one file of a multi-file torrent. */
+    suspend fun setTorrentFileSelected(jobId: Long, index: Int, selected: Boolean) {}
+    /** Torrent jobs: stop uploading a finished torrent now. */
+    suspend fun stopSeeding(jobId: Long) {}
+
     /** The video engine (yt-dlp + FFmpeg), or null where the phone has none. */
     val video: VideoEngine? get() = null
 }
@@ -71,6 +78,9 @@ data class PhoneAddRequest(
     /** Set when the link came from a PC's outbox: the PC and item, so an item offered again is not added twice. */
     val pcId: String? = null,
     val outboxItemId: Long? = null,
+    /** A .torrent file handed to the app (content:// URI) and its name; the engine reads and keeps its bytes. */
+    val torrentFileUri: String? = null,
+    val torrentFileName: String? = null,
 )
 
 enum class PhoneJobStatus { QUEUED, DOWNLOADING, PAUSED, WAITING_NETWORK, WAITING_WIFI, WAITING_CHARGING, COMPLETED, FAILED, CANCELLED }
@@ -100,7 +110,21 @@ data class PhoneJob(
     val startAt: Long? = null,
     /** "verified", "mismatch" or null (no checksum asked for). Advisory: the file is kept either way. */
     val checksum: String? = null,
+    /** Set for torrent jobs: peers, ratio, files, sequential and seeding state. */
+    val torrent: TorrentDetails? = null,
 ) {
     /** Failed because the site changed: offer "Update the video engine?" (only when the setting asks). */
     val needsEngineUpdate: Boolean get() = status == PhoneJobStatus.FAILED && error == dev.grabline.app.engine.video.VideoText.SITE_CHANGED
 }
+
+/** What Details shows for a torrent job. */
+data class TorrentDetails(
+    val peers: Int,
+    val uploaded: Long,
+    val ratio: Float,
+    val sequential: Boolean,
+    val seeding: Boolean,
+    val files: List<TorrentFileView>,
+)
+
+data class TorrentFileView(val index: Int, val name: String, val size: Long, val selected: Boolean)

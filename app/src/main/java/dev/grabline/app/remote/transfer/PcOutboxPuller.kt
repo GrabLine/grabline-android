@@ -82,9 +82,27 @@ class PcOutboxPuller(
 }
 
 /** Cancels the phone job behind a "Send to PC" once the PC has the link (QA-38): the partial file goes with it. */
-class SendToPcLink(private val jobs: PhoneJobDao, private val cancel: suspend (phoneJobId: Long) -> Unit) {
+class SendToPcLink(
+    private val jobs: PhoneJobDao,
+    /** Whether the outbox still has a row for this request (it is deleted once the PC has confirmed). */
+    private val outboxHas: suspend (requestId: String) -> Boolean = { true },
+    private val cancel: suspend (phoneJobId: Long) -> Unit,
+) {
     suspend fun onDelivered(item: HeldItem) {
         for (row in jobs.bySendRequest(item.requestId)) {
+            jobs.setSendRequest(row.id, null)
+            cancel(row.id)
+        }
+    }
+
+    /**
+     * After a restart: if the process died after the PC replied "queued" but before the phone job was cancelled, the
+     * outbox row is gone while the job still waits. Such a job is cancelled now (its partial file goes too).
+     */
+    suspend fun recover() {
+        for (row in jobs.withSendRequest()) {
+            val requestId = row.sendRequestId ?: continue
+            if (outboxHas(requestId)) continue
             jobs.setSendRequest(row.id, null)
             cancel(row.id)
         }

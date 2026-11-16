@@ -46,7 +46,7 @@ class SettingsAndWelcomeTest {
         compose.onAllNodesWithText("System").assertCountEquals(2) // theme and language
         compose.onNodeWithText("Forever").assertExists() // keep history
         compose.onNodeWithText("Downloads/GrabLine").assertExists()
-        compose.onAllNodesWithText("Coming in a later update").assertCountEquals(1) // Torrents (Video is live)
+        compose.onAllNodesWithText("Coming in a later update").assertCountEquals(0) // nothing is "later" any more: video and torrents are live
         compose.onNodeWithText("No crash logs").assertExists()
         compose.onNodeWithText("8").assertExists() // connections per file
     }

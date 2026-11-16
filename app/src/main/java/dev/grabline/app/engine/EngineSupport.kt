@@ -52,6 +52,10 @@ data class EngineConfig(
     val updateYtdlp: String = "ask",
     /** "mp3", "m4a" or "flac"; used when a quality of "audio" has no format of its own. */
     val audioFormat: String = "mp3",
+    /** Torrents may use mobile data (SPEC "Torrents on mobile data"); independent of Wi-Fi only. */
+    val torrentsOnMobile: Boolean = false,
+    /** "off", "ratio1" or "hour1" (SPEC "Seed after download"). */
+    val seedMode: String = "off",
 )
 
 fun interface EngineSettings {
@@ -68,6 +72,8 @@ class AppEngineSettings(private val s: AppSettings) : EngineSettings {
         autoRetry = s.observe(AppSettings.AUTO_RETRY).first(),
         updateYtdlp = s.observe(AppSettings.UPDATE_YTDLP).first(),
         audioFormat = s.observe(AppSettings.AUDIO_FORMAT).first(),
+        torrentsOnMobile = s.observe(AppSettings.TORRENTS_ON_MOBILE_DATA).first(),
+        seedMode = s.observe(AppSettings.SEED_AFTER_DOWNLOAD).first(),
     )
 }
 
@@ -83,6 +89,9 @@ interface PhoneStorage {
     suspend fun existingNames(folderUri: String?): Set<String>
     /** Copies the verified scratch file into the target folder and returns its content/file URI. */
     suspend fun publish(folderUri: String?, name: String, scratch: File): String
+    /** Like [publish] into the sub-folder [subDir] ("Show/Season 1") of the target folder (torrents with several files). */
+    suspend fun publishIn(folderUri: String?, subDir: String, name: String, scratch: File): String =
+        if (subDir.isEmpty()) publish(folderUri, name, scratch) else publish(folderUri, "$subDir/$name", scratch)
 }
 
 class FolderUnavailableException(cause: Throwable? = null) : IOException(EngineText.FOLDER, cause)
