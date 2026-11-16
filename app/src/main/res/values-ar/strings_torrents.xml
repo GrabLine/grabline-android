@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_torrent_file_phone_only">لا يمكن تنزيل ملف .torrent إلا على هذا الهاتف. اختر هذا الهاتف، أو شارك رابطًا مغناطيسيًا لإرساله إلى حاسوبك.</string>
+    <string name="detail_torrent_peers">الأقران</string>
+    <string name="detail_torrent_ratio">نسبة المشاركة</string>
+    <string name="detail_torrent_seeding">البذر</string>
+    <string name="detail_torrent_seeding_value">تتم مشاركة هذا التورنت مع الآخرين، النسبة %1$s</string>
+    <string name="detail_torrent_files">الملفات</string>
+    <string name="detail_torrent_sequential">التنزيل بالترتيب للتشغيل أثناء التنزيل</string>
+    <string name="detail_torrent_file_description">%1$s, %2$s, %3$s</string>
+    <string name="detail_torrent_file_included">مضمَّن</string>
+    <string name="detail_torrent_file_skipped">متخطّى</string>
+    <string name="detail_torrent_wait_metadata">في انتظار قائمة ملفات التورنت…</string>
+    <string name="action_stop_seeding">إيقاف البذر</string>
+</resources>

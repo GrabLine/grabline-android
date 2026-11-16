@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="shell_torrent_file_later">.torrent dosyalarını bilgisayara gönderme sonraki bir güncellemede geliyor. Magnet bağlantıları şimdiden çalışıyor.</string>
     <string name="shell_offer_copied">Kopyaladığın bağlantı gönderilsin mi?</string>
     <string name="shell_offer_send">Gönder</string>
     <string name="shell_pick_a_download">Ayrıntıları görmek için bir indirme seç</string>

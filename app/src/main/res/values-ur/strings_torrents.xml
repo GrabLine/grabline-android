@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_torrent_file_phone_only">ایک .torrent فائل صرف اسی فون پر ڈاؤن لوڈ ہو سکتی ہے۔ یہ فون منتخب کریں، یا اسے اپنے پی سی کو بھیجنے کے لیے میگنیٹ لنک شیئر کریں۔</string>
+    <string name="detail_torrent_peers">پیئرز</string>
+    <string name="detail_torrent_ratio">شیئر تناسب</string>
+    <string name="detail_torrent_seeding">سیڈنگ</string>
+    <string name="detail_torrent_seeding_value">اس ٹورنٹ کو دوسروں کے ساتھ شیئر کیا جا رہا ہے، تناسب %1$s</string>
+    <string name="detail_torrent_files">فائلیں</string>
+    <string name="detail_torrent_sequential">ترتیب سے ڈاؤن لوڈ کریں تاکہ ڈاؤن لوڈ کے دوران چلا سکیں</string>
+    <string name="detail_torrent_file_description">%1$s, %2$s, %3$s</string>
+    <string name="detail_torrent_file_included">شامل</string>
+    <string name="detail_torrent_file_skipped">چھوڑی گئی</string>
+    <string name="detail_torrent_wait_metadata">ٹورنٹ کی فائل فہرست کا انتظار ہے…</string>
+    <string name="action_stop_seeding">سیڈنگ روکیں</string>
+</resources>

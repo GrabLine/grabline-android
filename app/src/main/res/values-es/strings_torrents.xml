@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_torrent_file_phone_only">Un archivo .torrent solo se puede descargar en este teléfono. Elige Este teléfono o comparte un enlace magnet para enviarlo a tu PC.</string>
+    <string name="detail_torrent_peers">Pares</string>
+    <string name="detail_torrent_ratio">Ratio de compartición</string>
+    <string name="detail_torrent_seeding">Compartiendo</string>
+    <string name="detail_torrent_seeding_value">Compartiendo este torrent con otros, ratio %1$s</string>
+    <string name="detail_torrent_files">Archivos</string>
+    <string name="detail_torrent_sequential">Descargar en orden, para reproducir mientras se descarga</string>
+    <string name="detail_torrent_file_description">%1$s, %2$s, %3$s</string>
+    <string name="detail_torrent_file_included">incluido</string>
+    <string name="detail_torrent_file_skipped">omitido</string>
+    <string name="detail_torrent_wait_metadata">Esperando la lista de archivos del torrent…</string>
+    <string name="action_stop_seeding">Dejar de compartir</string>
+</resources>

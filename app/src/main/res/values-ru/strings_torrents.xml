@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_torrent_file_phone_only">Файл .torrent можно скачать только на этот телефон. Выберите «Этот телефон» или поделитесь magnet-ссылкой, чтобы отправить его на компьютер.</string>
+    <string name="detail_torrent_peers">Пиры</string>
+    <string name="detail_torrent_ratio">Рейтинг раздачи</string>
+    <string name="detail_torrent_seeding">Раздача</string>
+    <string name="detail_torrent_seeding_value">Этот торрент раздаётся другим, рейтинг %1$s</string>
+    <string name="detail_torrent_files">Файлы</string>
+    <string name="detail_torrent_sequential">Скачивать по порядку, чтобы смотреть во время загрузки</string>
+    <string name="detail_torrent_file_description">%1$s, %2$s, %3$s</string>
+    <string name="detail_torrent_file_included">включён</string>
+    <string name="detail_torrent_file_skipped">пропущен</string>
+    <string name="detail_torrent_wait_metadata">Ожидание списка файлов торрента…</string>
+    <string name="action_stop_seeding">Остановить раздачу</string>
+</resources>

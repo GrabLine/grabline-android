@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_torrent_file_phone_only">Bir .torrent dosyası yalnızca bu telefonda indirilebilir. Bu telefon\'u seç veya bilgisayarına göndermek için bir magnet bağlantısı paylaş.</string>
+    <string name="detail_torrent_peers">Eşler</string>
+    <string name="detail_torrent_ratio">Paylaşım oranı</string>
+    <string name="detail_torrent_seeding">Tohumlama</string>
+    <string name="detail_torrent_seeding_value">Bu torrent başkalarıyla paylaşılıyor, oran %1$s</string>
+    <string name="detail_torrent_files">Dosyalar</string>
+    <string name="detail_torrent_sequential">İndirirken oynatabilmek için sırayla indir</string>
+    <string name="detail_torrent_file_description">%1$s, %2$s, %3$s</string>
+    <string name="detail_torrent_file_included">dahil</string>
+    <string name="detail_torrent_file_skipped">atlandı</string>
+    <string name="detail_torrent_wait_metadata">Torrent\'in dosya listesi bekleniyor…</string>
+    <string name="action_stop_seeding">Tohumlamayı durdur</string>
+</resources>

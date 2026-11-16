@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_torrent_file_phone_only">.torrent 파일은 이 휴대전화에서만 다운로드할 수 있습니다. 이 휴대전화를 선택하거나 마그넷 링크를 공유해 PC로 보내세요.</string>
+    <string name="detail_torrent_peers">피어</string>
+    <string name="detail_torrent_ratio">공유율</string>
+    <string name="detail_torrent_seeding">시딩</string>
+    <string name="detail_torrent_seeding_value">이 토렌트를 다른 사용자와 공유 중, 공유율 %1$s</string>
+    <string name="detail_torrent_files">파일</string>
+    <string name="detail_torrent_sequential">순서대로 다운로드하여 받는 동안 재생</string>
+    <string name="detail_torrent_file_description">%1$s, %2$s, %3$s</string>
+    <string name="detail_torrent_file_included">포함됨</string>
+    <string name="detail_torrent_file_skipped">건너뜀</string>
+    <string name="detail_torrent_wait_metadata">토렌트 파일 목록을 기다리는 중…</string>
+    <string name="action_stop_seeding">시딩 중지</string>
+</resources>

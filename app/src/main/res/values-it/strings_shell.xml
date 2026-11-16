@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="shell_torrent_file_later">L\'invio di file .torrent a un PC arriverà in un aggiornamento futuro. I link magnet funzionano già.</string>
     <string name="shell_offer_copied">Inviare il link copiato?</string>
     <string name="shell_offer_send">Invia</string>
     <string name="shell_pick_a_download">Scegli un download per vederne i dettagli</string>
