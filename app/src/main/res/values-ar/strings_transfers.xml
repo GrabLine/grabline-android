@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_copy_to_phone">نسخ إلى هذا الهاتف</string>
+    <string name="action_download_here">التنزيل على هذا الهاتف بدلًا من ذلك</string>
+    <string name="action_send_to_pc">إرسال إلى الحاسوب</string>
+    <string name="send_to_pc_title">إلى أي حاسوب تريد الإرسال؟</string>
+    <string name="note_copy_started">جارٍ النسخ إلى هذا الهاتف. تابعه ضمن عمليات النقل</string>
+    <string name="note_sending_to_pc">جارٍ الإرسال إلى حاسوبك. يغادر هذا الهاتف بعد أن يستلمه حاسوبك</string>
+    <string name="note_already_sending">في طريقه بالفعل إلى حاسوبك</string>
+    <string name="note_moved_to_phone">يجري تنزيله الآن على هذا الهاتف</string>
+    <string name="tab_transfers">عمليات النقل</string>
+    <string name="transfers_title">عمليات النقل</string>
+    <string name="transfers_empty">لا شيء يُنسخ من حاسوبك</string>
+    <string name="transfers_cancel">إلغاء</string>
+    <string name="transfers_cancel_description">إلغاء نسخ %1$s</string>
+    <string name="transfers_open">فتح</string>
+    <string name="transfers_open_description">فتح %1$s</string>
+    <string name="transfers_progress_description">%1$s, %2$s</string>
+</resources>

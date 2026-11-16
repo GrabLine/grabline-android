@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_copy_to_phone">Копировать на этот телефон</string>
+    <string name="action_download_here">Скачать на этот телефон</string>
+    <string name="action_send_to_pc">Отправить на компьютер</string>
+    <string name="send_to_pc_title">На какой компьютер отправить?</string>
+    <string name="note_copy_started">Копируется на этот телефон. Следите во вкладке «Передачи»</string>
+    <string name="note_sending_to_pc">Отправляется на компьютер. Файл покинет этот телефон, когда компьютер его получит</string>
+    <string name="note_already_sending">Уже отправляется на компьютер</string>
+    <string name="note_moved_to_phone">Теперь скачивается на этот телефон</string>
+    <string name="tab_transfers">Передачи</string>
+    <string name="transfers_title">Передачи</string>
+    <string name="transfers_empty">С компьютера ничего не копируется</string>
+    <string name="transfers_cancel">Отмена</string>
+    <string name="transfers_cancel_description">Отменить копирование %1$s</string>
+    <string name="transfers_open">Открыть</string>
+    <string name="transfers_open_description">Открыть %1$s</string>
+    <string name="transfers_progress_description">%1$s, %2$s</string>
+</resources>

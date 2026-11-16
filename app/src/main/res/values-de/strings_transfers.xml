@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_copy_to_phone">Auf dieses Telefon kopieren</string>
+    <string name="action_download_here">Stattdessen auf diesem Telefon herunterladen</string>
+    <string name="action_send_to_pc">An PC senden</string>
+    <string name="send_to_pc_title">An welchen PC senden?</string>
+    <string name="note_copy_started">Wird auf dieses Telefon kopiert. Verfolge es unter Übertragungen</string>
+    <string name="note_sending_to_pc">Wird an deinen PC gesendet. Es verlässt dieses Telefon, sobald dein PC es hat</string>
+    <string name="note_already_sending">Schon auf dem Weg zu deinem PC</string>
+    <string name="note_moved_to_phone">Wird jetzt auf diesem Telefon heruntergeladen</string>
+    <string name="tab_transfers">Übertragungen</string>
+    <string name="transfers_title">Übertragungen</string>
+    <string name="transfers_empty">Es wird nichts von deinem PC kopiert</string>
+    <string name="transfers_cancel">Abbrechen</string>
+    <string name="transfers_cancel_description">Kopieren von %1$s abbrechen</string>
+    <string name="transfers_open">Öffnen</string>
+    <string name="transfers_open_description">%1$s öffnen</string>
+    <string name="transfers_progress_description">%1$s, %2$s</string>
+</resources>

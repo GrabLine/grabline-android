@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_copy_to_phone">इस फ़ोन पर कॉपी करें</string>
+    <string name="action_download_here">इसकी जगह इस फ़ोन पर डाउनलोड करें</string>
+    <string name="action_send_to_pc">पीसी को भेजें</string>
+    <string name="send_to_pc_title">किस पीसी को भेजें?</string>
+    <string name="note_copy_started">इस फ़ोन पर कॉपी हो रहा है। ट्रांसफ़र में देखें</string>
+    <string name="note_sending_to_pc">आपके पीसी को भेजा जा रहा है। पीसी के पास पहुँचते ही यह इस फ़ोन से हट जाएगा</string>
+    <string name="note_already_sending">पहले से आपके पीसी की ओर जा रहा है</string>
+    <string name="note_moved_to_phone">अब इस फ़ोन पर डाउनलोड हो रहा है</string>
+    <string name="tab_transfers">ट्रांसफ़र</string>
+    <string name="transfers_title">ट्रांसफ़र</string>
+    <string name="transfers_empty">आपके पीसी से कुछ भी कॉपी नहीं हो रहा</string>
+    <string name="transfers_cancel">रद्द करें</string>
+    <string name="transfers_cancel_description">%1$s की कॉपी रद्द करें</string>
+    <string name="transfers_open">खोलें</string>
+    <string name="transfers_open_description">%1$s खोलें</string>
+    <string name="transfers_progress_description">%1$s, %2$s</string>
+</resources>

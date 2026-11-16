@@ -104,7 +104,7 @@
     <string name="about_title">GrabLine hakkında</string>
     <string name="about_version">Uygulama sürümü</string>
     <string name="about_ytdlp">yt-dlp sürümü</string>
-    <string name="about_ytdlp_none">Kullanılamıyor</string>
+    <string name="about_ytdlp_none">Yüklü değil</string>
     <string name="about_links">Bağlantılar</string>
     <string name="about_licences">Lisanslar</string>
     <string name="about_source">Kaynak kodu</string>

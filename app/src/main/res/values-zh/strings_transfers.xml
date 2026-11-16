@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_copy_to_phone">复制到此手机</string>
+    <string name="action_download_here">改为在此手机上下载</string>
+    <string name="action_send_to_pc">发送到电脑</string>
+    <string name="send_to_pc_title">发送到哪台电脑？</string>
+    <string name="note_copy_started">正在复制到此手机。请在“传输”中查看进度</string>
+    <string name="note_sending_to_pc">正在发送到你的电脑。电脑收到后，文件才会离开此手机</string>
+    <string name="note_already_sending">已在发送到你的电脑的途中</string>
+    <string name="note_moved_to_phone">现在正在此手机上下载</string>
+    <string name="tab_transfers">传输</string>
+    <string name="transfers_title">传输</string>
+    <string name="transfers_empty">没有正在从你的电脑复制的内容</string>
+    <string name="transfers_cancel">取消</string>
+    <string name="transfers_cancel_description">取消复制 %1$s</string>
+    <string name="transfers_open">打开</string>
+    <string name="transfers_open_description">打开 %1$s</string>
+    <string name="transfers_progress_description">%1$s, %2$s</string>
+</resources>

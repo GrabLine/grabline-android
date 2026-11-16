@@ -104,7 +104,7 @@
     <string name="about_title">GrabLine के बारे में</string>
     <string name="about_version">ऐप वर्ज़न</string>
     <string name="about_ytdlp">yt-dlp वर्ज़न</string>
-    <string name="about_ytdlp_none">उपलब्ध नहीं</string>
+    <string name="about_ytdlp_none">इंस्टॉल नहीं है</string>
     <string name="about_links">लिंक</string>
     <string name="about_licences">लाइसेंस</string>
     <string name="about_source">सोर्स कोड</string>

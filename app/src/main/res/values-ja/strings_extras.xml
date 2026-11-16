@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_more_formats">その他の形式</string>
+    <string name="add_more_formats_hide">形式を減らす</string>
+    <string name="add_more_formats_description">サイトが提供するすべての形式を、解像度、コーデック、サイズとともに表示します</string>
+    <string name="add_format_audio_only">音声のみ</string>
+    <string name="add_subtitles">字幕</string>
+    <string name="add_subtitles_none">字幕なし</string>
+    <string name="add_clip_title">動画の一部だけを残す</string>
+    <string name="add_clip_start">開始（m:ss）</string>
+    <string name="add_clip_end">終了（m:ss）</string>
+    <string name="add_clip_hint">両方を空にすると動画全体を残します</string>
+    <string name="add_clip_error">1:30 のような時間を使い、終了を開始より後にしてください</string>
+    <string name="add_checksum_label">SHA-256 チェックサム（任意）</string>
+    <string name="add_checksum_hint">貼り付けると、完了時にファイルを検証します</string>
+    <string name="add_checksum_error">SHA-256 チェックサムではありません。0-9 と a-f の64文字です</string>
+    <string name="add_start_later">あとで開始</string>
+    <string name="add_start_later_description">選んだ時刻にあとで開始します</string>
+    <string name="add_start_later_at">%1$s に開始</string>
+    <string name="add_start_later_change">変更</string>
+    <string name="add_start_later_pick">開始時刻</string>
+    <string name="add_start_later_set">設定</string>
+    <string name="add_start_later_cancel">キャンセル</string>
+    <string name="add_start_later_button">あとで開始</string>
+    <string name="widget_description">最新のアクティブなダウンロード。「リンクを貼り付け」と「すべて一時停止」付き</string>
+    <string name="widget_title">GrabLine</string>
+    <string name="widget_empty">アクティブなダウンロードはありません</string>
+    <string name="widget_paste">リンクを貼り付け</string>
+    <string name="widget_paste_description">コピーしたリンクを GrabLine に貼り付けます</string>
+    <string name="widget_pause_all">すべて一時停止</string>
+    <string name="widget_pause_all_description">アクティブなダウンロードをすべて一時停止します</string>
+    <string name="widget_row_percent">%1$s, %2$d%%</string>
+    <string name="widget_row_unknown">%1$s、ダウンロード中</string>
+    <string name="tile_label">GrabLine</string>
+    <plurals name="tile_active">
+        <item quantity="other">%1$d件がアクティブ</item>
+    </plurals>
+    <string name="tile_idle">リンクを追加</string>
+    <string name="quick_add_nothing_copied">先にリンクをコピーしてから、もう一度お試しください</string>
+</resources>

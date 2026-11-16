@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_more_formats">المزيد من الصيغ</string>
+    <string name="add_more_formats_hide">صيغ أقل</string>
+    <string name="add_more_formats_description">عرض كل الصيغ التي يقدمها الموقع مع الدقة والترميز والحجم</string>
+    <string name="add_format_audio_only">صوت فقط</string>
+    <string name="add_subtitles">الترجمات</string>
+    <string name="add_subtitles_none">بلا ترجمات</string>
+    <string name="add_clip_title">الاحتفاظ بجزء من الفيديو فقط</string>
+    <string name="add_clip_start">من (د:ث)</string>
+    <string name="add_clip_end">إلى (د:ث)</string>
+    <string name="add_clip_hint">اترك الحقلين فارغين للاحتفاظ بالفيديو كاملًا</string>
+    <string name="add_clip_error">استخدم وقتًا مثل 1:30 واجعل النهاية بعد البداية</string>
+    <string name="add_checksum_label">المجموع الاختباري SHA-256 (اختياري)</string>
+    <string name="add_checksum_hint">الصقه للتحقق من الملف عند اكتماله</string>
+    <string name="add_checksum_error">هذا ليس مجموعًا اختباريًا SHA-256. يتكون من 64 حرفًا، 0-9 و a-f</string>
+    <string name="add_start_later">البدء لاحقًا</string>
+    <string name="add_start_later_description">البدء لاحقًا في وقت تختاره</string>
+    <string name="add_start_later_at">يبدأ في %1$s</string>
+    <string name="add_start_later_change">تغيير</string>
+    <string name="add_start_later_pick">البدء في</string>
+    <string name="add_start_later_set">تعيين</string>
+    <string name="add_start_later_cancel">إلغاء</string>
+    <string name="add_start_later_button">البدء لاحقًا</string>
+    <string name="widget_description">أحدث التنزيلات النشطة، مع لصق الرابط وإيقاف الكل مؤقتًا</string>
+    <string name="widget_title">GrabLine</string>
+    <string name="widget_empty">لا توجد تنزيلات نشطة</string>
+    <string name="widget_paste">لصق الرابط</string>
+    <string name="widget_paste_description">الصق الرابط المنسوخ في GrabLine</string>
+    <string name="widget_pause_all">إيقاف الكل مؤقتًا</string>
+    <string name="widget_pause_all_description">إيقاف كل التنزيلات النشطة مؤقتًا</string>
+    <string name="widget_row_percent">%1$s, %2$d%%</string>
+    <string name="widget_row_unknown">%1$s، جارٍ التنزيل</string>
+    <string name="tile_label">GrabLine</string>
+    <plurals name="tile_active">
+        <item quantity="zero">%1$d نشط</item>
+        <item quantity="one">%1$d نشط</item>
+        <item quantity="two">%1$d نشطان</item>
+        <item quantity="few">%1$d نشطة</item>
+        <item quantity="many">%1$d نشطًا</item>
+        <item quantity="other">%1$d نشط</item>
+    </plurals>
+    <string name="tile_idle">إضافة رابط</string>
+    <string name="quick_add_nothing_copied">انسخ رابطًا أولًا ثم حاول مرة أخرى</string>
+</resources>

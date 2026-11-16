@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_more_formats">형식 더 보기</string>
+    <string name="add_more_formats_hide">형식 줄이기</string>
+    <string name="add_more_formats_description">사이트가 제공하는 모든 형식을 해상도, 코덱, 크기와 함께 표시합니다</string>
+    <string name="add_format_audio_only">오디오만</string>
+    <string name="add_subtitles">자막</string>
+    <string name="add_subtitles_none">자막 없음</string>
+    <string name="add_clip_title">동영상의 일부만 유지</string>
+    <string name="add_clip_start">시작(m:ss)</string>
+    <string name="add_clip_end">종료(m:ss)</string>
+    <string name="add_clip_hint">둘 다 비워 두면 동영상 전체를 유지합니다</string>
+    <string name="add_clip_error">1:30 같은 시간을 사용하고, 종료를 시작보다 늦게 설정하세요</string>
+    <string name="add_checksum_label">SHA-256 체크섬(선택)</string>
+    <string name="add_checksum_hint">붙여넣으면 완료될 때 파일을 확인합니다</string>
+    <string name="add_checksum_error">SHA-256 체크섬이 아닙니다. 0-9와 a-f로 이루어진 64자여야 합니다</string>
+    <string name="add_start_later">나중에 시작</string>
+    <string name="add_start_later_description">선택한 시간에 나중에 시작합니다</string>
+    <string name="add_start_later_at">%1$s에 시작</string>
+    <string name="add_start_later_change">변경</string>
+    <string name="add_start_later_pick">시작 시간</string>
+    <string name="add_start_later_set">설정</string>
+    <string name="add_start_later_cancel">취소</string>
+    <string name="add_start_later_button">나중에 시작</string>
+    <string name="widget_description">최신 진행 중인 다운로드와 링크 붙여넣기, 모두 일시중지 버튼</string>
+    <string name="widget_title">GrabLine</string>
+    <string name="widget_empty">진행 중인 다운로드 없음</string>
+    <string name="widget_paste">링크 붙여넣기</string>
+    <string name="widget_paste_description">복사한 링크를 GrabLine에 붙여넣습니다</string>
+    <string name="widget_pause_all">모두 일시정지</string>
+    <string name="widget_pause_all_description">진행 중인 모든 다운로드를 일시중지합니다</string>
+    <string name="widget_row_percent">%1$s, %2$d%%</string>
+    <string name="widget_row_unknown">%1$s, 다운로드 중</string>
+    <string name="tile_label">GrabLine</string>
+    <plurals name="tile_active">
+        <item quantity="other">%1$d개 진행 중</item>
+    </plurals>
+    <string name="tile_idle">링크 추가</string>
+    <string name="quick_add_nothing_copied">먼저 링크를 복사한 다음 다시 시도하세요</string>
+</resources>

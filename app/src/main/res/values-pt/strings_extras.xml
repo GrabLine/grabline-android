@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_more_formats">Mais formatos</string>
+    <string name="add_more_formats_hide">Menos formatos</string>
+    <string name="add_more_formats_description">Mostrar todos os formatos que o site oferece, com resolução, codec e tamanho</string>
+    <string name="add_format_audio_only">Somente áudio</string>
+    <string name="add_subtitles">Legendas</string>
+    <string name="add_subtitles_none">Sem legendas</string>
+    <string name="add_clip_title">Manter apenas parte do vídeo</string>
+    <string name="add_clip_start">De (m:ss)</string>
+    <string name="add_clip_end">Até (m:ss)</string>
+    <string name="add_clip_hint">Deixe os dois vazios para manter o vídeo inteiro</string>
+    <string name="add_clip_error">Use um tempo como 1:30 e deixe o fim depois do início</string>
+    <string name="add_checksum_label">Checksum SHA-256 (opcional)</string>
+    <string name="add_checksum_hint">Cole-o para verificar o arquivo quando terminar</string>
+    <string name="add_checksum_error">Isso não é um checksum SHA-256. Ele tem 64 caracteres, 0-9 e a-f</string>
+    <string name="add_start_later">Iniciar depois</string>
+    <string name="add_start_later_description">Iniciar depois em um horário escolhido</string>
+    <string name="add_start_later_at">Começa às %1$s</string>
+    <string name="add_start_later_change">Alterar</string>
+    <string name="add_start_later_pick">Iniciar às</string>
+    <string name="add_start_later_set">Definir</string>
+    <string name="add_start_later_cancel">Cancelar</string>
+    <string name="add_start_later_button">Iniciar depois</string>
+    <string name="widget_description">Os downloads ativos mais recentes, com Colar link e Pausar tudo</string>
+    <string name="widget_title">GrabLine</string>
+    <string name="widget_empty">Nenhum download ativo</string>
+    <string name="widget_paste">Colar link</string>
+    <string name="widget_paste_description">Colar o link copiado no GrabLine</string>
+    <string name="widget_pause_all">Pausar tudo</string>
+    <string name="widget_pause_all_description">Pausar todos os downloads ativos</string>
+    <string name="widget_row_percent">%1$s, %2$d%%</string>
+    <string name="widget_row_unknown">%1$s, baixando</string>
+    <string name="tile_label">GrabLine</string>
+    <plurals name="tile_active">
+        <item quantity="one">%1$d ativo</item>
+        <item quantity="many">%1$d ativos</item>
+        <item quantity="other">%1$d ativos</item>
+    </plurals>
+    <string name="tile_idle">Adicionar um link</string>
+    <string name="quick_add_nothing_copied">Copie um link primeiro e tente novamente</string>
+</resources>

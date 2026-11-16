@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_copy_to_phone">اس فون پر کاپی کریں</string>
+    <string name="action_download_here">اس کے بجائے اس فون پر ڈاؤن لوڈ کریں</string>
+    <string name="action_send_to_pc">پی سی کو بھیجیں</string>
+    <string name="send_to_pc_title">کس پی سی کو بھیجیں؟</string>
+    <string name="note_copy_started">اس فون پر کاپی ہو رہا ہے۔ منتقلی میں دیکھیں</string>
+    <string name="note_sending_to_pc">آپ کے پی سی کو بھیجا جا رہا ہے۔ پی سی کے پاس پہنچتے ہی یہ اس فون سے ہٹ جائے گا</string>
+    <string name="note_already_sending">پہلے ہی آپ کے پی سی کی طرف جا رہا ہے</string>
+    <string name="note_moved_to_phone">اب اس فون پر ڈاؤن لوڈ ہو رہا ہے</string>
+    <string name="tab_transfers">منتقلی</string>
+    <string name="transfers_title">منتقلی</string>
+    <string name="transfers_empty">آپ کے پی سی سے کچھ کاپی نہیں ہو رہا</string>
+    <string name="transfers_cancel">منسوخ کریں</string>
+    <string name="transfers_cancel_description">%1$s کی کاپی منسوخ کریں</string>
+    <string name="transfers_open">کھولیں</string>
+    <string name="transfers_open_description">%1$s کھولیں</string>
+    <string name="transfers_progress_description">%1$s, %2$s</string>
+</resources>

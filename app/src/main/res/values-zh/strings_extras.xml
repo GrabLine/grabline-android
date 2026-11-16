@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_more_formats">更多格式</string>
+    <string name="add_more_formats_hide">更少格式</string>
+    <string name="add_more_formats_description">显示网站提供的所有格式，包括分辨率、编码和大小</string>
+    <string name="add_format_audio_only">仅音频</string>
+    <string name="add_subtitles">字幕</string>
+    <string name="add_subtitles_none">无字幕</string>
+    <string name="add_clip_title">只保留视频的一部分</string>
+    <string name="add_clip_start">开始（分:秒）</string>
+    <string name="add_clip_end">结束（分:秒）</string>
+    <string name="add_clip_hint">两项都留空则保留整个视频</string>
+    <string name="add_clip_error">请使用类似 1:30 的时间，并使结束时间晚于开始时间</string>
+    <string name="add_checksum_label">SHA-256 校验值（可选）</string>
+    <string name="add_checksum_hint">粘贴后将在文件完成时进行校验</string>
+    <string name="add_checksum_error">这不是 SHA-256 校验值。它有 64 个字符，包含 0-9 和 a-f</string>
+    <string name="add_start_later">稍后开始</string>
+    <string name="add_start_later_description">在选定的时间稍后开始</string>
+    <string name="add_start_later_at">将在 %1$s 开始</string>
+    <string name="add_start_later_change">更改</string>
+    <string name="add_start_later_pick">开始时间</string>
+    <string name="add_start_later_set">设定</string>
+    <string name="add_start_later_cancel">取消</string>
+    <string name="add_start_later_button">稍后开始</string>
+    <string name="widget_description">最新的活动下载，附带“粘贴链接”和“全部暂停”</string>
+    <string name="widget_title">GrabLine</string>
+    <string name="widget_empty">没有活动下载</string>
+    <string name="widget_paste">粘贴链接</string>
+    <string name="widget_paste_description">将复制的链接粘贴到 GrabLine</string>
+    <string name="widget_pause_all">全部暂停</string>
+    <string name="widget_pause_all_description">暂停所有活动下载</string>
+    <string name="widget_row_percent">%1$s, %2$d%%</string>
+    <string name="widget_row_unknown">%1$s，正在下载</string>
+    <string name="tile_label">GrabLine</string>
+    <plurals name="tile_active">
+        <item quantity="other">%1$d 个活动</item>
+    </plurals>
+    <string name="tile_idle">添加链接</string>
+    <string name="quick_add_nothing_copied">请先复制一个链接，然后再试</string>
+</resources>

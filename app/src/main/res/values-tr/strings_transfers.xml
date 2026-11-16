@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_copy_to_phone">Bu telefona kopyala</string>
+    <string name="action_download_here">Bunun yerine bu telefonda indir</string>
+    <string name="action_send_to_pc">Bilgisayara gönder</string>
+    <string name="send_to_pc_title">Hangi bilgisayara gönderilsin?</string>
+    <string name="note_copy_started">Bu telefona kopyalanıyor. Aktarımlar\'dan takip et</string>
+    <string name="note_sending_to_pc">Bilgisayarına gönderiliyor. Bilgisayarın aldığında bu telefondan çıkar</string>
+    <string name="note_already_sending">Zaten bilgisayarına doğru yolda</string>
+    <string name="note_moved_to_phone">Şimdi bu telefonda indiriliyor</string>
+    <string name="tab_transfers">Aktarımlar</string>
+    <string name="transfers_title">Aktarımlar</string>
+    <string name="transfers_empty">Bilgisayarından kopyalanan bir şey yok</string>
+    <string name="transfers_cancel">İptal</string>
+    <string name="transfers_cancel_description">%1$s kopyalamasını iptal et</string>
+    <string name="transfers_open">Aç</string>
+    <string name="transfers_open_description">%1$s dosyasını aç</string>
+    <string name="transfers_progress_description">%1$s, %2$s</string>
+</resources>

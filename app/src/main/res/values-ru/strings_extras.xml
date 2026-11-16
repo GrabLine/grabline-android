@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_more_formats">Больше форматов</string>
+    <string name="add_more_formats_hide">Меньше форматов</string>
+    <string name="add_more_formats_description">Показать все форматы, которые предлагает сайт, с разрешением, кодеком и размером</string>
+    <string name="add_format_audio_only">Только аудио</string>
+    <string name="add_subtitles">Субтитры</string>
+    <string name="add_subtitles_none">Без субтитров</string>
+    <string name="add_clip_title">Оставить только часть видео</string>
+    <string name="add_clip_start">От (м:сс)</string>
+    <string name="add_clip_end">До (м:сс)</string>
+    <string name="add_clip_hint">Оставьте оба поля пустыми, чтобы сохранить всё видео</string>
+    <string name="add_clip_error">Укажите время вроде 1:30, и конец должен быть позже начала</string>
+    <string name="add_checksum_label">Контрольная сумма SHA-256 (необязательно)</string>
+    <string name="add_checksum_hint">Вставьте её, чтобы проверить файл по окончании загрузки</string>
+    <string name="add_checksum_error">Это не контрольная сумма SHA-256. В ней 64 символа: 0-9 и a-f</string>
+    <string name="add_start_later">Начать позже</string>
+    <string name="add_start_later_description">Начать позже в выбранное время</string>
+    <string name="add_start_later_at">Начнётся в %1$s</string>
+    <string name="add_start_later_change">Изменить</string>
+    <string name="add_start_later_pick">Начать в</string>
+    <string name="add_start_later_set">Задать</string>
+    <string name="add_start_later_cancel">Отмена</string>
+    <string name="add_start_later_button">Начать позже</string>
+    <string name="widget_description">Последние активные загрузки, с кнопками «Вставить ссылку» и «Приостановить все»</string>
+    <string name="widget_title">GrabLine</string>
+    <string name="widget_empty">Нет активных загрузок</string>
+    <string name="widget_paste">Вставить ссылку</string>
+    <string name="widget_paste_description">Вставить скопированную ссылку в GrabLine</string>
+    <string name="widget_pause_all">Приостановить всё</string>
+    <string name="widget_pause_all_description">Приостановить все активные загрузки</string>
+    <string name="widget_row_percent">%1$s, %2$d%%</string>
+    <string name="widget_row_unknown">%1$s, идёт загрузка</string>
+    <string name="tile_label">GrabLine</string>
+    <plurals name="tile_active">
+        <item quantity="one">%1$d активна</item>
+        <item quantity="few">%1$d активны</item>
+        <item quantity="many">%1$d активных</item>
+        <item quantity="other">%1$d активной</item>
+    </plurals>
+    <string name="tile_idle">Добавить ссылку</string>
+    <string name="quick_add_nothing_copied">Сначала скопируйте ссылку, затем повторите</string>
+</resources>

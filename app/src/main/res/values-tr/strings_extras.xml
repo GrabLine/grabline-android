@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_more_formats">Daha fazla biçim</string>
+    <string name="add_more_formats_hide">Daha az biçim</string>
+    <string name="add_more_formats_description">Sitenin sunduğu tüm biçimleri çözünürlük, codec ve boyutla göster</string>
+    <string name="add_format_audio_only">Yalnızca ses</string>
+    <string name="add_subtitles">Altyazılar</string>
+    <string name="add_subtitles_none">Altyazı yok</string>
+    <string name="add_clip_title">Videonun yalnızca bir bölümünü tut</string>
+    <string name="add_clip_start">Başlangıç (d:ss)</string>
+    <string name="add_clip_end">Bitiş (d:ss)</string>
+    <string name="add_clip_hint">Tüm videoyu tutmak için ikisini de boş bırak</string>
+    <string name="add_clip_error">1:30 gibi bir süre kullan ve bitişi başlangıçtan sonra yap</string>
+    <string name="add_checksum_label">SHA-256 sağlama toplamı (isteğe bağlı)</string>
+    <string name="add_checksum_hint">Bittiğinde dosyayı denetlemek için yapıştır</string>
+    <string name="add_checksum_error">Bu bir SHA-256 sağlama toplamı değil. 64 karakter olmalı, 0-9 ve a-f</string>
+    <string name="add_start_later">Daha sonra başlat</string>
+    <string name="add_start_later_description">Seçilen bir saatte daha sonra başlat</string>
+    <string name="add_start_later_at">Saat %1$s\'de başlar</string>
+    <string name="add_start_later_change">Değiştir</string>
+    <string name="add_start_later_pick">Başlama saati</string>
+    <string name="add_start_later_set">Ayarla</string>
+    <string name="add_start_later_cancel">İptal</string>
+    <string name="add_start_later_button">Daha sonra başlat</string>
+    <string name="widget_description">En yeni etkin indirmeler, Bağlantı yapıştır ve Tümünü duraklat ile</string>
+    <string name="widget_title">GrabLine</string>
+    <string name="widget_empty">Etkin indirme yok</string>
+    <string name="widget_paste">Bağlantı yapıştır</string>
+    <string name="widget_paste_description">Kopyalanan bağlantıyı GrabLine\'a yapıştır</string>
+    <string name="widget_pause_all">Tümünü duraklat</string>
+    <string name="widget_pause_all_description">Tüm etkin indirmeleri duraklat</string>
+    <string name="widget_row_percent">%1$s, %2$d%%</string>
+    <string name="widget_row_unknown">%1$s, indiriliyor</string>
+    <string name="tile_label">GrabLine</string>
+    <plurals name="tile_active">
+        <item quantity="one">%1$d etkin</item>
+        <item quantity="other">%1$d etkin</item>
+    </plurals>
+    <string name="tile_idle">Bağlantı ekle</string>
+    <string name="quick_add_nothing_copied">Önce bir bağlantı kopyala, sonra tekrar dene</string>
+</resources>

@@ -106,7 +106,7 @@
     <string name="about_title">À propos de GrabLine</string>
     <string name="about_version">Version de l\'application</string>
     <string name="about_ytdlp">Version de yt-dlp</string>
-    <string name="about_ytdlp_none">Non disponible</string>
+    <string name="about_ytdlp_none">Non installé</string>
     <string name="about_links">Liens</string>
     <string name="about_licences">Licences</string>
     <string name="about_source">Code source</string>

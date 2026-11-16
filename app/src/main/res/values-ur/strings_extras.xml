@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_more_formats">مزید فارمیٹ</string>
+    <string name="add_more_formats_hide">کم فارمیٹ</string>
+    <string name="add_more_formats_description">سائٹ کے پیش کردہ تمام فارمیٹ ریزولوشن، کوڈیک اور سائز کے ساتھ دکھائیں</string>
+    <string name="add_format_audio_only">صرف آڈیو</string>
+    <string name="add_subtitles">سب ٹائٹلز</string>
+    <string name="add_subtitles_none">کوئی سب ٹائٹل نہیں</string>
+    <string name="add_clip_title">ویڈیو کا صرف ایک حصہ رکھیں</string>
+    <string name="add_clip_start">سے (m:ss)</string>
+    <string name="add_clip_end">تک (m:ss)</string>
+    <string name="add_clip_hint">پوری ویڈیو رکھنے کے لیے دونوں خالی چھوڑیں</string>
+    <string name="add_clip_error">1:30 جیسا وقت استعمال کریں، اور اختتام کو آغاز کے بعد رکھیں</string>
+    <string name="add_checksum_label">SHA-256 چیک سم (اختیاری)</string>
+    <string name="add_checksum_hint">اسے پیسٹ کریں تاکہ فائل مکمل ہونے پر جانچی جا سکے</string>
+    <string name="add_checksum_error">یہ SHA-256 چیک سم نہیں ہے۔ اس میں 64 حروف ہوتے ہیں، 0-9 اور a-f</string>
+    <string name="add_start_later">بعد میں شروع کریں</string>
+    <string name="add_start_later_description">منتخب وقت پر بعد میں شروع کریں</string>
+    <string name="add_start_later_at">%1$s پر شروع ہوگا</string>
+    <string name="add_start_later_change">تبدیل کریں</string>
+    <string name="add_start_later_pick">شروع کرنے کا وقت</string>
+    <string name="add_start_later_set">سیٹ کریں</string>
+    <string name="add_start_later_cancel">منسوخ کریں</string>
+    <string name="add_start_later_button">بعد میں شروع کریں</string>
+    <string name="widget_description">تازہ ترین فعال ڈاؤن لوڈ، لنک پیسٹ کریں اور سب روکیں کے ساتھ</string>
+    <string name="widget_title">GrabLine</string>
+    <string name="widget_empty">کوئی فعال ڈاؤن لوڈ نہیں</string>
+    <string name="widget_paste">لنک پیسٹ کریں</string>
+    <string name="widget_paste_description">کاپی کیا ہوا لنک GrabLine میں پیسٹ کریں</string>
+    <string name="widget_pause_all">سب کو روک دیں۔</string>
+    <string name="widget_pause_all_description">تمام فعال ڈاؤن لوڈ روکیں</string>
+    <string name="widget_row_percent">%1$s, %2$d%%</string>
+    <string name="widget_row_unknown">%1$s، ڈاؤن لوڈ ہو رہا ہے</string>
+    <string name="tile_label">GrabLine</string>
+    <plurals name="tile_active">
+        <item quantity="one">%1$d فعال</item>
+        <item quantity="other">%1$d فعال</item>
+    </plurals>
+    <string name="tile_idle">لنک شامل کریں</string>
+    <string name="quick_add_nothing_copied">پہلے کوئی لنک کاپی کریں، پھر دوبارہ کوشش کریں</string>
+</resources>

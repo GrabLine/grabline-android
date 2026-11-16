@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_more_formats">Più formati</string>
+    <string name="add_more_formats_hide">Meno formati</string>
+    <string name="add_more_formats_description">Mostra tutti i formati offerti dal sito, con risoluzione, codec e dimensione</string>
+    <string name="add_format_audio_only">Solo audio</string>
+    <string name="add_subtitles">Sottotitoli</string>
+    <string name="add_subtitles_none">Nessun sottotitolo</string>
+    <string name="add_clip_title">Mantieni solo una parte del video</string>
+    <string name="add_clip_start">Da (m:ss)</string>
+    <string name="add_clip_end">A (m:ss)</string>
+    <string name="add_clip_hint">Lascia vuoti entrambi per mantenere tutto il video</string>
+    <string name="add_clip_error">Usa un tempo come 1:30 e fai in modo che la fine sia dopo l\'inizio</string>
+    <string name="add_checksum_label">Checksum SHA-256 (facoltativo)</string>
+    <string name="add_checksum_hint">Incollalo per verificare il file al termine</string>
+    <string name="add_checksum_error">Non è un checksum SHA-256. Ha 64 caratteri, 0-9 e a-f</string>
+    <string name="add_start_later">Avvia più tardi</string>
+    <string name="add_start_later_description">Avvia più tardi a un\'ora scelta</string>
+    <string name="add_start_later_at">Inizia alle %1$s</string>
+    <string name="add_start_later_change">Cambia</string>
+    <string name="add_start_later_pick">Avvia alle</string>
+    <string name="add_start_later_set">Imposta</string>
+    <string name="add_start_later_cancel">Annulla</string>
+    <string name="add_start_later_button">Avvia più tardi</string>
+    <string name="widget_description">I download attivi più recenti, con Incolla link e Pausa tutti</string>
+    <string name="widget_title">GrabLine</string>
+    <string name="widget_empty">Nessun download attivo</string>
+    <string name="widget_paste">Incolla link</string>
+    <string name="widget_paste_description">Incolla il link copiato in GrabLine</string>
+    <string name="widget_pause_all">Metti tutto in pausa</string>
+    <string name="widget_pause_all_description">Metti in pausa tutti i download attivi</string>
+    <string name="widget_row_percent">%1$s, %2$d%%</string>
+    <string name="widget_row_unknown">%1$s, download in corso</string>
+    <string name="tile_label">GrabLine</string>
+    <plurals name="tile_active">
+        <item quantity="one">%1$d attivo</item>
+        <item quantity="many">%1$d attivi</item>
+        <item quantity="other">%1$d attivi</item>
+    </plurals>
+    <string name="tile_idle">Aggiungi un link</string>
+    <string name="quick_add_nothing_copied">Copia prima un link, poi riprova</string>
+</resources>

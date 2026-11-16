@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_copy_to_phone">このスマートフォンにコピー</string>
+    <string name="action_download_here">代わりにこのスマートフォンでダウンロード</string>
+    <string name="action_send_to_pc">PCに送信</string>
+    <string name="send_to_pc_title">どのPCに送信しますか？</string>
+    <string name="note_copy_started">このスマートフォンにコピー中です。「転送」で確認できます</string>
+    <string name="note_sending_to_pc">PCに送信中です。PCが受け取ると、このスマートフォンから削除されます</string>
+    <string name="note_already_sending">すでにPCへ送信中です</string>
+    <string name="note_moved_to_phone">このスマートフォンでダウンロード中です</string>
+    <string name="tab_transfers">転送</string>
+    <string name="transfers_title">転送</string>
+    <string name="transfers_empty">PCからコピー中のものはありません</string>
+    <string name="transfers_cancel">キャンセル</string>
+    <string name="transfers_cancel_description">%1$s のコピーをキャンセルします</string>
+    <string name="transfers_open">開く</string>
+    <string name="transfers_open_description">%1$s を開きます</string>
+    <string name="transfers_progress_description">%1$s, %2$s</string>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_copy_to_phone">이 휴대전화로 복사</string>
+    <string name="action_download_here">대신 이 휴대전화에서 다운로드</string>
+    <string name="action_send_to_pc">PC로 보내기</string>
+    <string name="send_to_pc_title">어느 PC로 보낼까요?</string>
+    <string name="note_copy_started">이 휴대전화로 복사 중입니다. 전송에서 확인하세요</string>
+    <string name="note_sending_to_pc">PC로 보내는 중입니다. PC가 받으면 이 휴대전화에서 삭제됩니다</string>
+    <string name="note_already_sending">이미 PC로 가는 중입니다</string>
+    <string name="note_moved_to_phone">이제 이 휴대전화에서 다운로드 중입니다</string>
+    <string name="tab_transfers">전송</string>
+    <string name="transfers_title">전송</string>
+    <string name="transfers_empty">PC에서 복사 중인 항목이 없습니다</string>
+    <string name="transfers_cancel">취소</string>
+    <string name="transfers_cancel_description">%1$s 복사 취소</string>
+    <string name="transfers_open">열기</string>
+    <string name="transfers_open_description">%1$s 열기</string>
+    <string name="transfers_progress_description">%1$s, %2$s</string>
+</resources>

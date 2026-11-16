@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_copy_to_phone">Copiar para este telefone</string>
+    <string name="action_download_here">Baixar neste telefone</string>
+    <string name="action_send_to_pc">Enviar ao PC</string>
+    <string name="send_to_pc_title">Enviar para qual PC?</string>
+    <string name="note_copy_started">Copiando para este telefone. Acompanhe em Transferências</string>
+    <string name="note_sending_to_pc">Enviando ao seu PC. Sai deste telefone quando o PC o receber</string>
+    <string name="note_already_sending">Já está a caminho do seu PC</string>
+    <string name="note_moved_to_phone">Agora baixando neste telefone</string>
+    <string name="tab_transfers">Transferências</string>
+    <string name="transfers_title">Transferências</string>
+    <string name="transfers_empty">Nada está sendo copiado do seu PC</string>
+    <string name="transfers_cancel">Cancelar</string>
+    <string name="transfers_cancel_description">Cancelar a cópia de %1$s</string>
+    <string name="transfers_open">Abrir</string>
+    <string name="transfers_open_description">Abrir %1$s</string>
+    <string name="transfers_progress_description">%1$s, %2$s</string>
+</resources>

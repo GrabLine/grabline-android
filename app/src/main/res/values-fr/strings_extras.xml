@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_more_formats">Plus de formats</string>
+    <string name="add_more_formats_hide">Moins de formats</string>
+    <string name="add_more_formats_description">Afficher tous les formats proposés par le site, avec résolution, codec et taille</string>
+    <string name="add_format_audio_only">Audio uniquement</string>
+    <string name="add_subtitles">Sous-titres</string>
+    <string name="add_subtitles_none">Aucun sous-titre</string>
+    <string name="add_clip_title">Garder une partie de la vidéo</string>
+    <string name="add_clip_start">De (m:ss)</string>
+    <string name="add_clip_end">À (m:ss)</string>
+    <string name="add_clip_hint">Laissez les deux vides pour garder toute la vidéo</string>
+    <string name="add_clip_error">Utilisez une durée comme 1:30, avec une fin postérieure au début</string>
+    <string name="add_checksum_label">Somme de contrôle SHA-256 (facultatif)</string>
+    <string name="add_checksum_hint">Collez-la pour vérifier le fichier à la fin du téléchargement</string>
+    <string name="add_checksum_error">Ce n\'est pas une somme de contrôle SHA-256. Elle compte 64 caractères, 0-9 et a-f</string>
+    <string name="add_start_later">Démarrer plus tard</string>
+    <string name="add_start_later_description">Démarrer plus tard à une heure choisie</string>
+    <string name="add_start_later_at">Démarre à %1$s</string>
+    <string name="add_start_later_change">Modifier</string>
+    <string name="add_start_later_pick">Démarrer à</string>
+    <string name="add_start_later_set">Valider</string>
+    <string name="add_start_later_cancel">Annuler</string>
+    <string name="add_start_later_button">Démarrer plus tard</string>
+    <string name="widget_description">Les derniers téléchargements actifs, avec Coller le lien et Tout mettre en pause</string>
+    <string name="widget_title">GrabLine</string>
+    <string name="widget_empty">Aucun téléchargement actif</string>
+    <string name="widget_paste">Coller le lien</string>
+    <string name="widget_paste_description">Coller le lien copié dans GrabLine</string>
+    <string name="widget_pause_all">Tout mettre en pause</string>
+    <string name="widget_pause_all_description">Mettre en pause tous les téléchargements actifs</string>
+    <string name="widget_row_percent">%1$s, %2$d%%</string>
+    <string name="widget_row_unknown">%1$s, téléchargement en cours</string>
+    <string name="tile_label">GrabLine</string>
+    <plurals name="tile_active">
+        <item quantity="one">%1$d actif</item>
+        <item quantity="many">%1$d actifs</item>
+        <item quantity="other">%1$d actifs</item>
+    </plurals>
+    <string name="tile_idle">Ajouter un lien</string>
+    <string name="quick_add_nothing_copied">Copiez d\'abord un lien, puis réessayez</string>
+</resources>

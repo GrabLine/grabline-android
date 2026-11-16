@@ -102,7 +102,7 @@
     <string name="about_title">GrabLine 정보</string>
     <string name="about_version">앱 버전</string>
     <string name="about_ytdlp">yt-dlp 버전</string>
-    <string name="about_ytdlp_none">사용할 수 없음</string>
+    <string name="about_ytdlp_none">설치되지 않음</string>
     <string name="about_links">링크</string>
     <string name="about_licences">라이선스</string>
     <string name="about_source">소스 코드</string>
