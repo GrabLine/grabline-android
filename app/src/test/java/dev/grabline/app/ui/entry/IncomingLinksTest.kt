@@ -50,7 +50,9 @@ class IncomingLinksTest {
 
     @Test fun contentRejected() = assertTrue(x("content://media/external/1").isEmpty())
 
-    @Test fun ftpRejected() = assertTrue(x("ftp://example.com/a").isEmpty())
+    @Test fun serverLinksAreAccepted() = assertEquals(listOf("ftp://example.com/a"), x("ftp://example.com/a"))
+
+    @Test fun unknownSchemesRejected() = assertTrue(x("gopher://example.com/a").isEmpty())
 
     @Test fun dedupPreservesOrder() = assertEquals(
         listOf("https://a.com", "https://b.com"),

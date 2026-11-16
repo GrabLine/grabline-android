@@ -337,6 +337,8 @@ class AddViewModel(
                     if (kind == LinkKind.PAGE) continue
                     // A .torrent file can only be downloaded on this phone; PCs get magnet and web links.
                     if (link.startsWith(TorrentRouting.FILE_PREFIX)) continue
+                    // Server links use logins saved on this phone, so only the phone downloads them.
+                    if (kind == LinkKind.CLOUD) continue
                     val result = remote.send(
                         pcId = pc.id,
                         url = link,
@@ -459,7 +461,7 @@ class AddViewModel(
         val rule = l.links.firstOrNull()?.let { RulesCodec.decode(e.prefs.rules)[RuleRouting.typeOf(it)] }
         val hasTorrentFile = l.links.any { it.startsWith(TorrentRouting.FILE_PREFIX) }
         val chosen = l.pc?.takeIf { it in valid }
-            ?: PHONE_ID.takeIf { phoneOk && hasTorrentFile }
+            ?: PHONE_ID.takeIf { phoneOk && (hasTorrentFile || l.links.any { LinkKind.classify(it) == LinkKind.CLOUD }) }
             ?: rule?.takeIf { it in valid }
             ?: e.prefs.device.takeIf { it in valid }
             ?: e.prefs.lastPc.takeIf { it in valid }
@@ -532,7 +534,7 @@ class AddViewModel(
             folderId = folderId,
             notDownloadable = notDownloadable,
             canStart = if (isPhone) phoneAdds > 0 && !notDownloadable && (!phoneVideo || clipValid) && (!showChecksum || checksumValid)
-            else pc != null && !notDownloadable && l.links.any { !it.startsWith(TorrentRouting.FILE_PREFIX) },
+            else pc != null && !notDownloadable && l.links.any { !it.startsWith(TorrentRouting.FILE_PREFIX) && LinkKind.classify(it) != LinkKind.CLOUD },
             torrentFileNeedsPhone = !isPhone && hasTorrentFile,
             sending = t.sending,
             notice = t.notice,

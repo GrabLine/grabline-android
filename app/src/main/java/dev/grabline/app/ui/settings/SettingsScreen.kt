@@ -52,6 +52,7 @@ private const val PAGE_MAIN = "main"
 private const val PAGE_RULES = "rules"
 private const val PAGE_ABOUT = "about"
 private const val PAGE_LICENCES = "licences"
+private const val PAGE_SERVERS = "servers"
 
 @Composable
 private fun <T> AppSettings.state(setting: Setting<T>): State<T> =
@@ -98,10 +99,12 @@ fun SettingsScreen(
             modifier = modifier,
         )
         PAGE_LICENCES -> LicencesScreen(onBack = { page = PAGE_ABOUT }, modifier = modifier)
+        PAGE_SERVERS -> ServersScreen(onBack = { page = PAGE_MAIN }, modifier = modifier)
         else -> SettingsMain(
             settings, pcs, modifier, onPairPc, languageChange, crashLogDir,
             onRules = { page = PAGE_RULES },
             onAbout = { page = PAGE_ABOUT },
+            onServers = { page = PAGE_SERVERS },
         )
     }
 }
@@ -116,6 +119,7 @@ private fun SettingsMain(
     crashLogDir: File?,
     onRules: () -> Unit,
     onAbout: () -> Unit,
+    onServers: () -> Unit,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -389,6 +393,10 @@ private fun SettingsMain(
                 }
             }
             ActionRow(stringResource(R.string.setting_reset), { confirmReset = true })
+        }
+
+        SettingsGroup(stringResource(R.string.servers_title)) {
+            ActionRow(stringResource(R.string.servers_title), onServers, supporting = stringResource(R.string.servers_summary))
         }
 
         SettingsGroup(stringResource(R.string.group_about)) {

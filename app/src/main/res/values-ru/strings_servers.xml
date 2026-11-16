@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="kind_cloud">Сервер</string>
+    <string name="servers_title">Серверы</string>
+    <string name="servers_summary">Сохранённые входы для загрузок по SFTP, FTP, WebDAV и S3</string>
+    <string name="servers_note">Данные для входа хранятся только на этом телефоне. Пароли и ключи шифруются ключом, который никогда не покидает защищённое хранилище телефона.</string>
+    <string name="servers_add">Добавить сервер</string>
+    <string name="servers_edit">Изменить сервер</string>
+    <string name="servers_empty">Серверов пока нет. Всё равно можно вставить ссылку с именем пользователя и паролем.</string>
+    <string name="servers_trusted">Доверенные SSH-серверы</string>
+    <string name="servers_trusted_note">При первом подключении к SFTP-серверу его ключ безопасности сохраняется здесь. Если он изменится, загрузки с этого сервера остановятся.</string>
+    <string name="server_forget">Забыть</string>
+    <string name="server_forget_description">Забыть ключ безопасности %1$s</string>
+    <string name="server_type">Тип</string>
+    <string name="server_label">Название (необязательно)</string>
+    <string name="server_host">Адрес сервера</string>
+    <string name="server_bucket">Бакет (* для любого бакета)</string>
+    <string name="server_port">Порт (пусто — стандартный)</string>
+    <string name="server_user">Имя пользователя</string>
+    <string name="server_access_key">Идентификатор ключа доступа</string>
+    <string name="server_auth_password">Пароль</string>
+    <string name="server_auth_key">Закрытый ключ</string>
+    <string name="server_password">Пароль</string>
+    <string name="server_secret_key">Секретный ключ доступа</string>
+    <string name="server_private_key">Закрытый ключ (вставьте сюда)</string>
+    <string name="server_import_key">Выбрать файл ключа</string>
+    <string name="server_import_failed">Не удалось прочитать этот файл как ключ</string>
+    <string name="server_passphrase">Парольная фраза ключа</string>
+    <string name="server_secret_kept">Сохранено. Оставьте пустым, чтобы сохранить</string>
+    <string name="server_endpoint">Эндпоинт (необязательно)</string>
+    <string name="server_endpoint_hint">Для MinIO, Backblaze и других S3-совместимых сервисов. Для Amazon S3 оставьте пустым</string>
+    <string name="server_region">Регион (необязательно)</string>
+    <string name="server_region_hint">Обычно us-east-1</string>
+    <string name="server_save">Сохранить</string>
+    <string name="server_delete">Удалить</string>
+    <string name="server_delete_confirm">Удалить этот вход? Сохранённые пароль или ключ тоже будут стёрты.</string>
+    <string name="server_error_host">Введите адрес сервера без http:// и косых черт</string>
+    <string name="server_error_port">Введите порт от 1 до 65535</string>
+    <string name="server_error_endpoint">Введите полный адрес, например https://minio.example:9000</string>
+    <string name="server_error_key">Вставьте закрытый ключ или выберите файл ключа</string>
+</resources>

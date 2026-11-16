@@ -345,6 +345,7 @@ private fun kindLabel(kind: LinkKind): Int = when (kind) {
     LinkKind.MAGNET, LinkKind.TORRENT -> R.string.kind_torrent
     LinkKind.VIDEO -> R.string.kind_video
     LinkKind.FILE -> R.string.kind_file
+    LinkKind.CLOUD -> R.string.kind_cloud
     LinkKind.PAGE -> R.string.kind_page
 }
 

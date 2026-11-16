@@ -11,6 +11,10 @@ import dev.grabline.app.data.PairedPc
 import dev.grabline.app.engine.AndroidPhoneStorage
 import dev.grabline.app.engine.AppEngineSettings
 import dev.grabline.app.engine.DownloadEngine
+import dev.grabline.app.engine.cloud.CredentialStore
+import dev.grabline.app.engine.cloud.DefaultCloudBackend
+import dev.grabline.app.engine.cloud.KeystoreSecretCipher
+import dev.grabline.app.engine.cloud.RoomHostKeyStore
 import dev.grabline.app.engine.torrent.TorrentEngine
 import dev.grabline.app.engine.video.YoutubeDlVideoEngine
 import androidx.lifecycle.Lifecycle
@@ -85,11 +89,14 @@ class AppContainer(context: Context) {
     // Downloads read slowly from some servers: 60 s read timeout for the engine (the shared client keeps 10 s).
     private val engineClient = baseClient.newBuilder().readTimeout(60, TimeUnit.SECONDS).build()
     val video = YoutubeDlVideoEngine(app)
+    /** Saved server logins; their secrets are sealed by an Android Keystore key. */
+    val cloudAccounts = CredentialStore(db.cloudAccounts(), KeystoreSecretCipher.create())
     val phone: DownloadEngine = DownloadEngine(
         db.phoneJobs(), engineClient, AndroidPhoneStorage(app), AppEngineSettings(settings), scope, video = video,
         transfers = FetchClient(TransferConnector { pcId -> connections.openTransfer(pcId) }),
         torrents = TorrentEngine(),
         torrentFiles = { uri -> readTorrentFile(app, uri) },
+        cloud = DefaultCloudBackend(cloudAccounts, RoomHostKeyStore(db.sshHostKeys()), engineClient),
     )
     val batteryTip = BatteryTip.create(app)
     /** Active downloads across the phone and every reachable PC, for the widget and the Quick Settings tile. */

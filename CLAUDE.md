@@ -16,7 +16,7 @@ One Android app that downloads on the phone and remotely controls GrabLine on a 
 - No mDNS: the QR code carries every local PC address; the phone remembers the last one that worked.
 - The phone never listens on a port. It never sends cookies or browser headers to the PC.
 - Desktop: listener in `app/remote/` (Qt TCP sockets on its own thread + Python `ssl` TLS; Qt TLS can't serve the P-256 key on Windows), off by default, private and link-local binds only, loopback test mode for the emulator (10.0.2.2). Phone links enter the `handoffs` table with source `phone` and take an unattended add path (never a modal dialog; default quality `best`). PROTOCOL_VERSION 6.
-- Phase 6 (cloud servers) waits for demand; do not start it.
+- Phase 6 (cloud servers: SFTP, FTP/FTPS, WebDAV, S3) is built: `engine/cloud`, secrets sealed by an Android Keystore AES-GCM key, SFTP host keys trusted on first use.
 
 ## Model division
 

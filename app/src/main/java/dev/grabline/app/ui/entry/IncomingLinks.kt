@@ -1,11 +1,11 @@
 package dev.grabline.app.ui.entry
 
-/** Extracts downloadable links (http, https, magnet) from free text such as a share. */
+/** Extracts downloadable links (http, https, magnet, and server links such as ftp, sftp, s3, webdav) from free text such as a share. */
 object IncomingLinks {
     const val MAX_LINKS = 300
 
     private val urlRegex = Regex(
-        """(?<![A-Za-z0-9+.\-]:)(?:https?://[^\s/?#<>"'`]+[^\s<>"'`]*|magnet:\?[^\s<>"'`]+)""",
+        """(?<![A-Za-z0-9+.\-]:)(?:https?://[^\s/?#<>"'`]+[^\s<>"'`]*|magnet:\?[^\s<>"'`]+|(?:ftps?|sftp|scp|s3|webdavs?)://[^\s<>"'`]+)""",
         RegexOption.IGNORE_CASE,
     )
     private const val TRAILING = ".,;:!?'\"]}>*"
@@ -38,6 +38,7 @@ object IncomingLinks {
             lower.startsWith("magnet:?") -> if ("xt=" in lower) s else null
             lower.startsWith("https://") || lower.startsWith("http://") ->
                 if (s.substringAfter("//").isNotEmpty()) s else null
+            Regex("""^(?:ftps?|sftp|scp|s3|webdavs?)://.+""").matches(lower) -> if (dev.grabline.app.engine.cloud.CloudUrl.parse(s) != null) s else null
             else -> null
         }
     }

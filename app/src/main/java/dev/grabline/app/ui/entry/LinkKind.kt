@@ -4,6 +4,8 @@ enum class LinkKind(val label: String) {
     MAGNET("Torrent"),
     TORRENT("Torrent"),
     VIDEO("Video"),
+    /** An ftp, ftps, sftp, scp, s3 or webdav link: downloaded on the phone from a server. */
+    CLOUD("Server"),
     FILE("File"),
     PAGE("Web page");
 
@@ -42,6 +44,7 @@ enum class LinkKind(val label: String) {
             val t = link.trim()
             if (t.startsWith("magnet:", ignoreCase = true)) return MAGNET
             if (t.startsWith(dev.grabline.app.engine.torrent.TorrentRouting.FILE_PREFIX, ignoreCase = true)) return TORRENT
+            if (dev.grabline.app.engine.cloud.CloudUrl.parse(t) != null) return CLOUD
             val m = urlParts.find(t) ?: return PAGE
             val host = m.groupValues[1].lowercase().removeSuffix(".")
             val path = m.groupValues[2]

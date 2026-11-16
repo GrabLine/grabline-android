@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="kind_cloud">Server</string>
+    <string name="servers_title">Servers</string>
+    <string name="servers_summary">Saved logins for SFTP, FTP, WebDAV and S3 downloads</string>
+    <string name="servers_note">Logins stay on this phone. Passwords and keys are encrypted with a key that never leaves the phone\'s secure storage.</string>
+    <string name="servers_add">Add a server</string>
+    <string name="servers_edit">Edit server</string>
+    <string name="servers_empty">No servers saved yet. You can still paste a link that has a user name and password in it.</string>
+    <string name="servers_trusted">Trusted SSH servers</string>
+    <string name="servers_trusted_note">The first time you connect to an SFTP server, its security key is saved here. If it ever changes, downloads from that server stop.</string>
+    <string name="server_forget">Forget</string>
+    <string name="server_forget_description">Forget the security key of %1$s</string>
+    <string name="server_type">Type</string>
+    <string name="server_label">Name (optional)</string>
+    <string name="server_host">Server address</string>
+    <string name="server_bucket">Bucket (* for any bucket)</string>
+    <string name="server_port">Port (empty for the usual one)</string>
+    <string name="server_user">User name</string>
+    <string name="server_access_key">Access key ID</string>
+    <string name="server_auth_password">Password</string>
+    <string name="server_auth_key">Private key</string>
+    <string name="server_password">Password</string>
+    <string name="server_secret_key">Secret access key</string>
+    <string name="server_private_key">Private key (paste it here)</string>
+    <string name="server_import_key">Choose a key file</string>
+    <string name="server_import_failed">That file couldn\'t be read as a key</string>
+    <string name="server_passphrase">Key passphrase</string>
+    <string name="server_secret_kept">Saved. Leave empty to keep it</string>
+    <string name="server_endpoint">Endpoint (optional)</string>
+    <string name="server_endpoint_hint">For MinIO, Backblaze and other S3-compatible services. Leave empty for Amazon S3</string>
+    <string name="server_region">Region (optional)</string>
+    <string name="server_region_hint">Usually us-east-1</string>
+    <string name="server_save">Save</string>
+    <string name="server_delete">Delete</string>
+    <string name="server_delete_confirm">Delete this login? Its saved password or key is erased too.</string>
+    <string name="server_error_host">Enter the server address without http:// or slashes</string>
+    <string name="server_error_port">Enter a port from 1 to 65535</string>
+    <string name="server_error_endpoint">Enter a full address such as https://minio.example:9000</string>
+    <string name="server_error_key">Paste a private key or choose a key file</string>
+</resources>

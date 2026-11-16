@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="kind_cloud">Sunucu</string>
+    <string name="servers_title">Sunucular</string>
+    <string name="servers_summary">SFTP, FTP, WebDAV ve S3 indirmeleri için kayıtlı girişler</string>
+    <string name="servers_note">Girişler yalnızca bu telefonda kalır. Parolalar ve anahtarlar, telefonun güvenli deposundan hiç çıkmayan bir anahtarla şifrelenir.</string>
+    <string name="servers_add">Sunucu ekle</string>
+    <string name="servers_edit">Sunucuyu düzenle</string>
+    <string name="servers_empty">Henüz kayıtlı sunucu yok. Yine de kullanıcı adı ve parola içeren bir bağlantı yapıştırabilirsin.</string>
+    <string name="servers_trusted">Güvenilen SSH sunucuları</string>
+    <string name="servers_trusted_note">Bir SFTP sunucusuna ilk bağlandığında güvenlik anahtarı burada saklanır. Değişirse o sunucudan indirmeler durur.</string>
+    <string name="server_forget">Unut</string>
+    <string name="server_forget_description">%1$s sunucusunun güvenlik anahtarını unut</string>
+    <string name="server_type">Tür</string>
+    <string name="server_label">Ad (isteğe bağlı)</string>
+    <string name="server_host">Sunucu adresi</string>
+    <string name="server_bucket">Bucket (herhangi biri için *)</string>
+    <string name="server_port">Bağlantı noktası (olağan için boş bırak)</string>
+    <string name="server_user">Kullanıcı adı</string>
+    <string name="server_access_key">Erişim anahtarı kimliği</string>
+    <string name="server_auth_password">Parola</string>
+    <string name="server_auth_key">Özel anahtar</string>
+    <string name="server_password">Parola</string>
+    <string name="server_secret_key">Gizli erişim anahtarı</string>
+    <string name="server_private_key">Özel anahtar (buraya yapıştır)</string>
+    <string name="server_import_key">Anahtar dosyası seç</string>
+    <string name="server_import_failed">Bu dosya anahtar olarak okunamadı</string>
+    <string name="server_passphrase">Anahtar parolası</string>
+    <string name="server_secret_kept">Kaydedildi. Korumak için boş bırak</string>
+    <string name="server_endpoint">Uç nokta (isteğe bağlı)</string>
+    <string name="server_endpoint_hint">MinIO, Backblaze ve diğer S3 uyumlu hizmetler için. Amazon S3 için boş bırak</string>
+    <string name="server_region">Bölge (isteğe bağlı)</string>
+    <string name="server_region_hint">Genellikle us-east-1</string>
+    <string name="server_save">Kaydet</string>
+    <string name="server_delete">Sil</string>
+    <string name="server_delete_confirm">Bu giriş silinsin mi? Kayıtlı parolası veya anahtarı da silinir.</string>
+    <string name="server_error_host">Sunucu adresini http:// ve eğik çizgi olmadan gir</string>
+    <string name="server_error_port">1 ile 65535 arasında bir bağlantı noktası gir</string>
+    <string name="server_error_endpoint">https://minio.example:9000 gibi tam bir adres gir</string>
+    <string name="server_error_key">Özel bir anahtar yapıştır veya anahtar dosyası seç</string>
+</resources>

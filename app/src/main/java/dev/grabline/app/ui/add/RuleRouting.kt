@@ -13,6 +13,6 @@ object RuleRouting {
             val path = link.trim().substringBefore('#').substringBefore('?')
             if (path.substringAfterLast('/').substringAfterLast('.', "").lowercase() in audio) "music" else "other"
         }
-        LinkKind.PAGE -> "other"
+        LinkKind.PAGE, LinkKind.CLOUD -> "other"
     }
 }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="kind_cloud">服务器</string>
+    <string name="servers_title">服务器</string>
+    <string name="servers_summary">为 SFTP、FTP、WebDAV 和 S3 下载保存的登录信息</string>
+    <string name="servers_note">登录信息只保存在这部手机上。密码和密钥用一个永远不会离开手机安全存储的密钥加密。</string>
+    <string name="servers_add">添加服务器</string>
+    <string name="servers_edit">编辑服务器</string>
+    <string name="servers_empty">还没有保存的服务器。你仍然可以粘贴包含用户名和密码的链接。</string>
+    <string name="servers_trusted">受信任的 SSH 服务器</string>
+    <string name="servers_trusted_note">首次连接 SFTP 服务器时，其安全密钥会保存在这里。如果它发生变化，来自该服务器的下载会停止。</string>
+    <string name="server_forget">忘记</string>
+    <string name="server_forget_description">忘记 %1$s 的安全密钥</string>
+    <string name="server_type">类型</string>
+    <string name="server_label">名称（可选）</string>
+    <string name="server_host">服务器地址</string>
+    <string name="server_bucket">存储桶（* 表示任意存储桶）</string>
+    <string name="server_port">端口（留空使用默认端口）</string>
+    <string name="server_user">用户名</string>
+    <string name="server_access_key">访问密钥 ID</string>
+    <string name="server_auth_password">密码</string>
+    <string name="server_auth_key">私钥</string>
+    <string name="server_password">密码</string>
+    <string name="server_secret_key">私有访问密钥</string>
+    <string name="server_private_key">私钥（粘贴到这里）</string>
+    <string name="server_import_key">选择密钥文件</string>
+    <string name="server_import_failed">无法将该文件读取为密钥</string>
+    <string name="server_passphrase">密钥口令</string>
+    <string name="server_secret_kept">已保存。留空则保持不变</string>
+    <string name="server_endpoint">端点（可选）</string>
+    <string name="server_endpoint_hint">适用于 MinIO、Backblaze 等兼容 S3 的服务。Amazon S3 请留空</string>
+    <string name="server_region">区域（可选）</string>
+    <string name="server_region_hint">通常为 us-east-1</string>
+    <string name="server_save">保存</string>
+    <string name="server_delete">删除</string>
+    <string name="server_delete_confirm">删除此登录信息？已保存的密码或密钥也会一并清除。</string>
+    <string name="server_error_host">输入不带 http:// 和斜杠的服务器地址</string>
+    <string name="server_error_port">输入 1 到 65535 之间的端口</string>
+    <string name="server_error_endpoint">输入完整地址，例如 https://minio.example:9000</string>
+    <string name="server_error_key">粘贴私钥或选择密钥文件</string>
+</resources>

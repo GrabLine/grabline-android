@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="kind_cloud">Servidor</string>
+    <string name="servers_title">Servidores</string>
+    <string name="servers_summary">Accesos guardados para descargas SFTP, FTP, WebDAV y S3</string>
+    <string name="servers_note">Los accesos se quedan en este teléfono. Las contraseñas y claves se cifran con una clave que nunca sale del almacenamiento seguro del teléfono.</string>
+    <string name="servers_add">Añadir un servidor</string>
+    <string name="servers_edit">Editar servidor</string>
+    <string name="servers_empty">Aún no hay servidores guardados. Aun así puedes pegar un enlace que incluya usuario y contraseña.</string>
+    <string name="servers_trusted">Servidores SSH de confianza</string>
+    <string name="servers_trusted_note">La primera vez que te conectas a un servidor SFTP, su clave de seguridad se guarda aquí. Si cambia, las descargas de ese servidor se detienen.</string>
+    <string name="server_forget">Olvidar</string>
+    <string name="server_forget_description">Olvidar la clave de seguridad de %1$s</string>
+    <string name="server_type">Tipo</string>
+    <string name="server_label">Nombre (opcional)</string>
+    <string name="server_host">Dirección del servidor</string>
+    <string name="server_bucket">Bucket (* para cualquier bucket)</string>
+    <string name="server_port">Puerto (vacío para el habitual)</string>
+    <string name="server_user">Usuario</string>
+    <string name="server_access_key">ID de clave de acceso</string>
+    <string name="server_auth_password">Contraseña</string>
+    <string name="server_auth_key">Clave privada</string>
+    <string name="server_password">Contraseña</string>
+    <string name="server_secret_key">Clave de acceso secreta</string>
+    <string name="server_private_key">Clave privada (pégala aquí)</string>
+    <string name="server_import_key">Elegir un archivo de clave</string>
+    <string name="server_import_failed">No se pudo leer ese archivo como clave</string>
+    <string name="server_passphrase">Frase de contraseña de la clave</string>
+    <string name="server_secret_kept">Guardada. Déjalo vacío para conservarla</string>
+    <string name="server_endpoint">Endpoint (opcional)</string>
+    <string name="server_endpoint_hint">Para MinIO, Backblaze y otros servicios compatibles con S3. Déjalo vacío para Amazon S3</string>
+    <string name="server_region">Región (opcional)</string>
+    <string name="server_region_hint">Normalmente us-east-1</string>
+    <string name="server_save">Guardar</string>
+    <string name="server_delete">Eliminar</string>
+    <string name="server_delete_confirm">¿Eliminar este acceso? También se borra su contraseña o clave guardada.</string>
+    <string name="server_error_host">Escribe la dirección del servidor sin http:// ni barras</string>
+    <string name="server_error_port">Escribe un puerto del 1 al 65535</string>
+    <string name="server_error_endpoint">Escribe una dirección completa, como https://minio.example:9000</string>
+    <string name="server_error_key">Pega una clave privada o elige un archivo de clave</string>
+</resources>

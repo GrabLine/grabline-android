@@ -22,6 +22,12 @@ androidxTestCore = "1.7.0"
 androidxTestRunner = "1.7.0"
 youtubedl = "0.18.1"
 libtorrent4j = "2.1.0-39"
+sshj = "0.40.0"
+bouncycastle = "1.80"
+commonsNet = "3.11.1"
+slf4j = "2.0.17"
+sshd = "2.15.0"
+ftpserver = "1.2.1"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -60,6 +66,14 @@ libtorrent4j = { module = "org.libtorrent4j:libtorrent4j", version.ref = "libtor
 libtorrent4j-arm64 = { module = "org.libtorrent4j:libtorrent4j-android-arm64", version.ref = "libtorrent4j" }
 libtorrent4j-arm = { module = "org.libtorrent4j:libtorrent4j-android-arm", version.ref = "libtorrent4j" }
 libtorrent4j-amd64 = { module = "org.libtorrent4j:libtorrent4j-android-x86_64", version.ref = "libtorrent4j" }
+sshj = { module = "com.hierynomus:sshj", version.ref = "sshj" }
+bouncycastle-prov = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
+bouncycastle-pkix = { module = "org.bouncycastle:bcpkix-jdk18on", version.ref = "bouncycastle" }
+commons-net = { module = "commons-net:commons-net", version.ref = "commonsNet" }
+slf4j-nop = { module = "org.slf4j:slf4j-nop", version.ref = "slf4j" }
+sshd-core = { module = "org.apache.sshd:sshd-core", version.ref = "sshd" }
+sshd-sftp = { module = "org.apache.sshd:sshd-sftp", version.ref = "sshd" }
+ftpserver-core = { module = "org.apache.ftpserver:ftpserver-core", version.ref = "ftpserver" }
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTestCore" }
 
 [plugins]

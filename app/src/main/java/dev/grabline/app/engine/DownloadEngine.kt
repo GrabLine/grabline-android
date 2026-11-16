@@ -2,6 +2,12 @@ package dev.grabline.app.engine
 
 import dev.grabline.app.data.PhoneJobDao
 import dev.grabline.app.data.PhoneJobRow
+import dev.grabline.app.engine.cloud.CloudBackend
+import dev.grabline.app.engine.cloud.CloudErrors
+import dev.grabline.app.engine.cloud.CloudRunner
+import dev.grabline.app.engine.cloud.CloudSchemes
+import dev.grabline.app.engine.cloud.CloudText
+import dev.grabline.app.engine.cloud.CloudUrl
 import dev.grabline.app.engine.torrent.LinkRoute
 import dev.grabline.app.engine.torrent.NetworkHold
 import dev.grabline.app.engine.torrent.SeedRules
@@ -19,6 +25,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
@@ -69,6 +76,8 @@ class DownloadEngine(
     private val torrents: TorrentBackend? = null,
     /** Reads the bytes of a .torrent file handed to the app (a content:// URI); null where files cannot be read. */
     private val torrentFiles: (suspend (uri: String) -> ByteArray?)? = null,
+    /** Runs jobs of kind "cloud" (ftp, ftps, sftp, scp, s3, webdav); null where there is none. */
+    private val cloud: CloudBackend? = null,
 ) : PhoneEngine {
     private val constraints = MutableStateFlow(EngineConstraints())
     private val speeds = MutableStateFlow<Map<Long, Long>>(emptyMap())
@@ -144,11 +153,16 @@ class DownloadEngine(
         val isVideo = kind == PhoneJobRow.KIND_VIDEO
         val isTransfer = kind == PhoneJobRow.KIND_TRANSFER
         val isTorrent = kind == PhoneJobRow.KIND_TORRENT
+        val isCloud = kind == PhoneJobRow.KIND_CLOUD
         val job = launch(ioDispatcher, start = CoroutineStart.LAZY) {
             val engine = video
             val fetcher = transfers
             val bt = torrents
-            if (isTorrent) {
+            if (isCloud) {
+                val backend = cloud
+                if (backend != null) CloudRunner(env, backend, id, cfg).run()
+                else dao.moveIf(id, listOf("DOWNLOADING"), "FAILED", null, CloudText.UNAVAILABLE)
+            } else if (isTorrent) {
                 if (bt != null) TorrentRunner(env, bt, id, settings).run()
                 else dao.moveIf(id, listOf("DOWNLOADING"), "FAILED", null, TorrentText.UNAVAILABLE)
             } else if (isTransfer) {
@@ -203,6 +217,7 @@ class DownloadEngine(
     }
 
     override suspend fun add(request: PhoneAddRequest): PhoneJob {
+        if (CloudSchemes.isCloud(request.url)) return addCloud(request)
         val id = addMutex.withLock {
             val now = clock()
             val route = if (request.torrentFileUri != null) LinkRoute.TORRENT_FILE else TorrentRouting.route(request.url)
@@ -247,6 +262,69 @@ class DownloadEngine(
         if (request.pcId != null) dao.setSource(id, request.pcId, request.outboxItemId)
         reevaluate()
         return toJob(dao.get(id)!!, 0)
+    }
+
+    /**
+     * An ftp, ftps, sftp, scp, s3 or webdav link: one job, or (for a folder link) one job per file inside. A password typed
+     * into the link is sealed by the Keystore and kept beside the job; the stored link never contains it.
+     */
+    private suspend fun addCloud(request: PhoneAddRequest): PhoneJob {
+        val now = clock()
+        fun failed(text: String) = PhoneJobRow(
+            url = request.url.substringBefore("://") + "://", name = fileNameFor(request.title, "download"), folderUri = request.folderUri,
+            status = PhoneJobStatus.FAILED.name, error = text, kind = PhoneJobRow.KIND_CLOUD, createdAt = now,
+        )
+        val backend = cloud
+        val target = CloudUrl.parse(request.url)
+        if (backend == null || target == null) {
+            val id = addMutex.withLock { dao.insert(failed(if (backend == null) CloudText.UNAVAILABLE else CloudText.BAD_LINK)) }
+            return toJob(dao.get(id)!!, 0)
+        }
+        val sealed = target.password?.let { backend.sealInline(it) }
+        val clean = target.withoutPassword()
+        // (file link, size) pairs; a folder link is listed first, outside the lock because it talks to the server.
+        var notice: String? = null
+        var files: List<Pair<String, Long?>> = listOf(clean to null)
+        var listError: String? = null
+        if (target.isFolder) {
+            try {
+                val entries = withContext(ioDispatcher) {
+                    val conn = backend.create(backend.resolve(clean, sealed))
+                    try { conn.connect(); conn.list() } finally { conn.close() }
+                }
+                val chosen = entries.sortedBy { it.name.lowercase() }
+                if (chosen.size > MAX_FOLDER_FILES) notice = CloudText.tooMany(MAX_FOLDER_FILES)
+                files = chosen.take(MAX_FOLDER_FILES).map { e ->
+                    (if (e.fullPath != null) target.build(newRawPath = CloudUrl.encode(e.fullPath, keepSlash = true)).substringBefore('?') else target.child(e.name)) to e.size
+                }
+                if (files.isEmpty()) listError = CloudText.EMPTY_FOLDER
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                listError = CloudErrors.text(e)
+            }
+        }
+        val firstId = addMutex.withLock {
+            if (listError != null) return@withLock dao.insert(failed(listError).copy(url = clean))
+            val taken = (storage.existingNames(request.folderUri) +
+                dao.all().filter { it.folderUri == request.folderUri && it.status !in DONE }.map { it.name }).toMutableSet()
+            var first = 0L
+            for ((link, size) in files) {
+                val name = uniqueName(fileNameFor((if (files.size == 1) request.title else null) ?: CloudUrl.suggestedFilename(link), link), taken)
+                taken += name
+                val id = dao.insert(
+                    PhoneJobRow(
+                        url = link, name = name, folderUri = request.folderUri, status = S_QUEUED, total = size, kind = PhoneJobRow.KIND_CLOUD,
+                        createdAt = now, startAt = request.startAt, notice = if (first == 0L) notice ?: scheduledNotice(request.startAt, now) else scheduledNotice(request.startAt, now),
+                        expectedSha256 = if (files.size == 1) request.sha256 else null, cloudSecret = sealed,
+                    ),
+                )
+                if (first == 0L) first = id
+            }
+            first
+        }
+        reevaluate()
+        return toJob(dao.get(firstId)!!, 0)
     }
 
     /** A magnet link, a .torrent link or a .torrent file: a job of kind "torrent" (the runner reads the metadata). */
@@ -402,6 +480,8 @@ class DownloadEngine(
     }
 
     private companion object {
+        /** A folder link queues at most this many files. */
+        const val MAX_FOLDER_FILES = 500
         val S_QUEUED = PhoneJobStatus.QUEUED.name
         val S_DOWNLOADING = PhoneJobStatus.DOWNLOADING.name
         val S_PAUSED = PhoneJobStatus.PAUSED.name

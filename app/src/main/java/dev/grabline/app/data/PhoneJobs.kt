@@ -76,6 +76,8 @@ data class PhoneJobRow(
     val seeding: Boolean = false,
     /** Torrent jobs: epoch millis seeding began; the "for 1 hour" rule counts from here. */
     val seedStartedAt: Long? = null,
+    /** Cloud jobs (added in schema 8): the password typed into the link, sealed by the Keystore. Never the plain text. */
+    val cloudSecret: String? = null,
 ) {
     companion object {
         const val KIND_FILE = "file"
@@ -84,6 +86,8 @@ data class PhoneJobRow(
         const val KIND_TRANSFER = "transfer"
         /** A magnet link or .torrent through libtorrent4j (schema 7). */
         const val KIND_TORRENT = "torrent"
+        /** An ftp, ftps, sftp, scp, s3 or webdav link (schema 8). */
+        const val KIND_CLOUD = "cloud"
     }
 }
 
@@ -229,6 +233,10 @@ interface PhoneJobDao {
 
     @Query("UPDATE phone_jobs SET downloaded = :downloaded, total = :total, etag = :etag WHERE id = :id")
     suspend fun saveTransfer(id: Long, downloaded: Long, total: Long?, etag: String?)
+
+    /** Cloud jobs report whole-file progress; [identity] (size and modified time, or an ETag) lives in the etag column. */
+    @Query("UPDATE phone_jobs SET downloaded = :downloaded, total = :total, etag = :identity, connections = 1 WHERE id = :id AND status = 'DOWNLOADING'")
+    suspend fun saveCloudProgress(id: Long, downloaded: Long, total: Long?, identity: String?)
 
     @Query("SELECT * FROM phone_segments WHERE jobId = :jobId ORDER BY start")
     suspend fun segments(jobId: Long): List<PhoneSegmentRow>

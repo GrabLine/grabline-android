@@ -40,7 +40,7 @@ class PhoneMigrationTest {
         raw.close()
 
         val db = Room.databaseBuilder(ctx, AppDatabase::class.java, "migration-23.db")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7).allowMainThreadQueries().build()
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8).allowMainThreadQueries().build()
         try {
             assertEquals("Desk", db.pcs().get("pc1")!!.name)
             val dao = db.phoneJobs()

@@ -94,9 +94,29 @@ val MIGRATION_6_7 = object : Migration(6, 7) {
     }
 }
 
+/** v7 -> v8: saved server accounts, trusted SSH host keys, and the sealed inline password of a cloud job. */
+val MIGRATION_7_8 = object : Migration(7, 8) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE phone_jobs ADD COLUMN cloudSecret TEXT")
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `cloud_accounts` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `service` TEXT NOT NULL, " +
+                "`host` TEXT NOT NULL, `port` INTEGER NOT NULL, `username` TEXT NOT NULL, `label` TEXT NOT NULL, " +
+                "`endpoint` TEXT NOT NULL, `region` TEXT NOT NULL, `secrets` TEXT)",
+        )
+        db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_cloud_accounts_service_host_username` ON `cloud_accounts` (`service`, `host`, `username`)")
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `ssh_host_keys` (`host` TEXT NOT NULL, `port` INTEGER NOT NULL, `keyType` TEXT NOT NULL, " +
+                "`sha256` TEXT NOT NULL, `firstSeenAt` INTEGER NOT NULL, PRIMARY KEY(`host`, `port`))",
+        )
+    }
+}
+
 @Database(
-    entities = [PairedPc::class, PcJob::class, OutboxItem::class, PhoneJobRow::class, PhoneSegmentRow::class],
-    version = 7,
+    entities = [
+        PairedPc::class, PcJob::class, OutboxItem::class, PhoneJobRow::class, PhoneSegmentRow::class,
+        CloudAccountRow::class, SshHostKeyRow::class,
+    ],
+    version = 8,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -105,6 +125,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun jobs(): PcJobDao
     abstract fun outbox(): OutboxDao
     abstract fun phoneJobs(): PhoneJobDao
+    abstract fun cloudAccounts(): CloudAccountDao
+    abstract fun sshHostKeys(): SshHostKeyDao
 
     companion object {
         @Volatile private var instance: AppDatabase? = null
@@ -115,7 +137,7 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "grabline.db",
-                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7).build().also { instance = it }
+                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8).build().also { instance = it }
             }
     }
 }

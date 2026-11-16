@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="kind_cloud">Servidor</string>
+    <string name="servers_title">Servidores</string>
+    <string name="servers_summary">Logins guardados para downloads SFTP, FTP, WebDAV e S3</string>
+    <string name="servers_note">Os logins ficam neste telemóvel. As palavras-passe e chaves são cifradas com uma chave que nunca sai do armazenamento seguro do telemóvel.</string>
+    <string name="servers_add">Adicionar um servidor</string>
+    <string name="servers_edit">Editar servidor</string>
+    <string name="servers_empty">Ainda não há servidores guardados. Pode na mesma colar um link que inclua utilizador e palavra-passe.</string>
+    <string name="servers_trusted">Servidores SSH de confiança</string>
+    <string name="servers_trusted_note">Na primeira ligação a um servidor SFTP, a sua chave de segurança é guardada aqui. Se mudar, os downloads desse servidor param.</string>
+    <string name="server_forget">Esquecer</string>
+    <string name="server_forget_description">Esquecer a chave de segurança de %1$s</string>
+    <string name="server_type">Tipo</string>
+    <string name="server_label">Nome (opcional)</string>
+    <string name="server_host">Endereço do servidor</string>
+    <string name="server_bucket">Bucket (* para qualquer bucket)</string>
+    <string name="server_port">Porta (vazio para a habitual)</string>
+    <string name="server_user">Utilizador</string>
+    <string name="server_access_key">ID da chave de acesso</string>
+    <string name="server_auth_password">Palavra-passe</string>
+    <string name="server_auth_key">Chave privada</string>
+    <string name="server_password">Palavra-passe</string>
+    <string name="server_secret_key">Chave de acesso secreta</string>
+    <string name="server_private_key">Chave privada (cole aqui)</string>
+    <string name="server_import_key">Escolher um ficheiro de chave</string>
+    <string name="server_import_failed">Não foi possível ler esse ficheiro como chave</string>
+    <string name="server_passphrase">Frase-passe da chave</string>
+    <string name="server_secret_kept">Guardada. Deixe vazio para a manter</string>
+    <string name="server_endpoint">Endpoint (opcional)</string>
+    <string name="server_endpoint_hint">Para MinIO, Backblaze e outros serviços compatíveis com S3. Deixe vazio para o Amazon S3</string>
+    <string name="server_region">Região (opcional)</string>
+    <string name="server_region_hint">Normalmente us-east-1</string>
+    <string name="server_save">Guardar</string>
+    <string name="server_delete">Eliminar</string>
+    <string name="server_delete_confirm">Eliminar este login? A palavra-passe ou chave guardada também é apagada.</string>
+    <string name="server_error_host">Indique o endereço do servidor sem http:// nem barras</string>
+    <string name="server_error_port">Indique uma porta de 1 a 65535</string>
+    <string name="server_error_endpoint">Indique um endereço completo, como https://minio.example:9000</string>
+    <string name="server_error_key">Cole uma chave privada ou escolha um ficheiro de chave</string>
+</resources>

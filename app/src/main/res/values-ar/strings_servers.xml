@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="kind_cloud">خادم</string>
+    <string name="servers_title">الخوادم</string>
+    <string name="servers_summary">بيانات دخول محفوظة لتنزيلات SFTP وFTP وWebDAV وS3</string>
+    <string name="servers_note">تبقى بيانات الدخول على هذا الهاتف فقط. تُشفَّر كلمات المرور والمفاتيح بمفتاح لا يغادر التخزين الآمن للهاتف أبدًا.</string>
+    <string name="servers_add">إضافة خادم</string>
+    <string name="servers_edit">تعديل الخادم</string>
+    <string name="servers_empty">لا توجد خوادم محفوظة بعد. يمكنك مع ذلك لصق رابط يتضمن اسم المستخدم وكلمة المرور.</string>
+    <string name="servers_trusted">خوادم SSH الموثوقة</string>
+    <string name="servers_trusted_note">عند الاتصال بخادم SFTP لأول مرة يُحفظ مفتاح الأمان الخاص به هنا. إذا تغيّر يتوقف التنزيل من ذلك الخادم.</string>
+    <string name="server_forget">نسيان</string>
+    <string name="server_forget_description">نسيان مفتاح الأمان الخاص بـ %1$s</string>
+    <string name="server_type">النوع</string>
+    <string name="server_label">الاسم (اختياري)</string>
+    <string name="server_host">عنوان الخادم</string>
+    <string name="server_bucket">الحاوية (* لأي حاوية)</string>
+    <string name="server_port">المنفذ (اتركه فارغًا للمنفذ المعتاد)</string>
+    <string name="server_user">اسم المستخدم</string>
+    <string name="server_access_key">معرّف مفتاح الوصول</string>
+    <string name="server_auth_password">كلمة المرور</string>
+    <string name="server_auth_key">المفتاح الخاص</string>
+    <string name="server_password">كلمة المرور</string>
+    <string name="server_secret_key">مفتاح الوصول السري</string>
+    <string name="server_private_key">المفتاح الخاص (الصقه هنا)</string>
+    <string name="server_import_key">اختيار ملف مفتاح</string>
+    <string name="server_import_failed">تعذّرت قراءة هذا الملف كمفتاح</string>
+    <string name="server_passphrase">عبارة مرور المفتاح</string>
+    <string name="server_secret_kept">تم الحفظ. اتركه فارغًا للإبقاء عليه</string>
+    <string name="server_endpoint">نقطة النهاية (اختياري)</string>
+    <string name="server_endpoint_hint">لخدمات MinIO وBackblaze وغيرها المتوافقة مع S3. اتركه فارغًا لـ Amazon S3</string>
+    <string name="server_region">المنطقة (اختياري)</string>
+    <string name="server_region_hint">عادةً us-east-1</string>
+    <string name="server_save">حفظ</string>
+    <string name="server_delete">حذف</string>
+    <string name="server_delete_confirm">حذف بيانات الدخول هذه؟ سيُمسح أيضًا كلمة المرور أو المفتاح المحفوظ.</string>
+    <string name="server_error_host">أدخل عنوان الخادم بدون http:// أو شرطات مائلة</string>
+    <string name="server_error_port">أدخل منفذًا من 1 إلى 65535</string>
+    <string name="server_error_endpoint">أدخل عنوانًا كاملًا مثل https://minio.example:9000</string>
+    <string name="server_error_key">الصق مفتاحًا خاصًا أو اختر ملف مفتاح</string>
+</resources>

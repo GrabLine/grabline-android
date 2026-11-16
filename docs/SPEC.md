@@ -97,7 +97,7 @@ Port the desktop engine's rules, not its code: the desktop is Python and Qt, the
 | Video and audio | yt-dlp with bundled Python and FFmpeg; the same quality presets as the desktop | `youtubedl-android` (used by the Seal app) |
 | HLS and DASH | Fetch segments natively, then remux locally with FFmpeg | `youtubedl-android` FFmpeg module |
 | Torrents | Magnets, DHT, sequential download for playback | `libtorrent4j` (same libtorrent engine as the desktop) |
-| Cloud protocols | SFTP, FTP, WebDAV, S3 | sshj, Apache Commons Net, OkHttp, MinIO client |
+| Cloud protocols | SFTP, FTP, WebDAV, S3 | sshj (with full BouncyCastle), Apache Commons Net, OkHttp. S3 uses a small hand-written AWS SigV4 signer over OkHttp instead of the MinIO client, to keep the APK small |
 | Background work | User-initiated data transfer jobs on Android 14+, a `dataSync` foreground service on older versions | JobScheduler, WorkManager |
 | Storage | `MediaStore.Downloads` by default, any folder the user picks through the system picker | Storage Access Framework |
 

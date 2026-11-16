@@ -72,7 +72,17 @@ ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
 
+// sshd-sftp registers a java.nio FileSystemProvider that breaks Robolectric's native SQLite loading on the test
+// classpath. The in-process SFTP test server does not need it, so test builds use a copy without that one file.
+val sshdSftp by configurations.creating { isTransitive = false }
+val cleanSshdSftp = tasks.register<Jar>("cleanSshdSftp") {
+    archiveFileName.set("sshd-sftp-clean.jar")
+    destinationDirectory.set(layout.buildDirectory.dir("test-libs"))
+    from(sshdSftp.elements.map { files -> files.map { zipTree(it.asFile) } }) { exclude("META-INF/services/java.nio.file.spi.FileSystemProvider") }
+}
+
 dependencies {
+    sshdSftp(libs.sshd.sftp)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -99,6 +109,12 @@ dependencies {
     implementation(libs.libtorrent4j.arm64)
     implementation(libs.libtorrent4j.arm)
     implementation(libs.libtorrent4j.amd64)
+    // Phase 6: SFTP (sshj with its own BouncyCastle, since Android's copy is stripped) and FTP/FTPS.
+    implementation(libs.sshj)
+    implementation(libs.bouncycastle.prov)
+    implementation(libs.bouncycastle.pkix)
+    implementation(libs.slf4j.nop)
+    implementation(libs.commons.net)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
@@ -108,6 +124,10 @@ dependencies {
     testImplementation(libs.okhttp.mockwebserver)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)
+    testImplementation(libs.sshd.core)
+    testImplementation(files(cleanSshdSftp))
+    testImplementation(libs.ftpserver.core)
+    testImplementation(libs.slf4j.nop)
 
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

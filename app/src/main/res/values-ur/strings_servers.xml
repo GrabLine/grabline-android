@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="kind_cloud">سرور</string>
+    <string name="servers_title">سرورز</string>
+    <string name="servers_summary">SFTP، FTP، WebDAV اور S3 ڈاؤن لوڈز کے لیے محفوظ کردہ لاگ اِن</string>
+    <string name="servers_note">لاگ اِن صرف اسی فون پر رہتے ہیں۔ پاس ورڈ اور کلیدیں ایسی کلید سے خفیہ کی جاتی ہیں جو فون کے محفوظ اسٹوریج سے کبھی باہر نہیں جاتی۔</string>
+    <string name="servers_add">سرور شامل کریں</string>
+    <string name="servers_edit">سرور میں ترمیم کریں</string>
+    <string name="servers_empty">ابھی کوئی سرور محفوظ نہیں ہے۔ آپ پھر بھی صارف نام اور پاس ورڈ والا لنک پیسٹ کر سکتے ہیں۔</string>
+    <string name="servers_trusted">قابلِ اعتماد SSH سرورز</string>
+    <string name="servers_trusted_note">SFTP سرور سے پہلی بار جڑنے پر اس کی سیکیورٹی کلید یہاں محفوظ ہوتی ہے۔ اگر وہ بدل جائے تو اس سرور سے ڈاؤن لوڈز رک جاتے ہیں۔</string>
+    <string name="server_forget">بھول جائیں</string>
+    <string name="server_forget_description">%1$s کی سیکیورٹی کلید بھول جائیں</string>
+    <string name="server_type">قسم</string>
+    <string name="server_label">نام (اختیاری)</string>
+    <string name="server_host">سرور کا پتہ</string>
+    <string name="server_bucket">بکٹ (کسی بھی بکٹ کے لیے *)</string>
+    <string name="server_port">پورٹ (عام کے لیے خالی چھوڑیں)</string>
+    <string name="server_user">صارف نام</string>
+    <string name="server_access_key">ایکسیس کلید آئی ڈی</string>
+    <string name="server_auth_password">پاس ورڈ</string>
+    <string name="server_auth_key">نجی کلید</string>
+    <string name="server_password">پاس ورڈ</string>
+    <string name="server_secret_key">خفیہ ایکسیس کلید</string>
+    <string name="server_private_key">نجی کلید (یہاں پیسٹ کریں)</string>
+    <string name="server_import_key">کلید فائل منتخب کریں</string>
+    <string name="server_import_failed">اس فائل کو کلید کے طور پر نہیں پڑھا جا سکا</string>
+    <string name="server_passphrase">کلید کا پاس فریز</string>
+    <string name="server_secret_kept">محفوظ ہو گیا۔ برقرار رکھنے کے لیے خالی چھوڑیں</string>
+    <string name="server_endpoint">اینڈ پوائنٹ (اختیاری)</string>
+    <string name="server_endpoint_hint">MinIO، Backblaze اور دیگر S3 سے ہم آہنگ سروسز کے لیے۔ Amazon S3 کے لیے خالی چھوڑیں</string>
+    <string name="server_region">علاقہ (اختیاری)</string>
+    <string name="server_region_hint">عموماً us-east-1</string>
+    <string name="server_save">محفوظ کریں</string>
+    <string name="server_delete">حذف کریں</string>
+    <string name="server_delete_confirm">یہ لاگ اِن حذف کریں؟ اس کا محفوظ کردہ پاس ورڈ یا کلید بھی مٹ جائے گی۔</string>
+    <string name="server_error_host">http:// اور سلیش کے بغیر سرور کا پتہ لکھیں</string>
+    <string name="server_error_port">1 سے 65535 کے درمیان پورٹ لکھیں</string>
+    <string name="server_error_endpoint">https://minio.example:9000 جیسا مکمل پتہ لکھیں</string>
+    <string name="server_error_key">نجی کلید پیسٹ کریں یا کلید فائل منتخب کریں</string>
+</resources>

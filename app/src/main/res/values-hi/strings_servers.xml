@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="kind_cloud">सर्वर</string>
+    <string name="servers_title">सर्वर</string>
+    <string name="servers_summary">SFTP, FTP, WebDAV और S3 डाउनलोड के लिए सहेजे गए लॉगिन</string>
+    <string name="servers_note">लॉगिन केवल इसी फ़ोन पर रहते हैं। पासवर्ड और कुंजियाँ ऐसी कुंजी से एन्क्रिप्ट होती हैं जो फ़ोन के सुरक्षित स्टोरेज से कभी बाहर नहीं जाती।</string>
+    <string name="servers_add">सर्वर जोड़ें</string>
+    <string name="servers_edit">सर्वर बदलें</string>
+    <string name="servers_empty">अभी कोई सर्वर सहेजा नहीं है। फिर भी आप यूज़र नाम और पासवर्ड वाला लिंक चिपका सकते हैं।</string>
+    <string name="servers_trusted">भरोसेमंद SSH सर्वर</string>
+    <string name="servers_trusted_note">SFTP सर्वर से पहली बार जुड़ने पर उसकी सुरक्षा कुंजी यहाँ सहेजी जाती है। यदि वह बदल जाए, तो उस सर्वर से डाउनलोड रुक जाते हैं।</string>
+    <string name="server_forget">भूल जाएँ</string>
+    <string name="server_forget_description">%1$s की सुरक्षा कुंजी भूल जाएँ</string>
+    <string name="server_type">प्रकार</string>
+    <string name="server_label">नाम (वैकल्पिक)</string>
+    <string name="server_host">सर्वर का पता</string>
+    <string name="server_bucket">बकेट (किसी भी बकेट के लिए *)</string>
+    <string name="server_port">पोर्ट (सामान्य के लिए खाली छोड़ें)</string>
+    <string name="server_user">यूज़र नाम</string>
+    <string name="server_access_key">एक्सेस की आईडी</string>
+    <string name="server_auth_password">पासवर्ड</string>
+    <string name="server_auth_key">निजी कुंजी</string>
+    <string name="server_password">पासवर्ड</string>
+    <string name="server_secret_key">सीक्रेट एक्सेस की</string>
+    <string name="server_private_key">निजी कुंजी (यहाँ चिपकाएँ)</string>
+    <string name="server_import_key">कुंजी फ़ाइल चुनें</string>
+    <string name="server_import_failed">इस फ़ाइल को कुंजी के रूप में पढ़ा नहीं जा सका</string>
+    <string name="server_passphrase">कुंजी का पासफ़्रेज़</string>
+    <string name="server_secret_kept">सहेजा गया। रखने के लिए खाली छोड़ें</string>
+    <string name="server_endpoint">एंडपॉइंट (वैकल्पिक)</string>
+    <string name="server_endpoint_hint">MinIO, Backblaze और अन्य S3-संगत सेवाओं के लिए। Amazon S3 के लिए खाली छोड़ें</string>
+    <string name="server_region">क्षेत्र (वैकल्पिक)</string>
+    <string name="server_region_hint">आमतौर पर us-east-1</string>
+    <string name="server_save">सहेजें</string>
+    <string name="server_delete">हटाएँ</string>
+    <string name="server_delete_confirm">यह लॉगिन हटाएँ? इसका सहेजा हुआ पासवर्ड या कुंजी भी मिट जाएगी।</string>
+    <string name="server_error_host">http:// और स्लैश के बिना सर्वर का पता लिखें</string>
+    <string name="server_error_port">1 से 65535 के बीच का पोर्ट लिखें</string>
+    <string name="server_error_endpoint">https://minio.example:9000 जैसा पूरा पता लिखें</string>
+    <string name="server_error_key">निजी कुंजी चिपकाएँ या कुंजी फ़ाइल चुनें</string>
+</resources>

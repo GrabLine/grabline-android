@@ -52,7 +52,7 @@ class MigrationTorrentTest {
         val path = ctx.getDatabasePath(name).apply { parentFile?.mkdirs() }
         createVersion6(path)
 
-        val db = Room.databaseBuilder(ctx, AppDatabase::class.java, name).addMigrations(MIGRATION_6_7).allowMainThreadQueries().build()
+        val db = Room.databaseBuilder(ctx, AppDatabase::class.java, name).addMigrations(MIGRATION_6_7, MIGRATION_7_8).allowMainThreadQueries().build()
         try {
             val old = db.phoneJobs().all().single()
             assertEquals("a.zip", old.name)
