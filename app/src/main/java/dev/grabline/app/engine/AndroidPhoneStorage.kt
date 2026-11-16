@@ -1,6 +1,7 @@
 package dev.grabline.app.engine
 
 import android.content.ContentValues
+import androidx.annotation.RequiresApi
 import android.content.Context
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -31,6 +32,7 @@ class AndroidPhoneStorage(context: Context) : PhoneStorage {
 
     override fun deleteScratch(jobId: Long) {
         scratchFile(jobId).delete()
+        scratchDir(jobId).deleteRecursively()
     }
 
     override fun freeBytes(folderUri: String?): Long =
@@ -73,6 +75,7 @@ class AndroidPhoneStorage(context: Context) : PhoneStorage {
         if (actual != null && actual != expected) throw IOException("Copied $actual of $expected bytes")
     }
 
+    @RequiresApi(29)
     private fun mediaStoreNames(): Set<String> {
         val out = HashSet<String>()
         app.contentResolver.query(
@@ -82,6 +85,7 @@ class AndroidPhoneStorage(context: Context) : PhoneStorage {
         return out
     }
 
+    @RequiresApi(29)
     private fun publishMediaStore(name: String, scratch: File): String {
         val resolver = app.contentResolver
         val values = ContentValues().apply {

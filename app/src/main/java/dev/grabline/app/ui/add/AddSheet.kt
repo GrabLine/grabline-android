@@ -120,7 +120,7 @@ fun AddSheetRoute(
             onSelectPc = vm::selectPc,
             onSelectPhone = vm::selectPhone,
             onChangeFolder = pickFolder,
-            onSendToPc = vm::sendToPcInstead,
+            onUpdateEngine = vm::updateEngine,
             onSelectQuality = vm::selectQuality,
             onSelectQueue = vm::selectQueue,
             onSelectFolder = vm::selectFolder,
@@ -146,7 +146,7 @@ fun AddSheetContent(
     onPairClick: () -> Unit,
     onSelectPhone: () -> Unit = {},
     onChangeFolder: () -> Unit = {},
-    onSendToPc: () -> Unit = {},
+    onUpdateEngine: () -> Unit = {},
 ) {
     val context = LocalContext.current
     Column(
@@ -169,7 +169,7 @@ fun AddSheetContent(
         LinkSummary(state, onToggleLinks)
 
         if (state.notDownloadable) {
-            Text(stringResource(R.string.add_not_downloadable), style = MaterialTheme.typography.bodyLarge)
+            Text(state.blockedMessage ?: stringResource(R.string.add_not_downloadable), style = MaterialTheme.typography.bodyLarge)
             val openDesc = stringResource(R.string.add_open_in_browser_description)
             OutlinedButton(
                 onClick = { openInBrowser(context, state.links.firstOrNull()) },
@@ -198,7 +198,7 @@ fun AddSheetContent(
         }
 
         if (state.deviceIsPhone) {
-            PhoneOptions(state, onChangeFolder, onSendToPc)
+            PhoneOptions(state, onChangeFolder)
         }
 
         if (state.showQuality) {
@@ -223,9 +223,21 @@ fun AddSheetContent(
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
+                        if (a.reason == FailureReason.SITE_CHANGED && state.deviceIsPhone) {
+                            Button(onClick = onUpdateEngine, modifier = Modifier.heightIn(min = 48.dp)) {
+                                Text(stringResource(R.string.add_update_engine))
+                            }
+                        }
                         TextButton(onClick = onRetry, modifier = Modifier.heightIn(min = 48.dp)) {
                             Text(stringResource(R.string.add_analyse_retry))
                         }
+                    }
+                    is AnalysisUi.Ready -> a.playlistCount?.let {
+                        Text(
+                            pluralStringResource(R.plurals.add_playlist_count, it, it),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     }
                     else -> Unit
                 }
@@ -308,7 +320,7 @@ private fun kindLabel(kind: LinkKind): Int = when (kind) {
 private data class DeviceOption(val id: String, val name: String, val status: String?, val desc: String, val selected: Boolean, val pick: () -> Unit)
 
 @Composable
-private fun PhoneOptions(state: AddUiState, onChangeFolder: () -> Unit, onSendToPc: () -> Unit) {
+private fun PhoneOptions(state: AddUiState, onChangeFolder: () -> Unit) {
     Section(stringResource(R.string.add_phone_folder)) {
         val label = folderLabel(state.phoneFolder)
         val changeDesc = stringResource(R.string.add_phone_folder_change_description, label)
@@ -316,23 +328,6 @@ private fun PhoneOptions(state: AddUiState, onChangeFolder: () -> Unit, onSendTo
             Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f), maxLines = 2, overflow = TextOverflow.Ellipsis)
             TextButton(onClick = onChangeFolder, modifier = Modifier.heightIn(min = 48.dp).semantics { contentDescription = changeDesc }) {
                 Text(stringResource(R.string.add_phone_folder_change))
-            }
-        }
-    }
-    if (state.phoneVideoCount > 0) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(stringResource(R.string.add_phone_video_later), style = MaterialTheme.typography.bodyLarge)
-            if (state.phoneAddCount > 0) {
-                Text(
-                    pluralStringResource(R.plurals.add_phone_video_skipped, state.phoneVideoCount, state.phoneVideoCount),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            if (state.pcs.isNotEmpty()) {
-                OutlinedButton(onClick = onSendToPc, modifier = Modifier.heightIn(min = 48.dp)) {
-                    Text(stringResource(R.string.add_phone_video_to_pc))
-                }
             }
         }
     }

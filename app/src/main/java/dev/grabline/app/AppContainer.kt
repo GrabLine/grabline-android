@@ -11,6 +11,7 @@ import dev.grabline.app.data.PairedPc
 import dev.grabline.app.engine.AndroidPhoneStorage
 import dev.grabline.app.engine.AppEngineSettings
 import dev.grabline.app.engine.DownloadEngine
+import dev.grabline.app.engine.video.YoutubeDlVideoEngine
 import androidx.lifecycle.Lifecycle
 import dev.grabline.app.engine.work.BatteryTip
 import dev.grabline.app.engine.work.ChargingMonitor
@@ -68,7 +69,10 @@ class AppContainer(context: Context) {
     private val appVersion = BuildConfig.VERSION_NAME
     // Downloads read slowly from some servers: 60 s read timeout for the engine (the shared client keeps 10 s).
     private val engineClient = baseClient.newBuilder().readTimeout(60, TimeUnit.SECONDS).build()
-    val phone: DownloadEngine = DownloadEngine(db.phoneJobs(), engineClient, AndroidPhoneStorage(app), AppEngineSettings(settings), scope)
+    val video = YoutubeDlVideoEngine(app)
+    val phone: DownloadEngine = DownloadEngine(
+        db.phoneJobs(), engineClient, AndroidPhoneStorage(app), AppEngineSettings(settings), scope, video = video,
+    )
     val batteryTip = BatteryTip.create(app)
     val scheduler = DownloadScheduler(app) { ProcessLifecycleOwner.get().lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED) }
     private val phoneNotifier = PhoneJobNotifier(app)
@@ -103,6 +107,8 @@ class AppContainer(context: Context) {
 
     fun start() {
         outbox.start()
+        // yt-dlp, Python and FFmpeg unpack once, off the main thread; video downloads wait for it.
+        scope.launch { runCatching { video.ensureReady() } }
         scope.launch { outbox.pendingCount.collect { defaultRemote.onPendingCount(it) } }
         scope.launch { settings.observe(AppSettings.NOTIFY_PC_DOWNLOADS).collect { pcNotificationsOn = it } }
         // PC activity notifications: only while connected (no push service).

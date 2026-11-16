@@ -28,6 +28,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -49,7 +50,10 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import dev.grabline.app.GrabLineApp
 import dev.grabline.app.R
+import dev.grabline.app.engine.video.EngineUpdateState
+import dev.grabline.app.engine.video.VideoText
 import dev.grabline.app.engine.PhoneEngine
 import dev.grabline.app.remote.PcRemote
 import dev.grabline.app.ui.downloads.AndroidStatusStrings
@@ -103,6 +107,29 @@ fun DownloadDetailsRoute(
         onBack = onBack,
         modifier = modifier,
     )
+}
+
+/** "This site changed. Update the video engine?" with an Update button; on success the job is retried. */
+@Composable
+private fun UpdateEnginePrompt(onRetry: () -> Unit) {
+    val context = LocalContext.current
+    val video = remember { (context.applicationContext as? GrabLineApp)?.container?.video } ?: return
+    val scope = rememberCoroutineScope()
+    val update by video.updateState.collectAsState()
+    val running = update == EngineUpdateState.Running
+    Button(
+        onClick = {
+            scope.launch {
+                video.update()
+                if (video.updateState.value is EngineUpdateState.Done) onRetry()
+            }
+        },
+        enabled = !running,
+        modifier = Modifier.heightIn(min = 48.dp),
+    ) {
+        Text(stringResource(if (running) R.string.detail_update_engine_updating else R.string.detail_update_engine))
+    }
+    (update as? EngineUpdateState.Failed)?.let { Text(it.message, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error) }
 }
 
 @Composable
@@ -201,6 +228,7 @@ private fun DetailsBody(
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(stringResource(R.string.detail_failed_what_to_try), style = MaterialTheme.typography.titleSmall)
                 Text(stringResource(if (row.isPhone) R.string.detail_phone_failed_advice else R.string.detail_failed_advice))
+                if (row.isPhone && row.error == VideoText.SITE_CHANGED) UpdateEnginePrompt(onRetry = { onAction(RowAction.Retry) })
             }
         }
         row.notice?.let { notice ->

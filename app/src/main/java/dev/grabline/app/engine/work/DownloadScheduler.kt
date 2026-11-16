@@ -29,6 +29,7 @@ class DownloadScheduler(context: Context, private val appVisible: () -> Boolean)
     }
 
     private fun scheduleUserInitiated(): Boolean {
+        if (Build.VERSION.SDK_INT < 34) return false
         if (jobs.getPendingJob(JOB_USER) != null) return true
         val info = JobInfo.Builder(JOB_USER, component())
             .setUserInitiated(true)

@@ -1,5 +1,6 @@
 package dev.grabline.app.engine
 
+import dev.grabline.app.engine.video.VideoEngine
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -30,6 +31,9 @@ interface PhoneEngine {
     suspend fun resumeAll()
     /** "Download now anyway" for a job held by Wi-Fi only (overrides once). */
     suspend fun allowMobileData(jobId: Long)
+
+    /** The video engine (yt-dlp + FFmpeg), or null where the phone has none. */
+    val video: VideoEngine? get() = null
 }
 
 data class PhoneAddRequest(
@@ -37,7 +41,7 @@ data class PhoneAddRequest(
     val title: String? = null,
     /** SAF tree URI string, or null for Downloads/GrabLine through MediaStore. */
     val folderUri: String? = null,
-    /** Phase 3: video quality label; Phase 2 ignores it. */
+    /** Video quality wire value (best, 1080p, mp3...); null for files. A video link without one downloads as Best. */
     val quality: String? = null,
 )
 
@@ -61,4 +65,8 @@ data class PhoneJob(
     val fileUri: String?,
     val createdAt: Long,
     val finishedAt: Long?,
-)
+    val isVideo: Boolean = false,
+) {
+    /** Failed because the site changed: offer "Update the video engine?" (only when the setting asks). */
+    val needsEngineUpdate: Boolean get() = status == PhoneJobStatus.FAILED && error == dev.grabline.app.engine.video.VideoText.SITE_CHANGED
+}

@@ -248,7 +248,7 @@ private fun SettingsMain(
             )
         }
 
-        SettingsGroup(stringResource(R.string.group_video), later) {
+        SettingsGroup(stringResource(R.string.group_video)) {
             ChoiceRow(
                 stringResource(R.string.setting_video_quality),
                 listOf(
@@ -257,20 +257,21 @@ private fun SettingsMain(
                     "1080p" to "1080p", "720p" to "720p",
                     "audio" to stringResource(R.string.quality_audio),
                 ),
-                videoQuality, { put(AppSettings.VIDEO_QUALITY, it) }, enabled = false,
+                videoQuality, { put(AppSettings.VIDEO_QUALITY, it) },
             )
             ChoiceRow(
                 stringResource(R.string.setting_audio_format),
                 listOf("mp3" to "MP3", "m4a" to "M4A", "flac" to "FLAC"),
-                audioFormat, { put(AppSettings.AUDIO_FORMAT, it) }, enabled = false,
+                audioFormat, { put(AppSettings.AUDIO_FORMAT, it) },
             )
             ChoiceRow(
                 stringResource(R.string.setting_update_ytdlp),
                 listOf(
                     "ask" to stringResource(R.string.ytdlp_ask),
+                    "auto" to stringResource(R.string.ytdlp_auto),
                     "manual" to stringResource(R.string.ytdlp_manual),
                 ),
-                updateYtdlp, { put(AppSettings.UPDATE_YTDLP, it) }, enabled = false,
+                updateYtdlp, { put(AppSettings.UPDATE_YTDLP, it) },
             )
         }
 

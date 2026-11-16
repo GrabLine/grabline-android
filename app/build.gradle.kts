@@ -6,6 +6,10 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+// ABI splits for release builds (each APK carries one set of yt-dlp/Python/FFmpeg libraries).
+// Debug-only invocations stay a single APK with the three ABIs the project supports.
+val splitAbis = gradle.startParameter.taskNames.any { it.contains("release", ignoreCase = true) || it.contains("bundle", ignoreCase = true) }
+
 android {
     namespace = "dev.grabline.app"
     compileSdk = 36
@@ -17,6 +21,21 @@ android {
         versionCode = 1
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        if (!splitAbis) ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64") }
+    }
+
+    splits {
+        abi {
+            isEnable = splitAbis
+            reset()
+            include("arm64-v8a", "armeabi-v7a", "x86_64")
+            isUniversalApk = true
+        }
+    }
+
+    packaging {
+        // youtubedl-android loads Python and FFmpeg from zipped .so files in the native library directory.
+        jniLibs.useLegacyPackaging = true
     }
 
     buildTypes {
@@ -74,6 +93,8 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.youtubedl.library)
+    implementation(libs.youtubedl.ffmpeg)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)

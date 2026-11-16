@@ -8,6 +8,10 @@ import dev.grabline.app.data.AppSettings
 import dev.grabline.app.data.Setting
 import dev.grabline.app.engine.PhoneAddRequest
 import dev.grabline.app.engine.PhoneEngine
+import dev.grabline.app.engine.video.DrmGuard
+import dev.grabline.app.engine.video.VideoException
+import dev.grabline.app.engine.video.VideoFailure
+import dev.grabline.app.engine.video.VideoText
 import dev.grabline.app.remote.PcRemote
 import dev.grabline.app.remote.RemoteFailure
 import dev.grabline.app.remote.connection.PcLinkState
@@ -35,12 +39,12 @@ import kotlinx.coroutines.launch
 
 data class PcOption(val id: String, val name: String, val online: Boolean)
 
-enum class FailureReason { NO_MEDIA, DRM, OTHER }
+enum class FailureReason { NO_MEDIA, DRM, SITE_CHANGED, OTHER }
 
 sealed interface AnalysisUi {
     data object Idle : AnalysisUi
     data object Loading : AnalysisUi
-    data class Ready(val title: String?, val sizes: Map<String, Long?>) : AnalysisUi
+    data class Ready(val title: String?, val sizes: Map<String, Long?>, val playlistCount: Int? = null) : AnalysisUi
     data class Failed(val message: String, val reason: FailureReason) : AnalysisUi
 }
 
@@ -80,10 +84,10 @@ data class AddUiState(
     val deviceIsPhone: Boolean = false,
     /** The Save folder for this add: "Downloads/GrabLine" or a picked tree URI. */
     val phoneFolder: String = "Downloads/GrabLine",
-    /** Video links that cannot go to the phone yet (Phase 2). */
-    val phoneVideoCount: Int = 0,
     /** Links the phone will add. */
     val phoneAddCount: Int = 0,
+    /** A DRM service on this phone: the plain-words refusal, shown instead of the options. */
+    val blockedMessage: String? = null,
 ) {
     val selectedPc: PcOption? get() = pcs.firstOrNull { it.id == selectedPcId }
 }
@@ -165,6 +169,20 @@ class AddViewModel(
                     return@collectLatest
                 }
                 transient.update { it.copy(analysis = AnalysisUi.Loading) }
+                if (target.pcId == PHONE_ID) {
+                    val ui = try {
+                        val a = phone?.video?.analyze(target.url) ?: return@collectLatest
+                        AnalysisUi.Ready(a.title, a.qualities.associate { it.wire to it.sizeBytes }, a.playlistCount.takeIf { a.isPlaylist })
+                    } catch (e: CancellationException) {
+                        throw e
+                    } catch (e: VideoException) {
+                        AnalysisUi.Failed(e.message.orEmpty(), videoReason(e.failure))
+                    } catch (e: Exception) {
+                        AnalysisUi.Failed(VideoText.UNEXPECTED, FailureReason.OTHER)
+                    }
+                    transient.update { it.copy(analysis = ui) }
+                    return@collectLatest
+                }
                 val result = try {
                     remote.analyze(target.pcId, target.url)
                 } catch (e: CancellationException) {
@@ -219,10 +237,14 @@ class AddViewModel(
     /** A picked folder (SAF tree URI string) for this add only. */
     fun selectPhoneFolder(uri: String) { handle[PHONE_FOLDER] = uri }
 
-    /** "Send to a PC instead" for video links, which the phone cannot download yet. */
-    fun sendToPcInstead() {
-        val pc = state.value.pcs.let { l -> l.firstOrNull { it.online } ?: l.firstOrNull() } ?: return
-        selectPc(pc.id)
+    /** "Update the video engine" after "This site changed", then analyse again. */
+    fun updateEngine() {
+        val engine = phone?.video ?: return
+        transient.update { it.copy(analysis = AnalysisUi.Loading) }
+        viewModelScope.launch {
+            engine.update()
+            retryAnalyze()
+        }
     }
 
     fun selectQuality(wire: String) { handle[QUALITY] = wire }
@@ -298,8 +320,9 @@ class AddViewModel(
             try {
                 for (link in s.links) {
                     val kind = LinkKind.classify(link)
-                    if (kind == LinkKind.PAGE || kind == LinkKind.VIDEO) continue
-                    engine.add(PhoneAddRequest(url = link, title = title, folderUri = folderUri))
+                    if (kind == LinkKind.PAGE) continue
+                    val quality = if (kind == LinkKind.VIDEO) s.quality else null
+                    engine.add(PhoneAddRequest(url = link, title = title, folderUri = folderUri, quality = quality))
                     added++
                 }
             } catch (e: CancellationException) {
@@ -324,6 +347,13 @@ class AddViewModel(
     private fun analysisReady(reply: AnalysisReply): AnalysisUi {
         val sizes = reply.qualities.associate { it.label.lowercase() to it.sizeBytes }
         return AnalysisUi.Ready(reply.title, sizes)
+    }
+
+    private fun videoReason(f: VideoFailure) = when (f) {
+        VideoFailure.NO_MEDIA -> FailureReason.NO_MEDIA
+        VideoFailure.DRM -> FailureReason.DRM
+        VideoFailure.SITE_CHANGED -> FailureReason.SITE_CHANGED
+        else -> FailureReason.OTHER
     }
 
     private fun analysisFailed(e: Throwable): AnalysisUi {
@@ -358,11 +388,16 @@ class AddViewModel(
         val kinds = l.links.map { LinkKind.classify(it) }
         val allPages = l.links.isNotEmpty() && kinds.all { it == LinkKind.PAGE }
         val hasVideo = kinds.any { it == LinkKind.VIDEO }
-        val analysis = if (online) t.analysis else AnalysisUi.Idle
+        val analysis = if (online || isPhone) t.analysis else AnalysisUi.Idle
+        val blocked = if (isPhone) {
+            l.links.firstNotNullOfOrNull { DrmGuard.refusal(it) }
+                ?: (analysis as? AnalysisUi.Failed)?.takeIf { it.reason == FailureReason.DRM }?.message
+        } else {
+            null
+        }
         val noMedia = (analysis as? AnalysisUi.Failed)?.reason == FailureReason.NO_MEDIA
-        val notDownloadable = allPages || noMedia
-        val phoneVideos = if (isPhone) kinds.count { it == LinkKind.VIDEO } else 0
-        val phoneAdds = if (isPhone) kinds.count { it != LinkKind.VIDEO && it != LinkKind.PAGE } else 0
+        val notDownloadable = allPages || noMedia || blocked != null
+        val phoneAdds = if (isPhone) kinds.count { it != LinkKind.PAGE } else 0
 
         val options = when (analysis) {
             is AnalysisUi.Ready -> ALL_QUALITIES.filter { it == "best" || it in analysis.sizes }
@@ -379,10 +414,11 @@ class AddViewModel(
         val folderId = l.folder?.takeIf { id -> folders.any { it.id == id } }
 
         val single = l.links.size == 1
-        val target = if (pcId != null && online && single && kinds[0] == LinkKind.VIDEO) {
-            AnalyzeTarget(pcId, l.links[0], t.retry)
-        } else {
-            null
+        val target = when {
+            pcId != null && online && single && kinds[0] == LinkKind.VIDEO -> AnalyzeTarget(pcId, l.links[0], t.retry)
+            isPhone && phone?.video != null && single && kinds[0] == LinkKind.VIDEO && blocked == null ->
+                AnalyzeTarget(PHONE_ID, l.links[0], t.retry)
+            else -> null
         }
         return AddUiState(
             ready = true,
@@ -393,7 +429,7 @@ class AddViewModel(
             pcs = pcs,
             selectedPcId = pcId,
             pcOnline = online,
-            showQuality = hasVideo && !notDownloadable && !isPhone,
+            showQuality = hasVideo && !notDownloadable,
             qualityOptions = options,
             quality = quality,
             sizes = (analysis as? AnalysisUi.Ready)?.sizes.orEmpty(),
@@ -412,8 +448,8 @@ class AddViewModel(
             phoneAvailable = phoneOk,
             deviceIsPhone = isPhone,
             phoneFolder = l.phoneFolder ?: e.prefs.folder,
-            phoneVideoCount = phoneVideos,
             phoneAddCount = phoneAdds,
+            blockedMessage = blocked,
         )
     }
 

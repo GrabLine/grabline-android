@@ -115,21 +115,28 @@ class AddPhoneTest {
         assertEquals(tree, phone.added.single().folderUri)
     }
 
-    @Test fun videoToPhoneIsSkippedAndOfferedToAPc() {
+    @Test fun videoLinksGoToThePhoneWithTheChosenQuality() {
         val vm = vm(listOf(video, file), listOf(pc("a")))
         vm.await()
         vm.selectPhone()
         val s = vm.await { it.deviceIsPhone }
-        assertEquals(1, s.phoneVideoCount)
-        assertEquals(1, s.phoneAddCount)
+        assertEquals(2, s.phoneAddCount)
+        assertTrue(s.showQuality)
+        vm.selectQuality("720p")
         vm.startNow()
         vm.await { it.sent != null }
-        assertEquals(listOf(file), phone.added.map { it.url })
-        val onlyVideo = vm(listOf(video), listOf(pc("a")))
-        onlyVideo.await()
-        onlyVideo.selectPhone()
-        assertFalse(onlyVideo.await { it.deviceIsPhone }.canStart)
-        onlyVideo.sendToPcInstead()
-        assertEquals("a", onlyVideo.await { !it.deviceIsPhone }.selectedPcId)
+        assertEquals(listOf(video, file), phone.added.map { it.url })
+        assertEquals("720p", phone.added[0].quality)
+        assertEquals(null, phone.added[1].quality)
+    }
+
+    @Test fun drmLinkIsRefusedUpFrontOnThePhone() {
+        val vm = vm(listOf("https://www.netflix.com/watch/123"), listOf(pc("a")))
+        vm.await()
+        vm.selectPhone()
+        val s = vm.await { it.deviceIsPhone }
+        assertEquals("Netflix protects its media with DRM. GrabLine can't download it", s.blockedMessage)
+        assertTrue(s.notDownloadable)
+        assertFalse(s.canStart)
     }
 }

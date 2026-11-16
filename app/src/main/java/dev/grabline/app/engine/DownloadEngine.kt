@@ -2,6 +2,9 @@ package dev.grabline.app.engine
 
 import dev.grabline.app.data.PhoneJobDao
 import dev.grabline.app.data.PhoneJobRow
+import dev.grabline.app.engine.video.DrmGuard
+import dev.grabline.app.engine.video.VideoEngine
+import dev.grabline.app.ui.entry.LinkKind
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.random.Random
 import kotlinx.coroutines.CoroutineDispatcher
@@ -50,6 +53,7 @@ class DownloadEngine(
     minSegmentBytes: Long = 1L shl 20,
     backoffBaseMs: Long = 1000,
     random: Random = Random.Default,
+    override val video: VideoEngine? = null,
 ) : PhoneEngine {
     private val constraints = MutableStateFlow(EngineConstraints())
     private val speeds = MutableStateFlow<Map<Long, Long>>(emptyMap())
@@ -106,7 +110,11 @@ class DownloadEngine(
 
     private suspend fun CoroutineScope.start(id: Long, cfg: EngineConfig) {
         if (dao.setStatusIf(id, listOf(S_QUEUED), S_DOWNLOADING) == 0) return
-        val job = launch(ioDispatcher, start = CoroutineStart.LAZY) { JobRunner(env, id, cfg).run() }
+        val isVideo = dao.get(id)?.kind == PhoneJobRow.KIND_VIDEO
+        val job = launch(ioDispatcher, start = CoroutineStart.LAZY) {
+            val engine = video
+            if (isVideo && engine != null) VideoRunner(env, engine, id, cfg).run() else JobRunner(env, id, cfg).run()
+        }
         runners[id] = job
         job.invokeOnCompletion {
             runners.remove(id, job)
@@ -155,6 +163,18 @@ class DownloadEngine(
                 )
             }
             val url = request.url.trim()
+            val isVideo = video != null && (request.quality != null || LinkKind.classify(url) == LinkKind.VIDEO)
+            if (isVideo) {
+                // DRM services are refused up front, with no job to retry.
+                val refusal = DrmGuard.refusal(url)
+                return@withLock dao.insert(
+                    PhoneJobRow(
+                        url = url, name = fileNameFor(request.title, url), folderUri = request.folderUri,
+                        status = if (refusal != null) PhoneJobStatus.FAILED.name else S_QUEUED, error = refusal,
+                        quality = request.quality ?: "best", kind = PhoneJobRow.KIND_VIDEO, createdAt = now,
+                    ),
+                )
+            }
             // Rule 7: unique across finished files and unfinished jobs in this folder.
             val taken = storage.existingNames(request.folderUri) +
                 dao.all().filter { it.folderUri == request.folderUri && it.status !in DONE }.map { it.name }
@@ -226,7 +246,7 @@ class DownloadEngine(
             downloaded = r.downloaded, total = r.total, speed = speed,
             etaSeconds = if (speed > 0 && remaining != null) (remaining / speed).coerceAtLeast(0) else null,
             connections = r.connections, notice = r.notice, error = r.error, fileUri = r.fileUri,
-            createdAt = r.createdAt, finishedAt = r.finishedAt,
+            createdAt = r.createdAt, finishedAt = r.finishedAt, isVideo = r.kind == PhoneJobRow.KIND_VIDEO,
         )
     }
 

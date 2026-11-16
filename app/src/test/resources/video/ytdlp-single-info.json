@@ -1,0 +1,18 @@
+{
+  "id": "dQw4w9WgXcQ",
+  "title": "Sample clip",
+  "uploader": "Sample Channel",
+  "duration": 212,
+  "webpage_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "extractor_key": "Youtube",
+  "formats": [
+    {"format_id": "sb0", "ext": "mhtml", "vcodec": "none", "acodec": "none", "height": 90, "format_note": "storyboard"},
+    {"format_id": "139", "ext": "m4a", "vcodec": "none", "acodec": "mp4a.40.5", "abr": 48.8, "filesize": 1300000},
+    {"format_id": "140", "ext": "m4a", "vcodec": "none", "acodec": "mp4a.40.2", "abr": 129.5, "filesize": 3000000},
+    {"format_id": "18", "ext": "mp4", "vcodec": "avc1.42001E", "acodec": "mp4a.40.2", "height": 360, "width": 640, "tbr": 500, "filesize_approx": 9000000},
+    {"format_id": "247", "ext": "webm", "vcodec": "vp09.00.40.08", "acodec": "none", "height": 720, "width": 1280, "tbr": 1500, "filesize": 20000000},
+    {"format_id": "136", "ext": "mp4", "vcodec": "avc1.4d401f", "acodec": "none", "height": 720, "width": 1280, "tbr": 2500, "filesize": 25000000},
+    {"format_id": "137", "ext": "mp4", "vcodec": "avc1.640028", "acodec": "none", "height": 1080, "width": 1920, "tbr": 4000, "filesize": 50000000},
+    {"format_id": "hls-1080", "ext": "mp4", "vcodec": "avc1.640028", "acodec": "none", "height": 1088, "tbr": 3000, "protocol": "m3u8_native"}
+  ]
+}

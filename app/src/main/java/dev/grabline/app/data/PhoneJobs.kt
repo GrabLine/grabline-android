@@ -37,7 +37,14 @@ data class PhoneJobRow(
     val quality: String? = null,
     val createdAt: Long,
     val finishedAt: Long? = null,
-)
+    /** "file" (the segment engine) or "video" (yt-dlp + FFmpeg). Added in schema 4. */
+    val kind: String = KIND_FILE,
+) {
+    companion object {
+        const val KIND_FILE = "file"
+        const val KIND_VIDEO = "video"
+    }
+}
 
 /** One byte range of a phone job: [start, end) with [done] the next byte to write. */
 @Entity(
@@ -102,6 +109,13 @@ interface PhoneJobDao {
 
     @Query("UPDATE phone_jobs SET downloaded = 0, connections = 0 WHERE id = :id")
     suspend fun clearProgress(id: Long)
+
+    /** Video jobs report whole-job progress, not segments. */
+    @Query("UPDATE phone_jobs SET downloaded = :downloaded, total = :total, connections = 1 WHERE id = :id AND status = 'DOWNLOADING'")
+    suspend fun saveVideoProgress(id: Long, downloaded: Long, total: Long?)
+
+    @Query("UPDATE phone_jobs SET name = :name WHERE id = :id")
+    suspend fun rename(id: Long, name: String)
 
     @Query("UPDATE phone_jobs SET mobileOverride = 1 WHERE id = :id")
     suspend fun allowMobile(id: Long)

@@ -48,6 +48,10 @@ data class EngineConfig(
     val onlyCharging: Boolean = false,
     /** Failures in a row with no progress before giving up; -1 = no limit. */
     val autoRetry: Int = 3,
+    /** "ask", "auto" or "manual" (what to do when a site changed and yt-dlp is out of date). */
+    val updateYtdlp: String = "ask",
+    /** "mp3", "m4a" or "flac"; used when a quality of "audio" has no format of its own. */
+    val audioFormat: String = "mp3",
 )
 
 fun interface EngineSettings {
@@ -62,6 +66,8 @@ class AppEngineSettings(private val s: AppSettings) : EngineSettings {
         onlyWifi = s.observe(AppSettings.ONLY_WIFI).first(),
         onlyCharging = s.observe(AppSettings.ONLY_CHARGING).first(),
         autoRetry = s.observe(AppSettings.AUTO_RETRY).first(),
+        updateYtdlp = s.observe(AppSettings.UPDATE_YTDLP).first(),
+        audioFormat = s.observe(AppSettings.AUDIO_FORMAT).first(),
     )
 }
 
@@ -69,6 +75,8 @@ class AppEngineSettings(private val s: AppSettings) : EngineSettings {
 interface PhoneStorage {
     /** Temp file in app-private storage for a job. */
     fun scratchFile(jobId: Long): File
+    /** Scratch folder of a video job (yt-dlp's .part files and fragments); [deleteScratch] removes it too. */
+    fun scratchDir(jobId: Long): File = File(scratchFile(jobId).parentFile, "video-$jobId")
     fun deleteScratch(jobId: Long)
     fun freeBytes(folderUri: String?): Long
     /** Names already in the target folder (finished files). */
