@@ -102,7 +102,7 @@
     <string name="about_title">关于 GrabLine</string>
     <string name="about_version">应用版本</string>
     <string name="about_ytdlp">yt-dlp 版本</string>
-    <string name="about_ytdlp_none">未安装</string>
+    <string name="about_ytdlp_none">不可用</string>
     <string name="about_links">链接</string>
     <string name="about_licences">许可证</string>
     <string name="about_source">源代码</string>

@@ -102,7 +102,7 @@
     <string name="about_title">GrabLine について</string>
     <string name="about_version">アプリのバージョン</string>
     <string name="about_ytdlp">yt-dlp のバージョン</string>
-    <string name="about_ytdlp_none">未インストール</string>
+    <string name="about_ytdlp_none">利用不可</string>
     <string name="about_links">リンク</string>
     <string name="about_licences">ライセンス</string>
     <string name="about_source">ソースコード</string>

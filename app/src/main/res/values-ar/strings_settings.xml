@@ -112,7 +112,7 @@
     <string name="about_title">حول GrabLine</string>
     <string name="about_version">إصدار التطبيق</string>
     <string name="about_ytdlp">إصدار yt-dlp</string>
-    <string name="about_ytdlp_none">غير مثبّت</string>
+    <string name="about_ytdlp_none">غير متاح</string>
     <string name="about_links">الروابط</string>
     <string name="about_licences">التراخيص</string>
     <string name="about_source">الشيفرة المصدرية</string>
