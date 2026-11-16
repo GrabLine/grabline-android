@@ -14,7 +14,11 @@ Status: todo / doing / review / done. Repo: **D** = desktop worktree `GrabLine-p
 
 **Final checks (2026-11-16):** desktop 1470 passed / 15 skipped / 0 failed, ruff, format, mypy, no-listen gate clean; Android 432 unit tests, 54 on-device tests on grabline_pixel, lint clean.
 
-**Next step:** Phase 6 (cloud servers) is NOT started - the spec says it waits for user demand; ask the owner before starting it. Remaining before a release: real-device QA (all Blocked rows), native-speaker translation review, release signing key, F-Droid metadata, website download section.
+**Phase 6: done, tagged phase-6-gate (2026-11-17)** (owner asked to finish all phases). engine/cloud: SFTP/scp (sshj, trust-on-first-use host keys), FTP/FTPS (commons-net), WebDAV over HTTPS (OkHttp), S3 (hand-written SigV4 over OkHttp instead of the MinIO client, to save size). Resume, .part then rename, never overwrite, folder listing. Saved accounts under Settings, Servers; secrets sealed with an Android Keystore AES-GCM key. Room schema 8. Desktop cloud tests ported (in-process FTP and SFTP servers, MockWebServer for WebDAV/S3): 497 unit tests pass, lint clean. Blocked (real servers): FTPS, SFTP key login, real S3 and region redirect, real WebDAV, on-device Keystore sealing. Plain webdav:// is refused (cleartext); use webdavs://.
+
+**Release prep (2026-11-17):** release signing config (keystore.properties or GRABLINE_* env), tag-driven Release workflow with SHA256SUMS, F-Droid fastlane metadata, docs/RELEASING.md, docs/PHONE_TESTING.md, website Android download PR (GrabLine/grabline.github.io#1, merge after the first release).
+
+**Next step:** owner runs the real-phone checks in docs/PHONE_TESTING.md, creates the release key (scripts/make-release-key.ps1) and adds the four release secrets, gets native-speaker translation review, then tags v0.1.0.
 
 ## Phase 0 - Setup
 
@@ -92,4 +96,4 @@ libtorrent4j: magnets, .torrent, DHT, sequential, seeding rules, Wi-Fi only by d
 
 ## Phase 6 - Cloud servers
 
-Not started: waits for user demand (ask before starting).
+Done (see status above): SFTP, FTP/FTPS, WebDAV, S3 on the phone; secrets in Keystore; desktop cloud tests ported.

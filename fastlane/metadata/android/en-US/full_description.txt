@@ -1,0 +1,15 @@
+<p>GrabLine for Android is a free, open source download manager. It downloads on your phone and controls <a href="https://grabline.github.io/">GrabLine</a> on your PC over your own Wi-Fi. No accounts, ads or analytics.</p>
+
+<p>Share a link to GrabLine from any app, or paste it, then choose <b>Phone</b> or <b>PC</b>. Phone and PC downloads appear in one list, and you can control both.</p>
+
+<ul>
+<li><b>PC remote:</b> pair with a QR code, see the PC queue, add links, pause, resume, cancel and retry.</li>
+<li><b>Phone downloads:</b> segmented downloads that resume after a drop. Existing files are never overwritten.</li>
+<li><b>Video and audio:</b> pick a quality through yt-dlp and FFmpeg; yt-dlp updates inside the app.</li>
+<li><b>Between devices:</b> send a phone job to the PC, or copy a finished PC file to the phone with a SHA-256 check.</li>
+<li><b>Torrents:</b> magnets and .torrent files, file selection, seeding rules, Wi-Fi only on metered networks.</li>
+<li><b>Servers:</b> SFTP, FTP, FTPS, WebDAV and S3, with passwords and keys kept in Android Keystore.</li>
+<li>Home screen widget and Quick Settings tile. 14 languages.</li>
+</ul>
+
+<p>The phone never listens on a port. It connects only to the PCs you paired and the servers you chose to download from. The PC's certificate is pinned at pairing.</p>

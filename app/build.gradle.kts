@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -8,6 +10,22 @@ plugins {
 
 // ABI splits for release builds (each APK carries one set of yt-dlp/Python/FFmpeg libraries).
 // Debug-only invocations stay a single APK with the three ABIs the project supports.
+// Release signing: keystore.properties (local, gitignored) or GRABLINE_* environment variables (CI).
+// Without either, release APKs are built unsigned. See docs/RELEASING.md.
+val releaseSigning: Map<String, String>? = run {
+    val file = rootProject.file("keystore.properties")
+    val props = Properties()
+    if (file.isFile) file.inputStream().use { props.load(it) }
+    fun pick(key: String, env: String) = props.getProperty(key) ?: System.getenv(env)
+    val values = mapOf(
+        "storeFile" to pick("storeFile", "GRABLINE_KEYSTORE"),
+        "storePassword" to pick("storePassword", "GRABLINE_KEYSTORE_PASSWORD"),
+        "keyAlias" to pick("keyAlias", "GRABLINE_KEY_ALIAS"),
+        "keyPassword" to pick("keyPassword", "GRABLINE_KEY_PASSWORD"),
+    )
+    if (values.values.all { !it.isNullOrBlank() }) values.mapValues { it.value!! } else null
+}
+
 val splitAbis = gradle.startParameter.taskNames.any { it.contains("release", ignoreCase = true) || it.contains("bundle", ignoreCase = true) }
 
 android {
@@ -38,8 +56,20 @@ android {
         jniLibs.useLegacyPackaging = true
     }
 
+    signingConfigs {
+        releaseSigning?.let { cfg ->
+            create("release") {
+                storeFile = file(cfg.getValue("storeFile"))
+                storePassword = cfg.getValue("storePassword")
+                keyAlias = cfg.getValue("keyAlias")
+                keyPassword = cfg.getValue("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            if (releaseSigning != null) signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }

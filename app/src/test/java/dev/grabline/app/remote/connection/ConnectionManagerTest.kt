@@ -252,7 +252,9 @@ class ConnectionManagerTest {
         online()
         val first = fake.lastLive!!
         first.closeFromPc(1001)
-        waitState("Offline") { it is PcLinkState.Offline }
+        // Offline can last only a moment before the reconnect starts, so look for
+        // it in everything the collector saw rather than polling the current state.
+        eventually(what = "Offline") { seen.firstOrNull { it is PcLinkState.Offline } }
         eventually(what = "reconnected") { fake.liveConns.firstOrNull { it !== first } }
         online()
         collector.cancel()

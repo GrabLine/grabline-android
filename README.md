@@ -14,10 +14,11 @@ Phone and PC downloads appear in one list, and you can control both.
 
 ## Status
 
-Phases 1 to 5 are built: PC remote, phone downloads, video, moving files
-between devices, and torrents. The app is **not released yet**, and no APK is
-published. Real-device testing, native-speaker translation review and release
-signing come first. Cloud servers (phase 6) will wait for demand. See the
+All six phases are built: PC remote, phone downloads, video, moving files
+between devices, torrents, and file servers (SFTP, FTP, WebDAV and S3). The app
+is **not released yet**, and no APK is published. Real-device testing
+([guide](docs/PHONE_TESTING.md)), native-speaker translation review and the
+release key come first ([releasing](docs/RELEASING.md)). See the
 [build plan](docs/BUILD_PLAN.md) for details.
 
 ## Features
@@ -30,6 +31,7 @@ signing come first. Cloud servers (phase 6) will wait for demand. See the
 | Video and audio | Pick a quality through yt-dlp and FFmpeg. yt-dlp updates inside the app. |
 | Between devices | Send a phone job to the PC, or copy a finished PC file to the phone with a SHA-256 check. |
 | Torrents | Magnets and `.torrent` files, file selection, seeding rules, Wi-Fi only on metered networks. |
+| File servers | SFTP, FTP, FTPS, WebDAV and S3, with saved accounts whose secrets stay in Android Keystore. |
 | Android extras | Home screen widget and Quick Settings tile. |
 
 ## Privacy

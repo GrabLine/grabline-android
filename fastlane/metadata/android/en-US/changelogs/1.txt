@@ -1,0 +1,5 @@
+First release.
+- Pair with GrabLine on your PC and control its downloads.
+- Download on the phone: files, video and audio, torrents, SFTP, FTP, WebDAV and S3.
+- Move downloads between phone and PC.
+- Widget, Quick Settings tile, 14 languages.
