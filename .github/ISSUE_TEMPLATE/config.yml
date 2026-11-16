@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Questions and help
+    url: https://github.com/GrabLine/GrabLine/discussions/categories/q-a
+    about: Ask usage and setup questions in Discussions Q&A.
+  - name: Documentation
+    url: https://github.com/GrabLine/grabline-android/blob/main/docs/SPEC.md
+    about: Start with the product spec and the phone-to-PC protocol.
+  - name: Report a security vulnerability privately
+    url: https://github.com/GrabLine/grabline-android/security/advisories/new
+    about: Do not disclose exploitable findings in a public issue.

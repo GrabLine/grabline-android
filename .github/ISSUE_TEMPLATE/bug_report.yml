@@ -1,0 +1,58 @@
+name: Bug report
+description: Report a reproducible GrabLine for Android problem.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please check existing issues first.
+        Do not post pairing codes, keys, private URLs or logs you have not checked.
+        Report exploitable security issues privately using SECURITY.md.
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: Find it in Settings, About.
+      placeholder: "0.1.0 (debug build)"
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and Android version
+      placeholder: "Pixel 8, Android 15"
+    validations:
+      required: true
+  - type: input
+    id: pc-version
+    attributes:
+      label: GrabLine version on the PC
+      description: Write "none" if the problem does not involve a PC.
+      placeholder: "GrabLine 1.32.15, Windows 11"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Give exact steps and a public or synthetic link when possible.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour and error
+      description: Say whether it happens on the phone, the PC or both, and whether it uses Wi-Fi or mobile data.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized crash log or screenshots
+      description: Remove secrets, pairing codes and unrelated history first.

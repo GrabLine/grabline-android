@@ -1,0 +1,23 @@
+name: Feature request
+description: Suggest a focused improvement to GrabLine for Android.
+title: "[Feature]: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe a concrete task that is difficult with the current app.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Suggested behaviour
+      description: Explain the result you want, with a small example.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and device details
+      description: Include workarounds, Android version limits and related issues, if any.
