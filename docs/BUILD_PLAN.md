@@ -6,7 +6,9 @@ Status: todo / doing / review / done. Repo: **D** = desktop worktree `GrabLine-p
 
 **Phase 2: done, tagged phase-2-gate (2026-11-16).** QA-22..27, 31 Pass (MockWebServer suite, SHA-256 checked; background job completes on the emulator). Blocked, need a real phone or real network: QA-18 (1 GB over real Wi-Fi; logic tested with small files), QA-19 airplane mode, QA-20 force-stop, QA-21 reboot, QA-28 Wi-Fi to mobile, QA-29 Doze, QA-30 7-hour run on Android 15, QA-32 notifications off, QA-45 tablet/foldable. Desktop Phase 4 server side is already done (files, fetch, fileHash, outbox).
 
-**Next step:** Phase 3 (video on the phone).
+**Phase 3: done, tagged phase-3-gate (2026-11-16).** Video engine (youtubedl-android + FFmpeg), quality chips, HLS/DASH, in-app yt-dlp update, 13 languages (machine translations, review by native speakers pending). Per-ABI release APKs 56-66 MB (budget 90 MB). QA-33..36 and QA-46 Blocked: they need real downloads over the internet or a manual Arabic layout check; on-device yt-dlp init and RTL layout tests pass.
+
+**Next step:** Phase 4 phone side (part A transfers/cross-device, part B formats/start later/checksum/widget/tile) in progress; desktop side done.
 
 ## Phase 0 - Setup
 
