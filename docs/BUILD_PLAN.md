@@ -8,7 +8,13 @@ Status: todo / doing / review / done. Repo: **D** = desktop worktree `GrabLine-p
 
 **Phase 3: done, tagged phase-3-gate (2026-11-16).** Video engine (youtubedl-android + FFmpeg), quality chips, HLS/DASH, in-app yt-dlp update, 13 languages (machine translations, review by native speakers pending). Per-ABI release APKs 56-66 MB (budget 90 MB). QA-33..36 and QA-46 Blocked: they need real downloads over the internet or a manual Arabic layout check; on-device yt-dlp init and RTL layout tests pass.
 
-**Next step:** Phase 4 phone side (part A transfers/cross-device, part B formats/start later/checksum/widget/tile) in progress; desktop side done.
+**Phase 4: done, tagged phase-4-gate (2026-11-16).** Desktop: files/fetch/fileHash/outbox over the listener (22 real-TLS tests). Phone: transfers with resume + SHA-256, send to PC / download on phone instead, PC outbox pull, full format list + trim, start later, checksum, widget, Quick Settings tile. QA-40 Pass; QA-38, QA-39 Blocked (need a real PC download and a real 2 GB copy with a Wi-Fi drop).
+
+**Phase 5: done, tagged phase-5-gate (2026-11-16).** libtorrent4j: magnets, .torrent files, DHT, resume data, sequential, file selection, seeding rules, Wi-Fi only on metered networks. Per-ABI release APKs 65-75 MB. QA-37 Blocked (real swarm); battery check on 3 makers Blocked (real devices).
+
+**Final checks (2026-11-16):** desktop 1470 passed / 15 skipped / 0 failed, ruff, format, mypy, no-listen gate clean; Android 432 unit tests, 54 on-device tests on grabline_pixel, lint clean.
+
+**Next step:** Phase 6 (cloud servers) is NOT started - the spec says it waits for user demand; ask the owner before starting it. Remaining before a release: real-device QA (all Blocked rows), native-speaker translation review, release signing key, F-Droid metadata, website download section.
 
 ## Phase 0 - Setup
 
