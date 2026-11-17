@@ -42,6 +42,7 @@ import dev.grabline.app.remote.connection.ConnectionManager
 import dev.grabline.app.remote.connection.OkHttpWireFactory
 import dev.grabline.app.remote.connection.WifiSubnetSweeper
 import dev.grabline.app.remote.outbox.Outbox
+import dev.grabline.app.remote.phone.PhoneShare
 import dev.grabline.app.remote.connection.TransferConnector
 import dev.grabline.app.remote.transfer.FetchClient
 import dev.grabline.app.remote.transfer.PcOutboxPuller
@@ -121,6 +122,7 @@ class AppContainer(context: Context) {
         },
         sweeper = WifiSubnetSweeper(app),
         onPairingRemoved = { pc -> runCatching { keyStore.delete(Authenticator.keyAliasOf(pc)) } },
+        phoneShare = PhoneShare(phone, settings.observe(AppSettings.SHARE_PHONE_JOBS), remote = { remote }),
     )
     val outbox = Outbox(scope, db.outbox(), connections)
     private val sendLink = SendToPcLink(db.phoneJobs(), { requestId -> db.outbox().countByRequestId(requestId) > 0 }) { phoneJobId -> phone.cancel(phoneJobId) }

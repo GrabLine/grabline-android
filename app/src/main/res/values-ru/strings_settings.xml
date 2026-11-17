@@ -69,6 +69,7 @@
     <string name="setting_paired_pcs">Подключённые компьютеры</string>
     <string name="pcs_none">Пока нет. Нажмите, чтобы подключить компьютер.</string>
     <string name="setting_notify_pc">Уведомлять о загрузках на компьютере</string>
+    <string name="setting_share_phone_jobs">Разрешить подключённым компьютерам видеть загрузки на этом телефоне и управлять ими</string>
     <string name="group_appearance">Оформление</string>
     <string name="setting_theme">Тема</string>
     <string name="theme_system">Системная</string>

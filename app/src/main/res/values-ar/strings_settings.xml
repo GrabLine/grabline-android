@@ -71,6 +71,7 @@
     <string name="setting_paired_pcs">الحواسيب المقترنة</string>
     <string name="pcs_none">لا شيء بعد. اضغط لاقتران حاسوب.</string>
     <string name="setting_notify_pc">أبلغني بتنزيلات الحاسوب</string>
+    <string name="setting_share_phone_jobs">السماح للحواسيب المقترنة برؤية التنزيلات على هذا الهاتف والتحكم بها</string>
     <string name="group_appearance">المظهر</string>
     <string name="setting_theme">المظهر</string>
     <string name="theme_system">النظام</string>

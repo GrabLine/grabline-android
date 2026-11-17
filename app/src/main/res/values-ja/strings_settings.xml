@@ -66,6 +66,7 @@
     <string name="setting_paired_pcs">ペアリング済みのPC</string>
     <string name="pcs_none">まだありません。タップしてPCをペアリングします。</string>
     <string name="setting_notify_pc">PCのダウンロードを通知</string>
+    <string name="setting_share_phone_jobs">ペアリング済みのPCがこのスマートフォンのダウンロードを確認・操作できるようにする</string>
     <string name="group_appearance">外観</string>
     <string name="setting_theme">テーマ</string>
     <string name="theme_system">システム</string>

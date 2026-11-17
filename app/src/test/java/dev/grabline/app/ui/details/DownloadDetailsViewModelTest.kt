@@ -1,6 +1,13 @@
 package dev.grabline.app.ui.details
 
+import dev.grabline.app.data.PairedPc
+import dev.grabline.app.engine.PhoneJobStatus
+import dev.grabline.app.remote.PcRemote
 import dev.grabline.app.ui.downloads.FakePcRemote
+import dev.grabline.app.ui.downloads.FakePhoneEngine
+import dev.grabline.app.ui.downloads.PHONE_ID
+import dev.grabline.app.ui.downloads.phoneJob
+import kotlinx.coroutines.flow.flowOf
 import dev.grabline.app.ui.downloads.RowAction
 import dev.grabline.app.ui.downloads.RowStatus
 import dev.grabline.app.ui.downloads.fakeJob
@@ -51,5 +58,43 @@ class DownloadDetailsViewModelTest {
         advanceTimeBy(5_100); runCurrent()
         remote.jobsFlow.value = emptyList(); runCurrent() // the PC's event removes it
         assertTrue(vm.state.value.leave)
+    }
+
+    private val pairedRemote = object : PcRemote by remote {
+        override val pcs = flowOf(
+            listOf(
+                PairedPc(
+                    pcId = "pcA", name = "Desk", fingerprint = "ab", deviceId = "KsucBZHeyJguN6H0BzJQiw",
+                    addresses = listOf("10.0.0.1"), port = 47821, protocolVersion = 6, pairedAt = 1L,
+                ),
+            ),
+        )
+    }
+
+    private suspend fun kotlinx.coroutines.test.TestScope.sendTargetsFor(job: dev.grabline.app.engine.PhoneJob): List<PcChoice> {
+        val engine = FakePhoneEngine()
+        engine.jobsFlow.value = listOf(job)
+        val vm = DownloadDetailsViewModel(pairedRemote, PHONE_ID, job.id, flushScope = backgroundScope, phone = engine)
+        backgroundScope.launch { vm.state.collect {} }
+        runCurrent()
+        return vm.state.value.sendTargets
+    }
+
+    @Test fun sendToPcIsOfferedForEveryPhoneDownloadThatCanMove() = runTest(dispatcher) {
+        val movable = listOf(
+            PhoneJobStatus.QUEUED, PhoneJobStatus.DOWNLOADING, PhoneJobStatus.PAUSED, PhoneJobStatus.WAITING_NETWORK,
+            PhoneJobStatus.WAITING_WIFI, PhoneJobStatus.WAITING_CHARGING, PhoneJobStatus.FAILED,
+        )
+        for (status in movable) {
+            assertEquals(status.name, listOf(PcChoice("pcA", "Desk")), sendTargetsFor(phoneJob(1, status)))
+        }
+    }
+
+    @Test fun sendToPcIsNotOfferedForTransfersFinishedCancelledOrLinksAPcCannotTake() = runTest(dispatcher) {
+        assertTrue(sendTargetsFor(phoneJob(1, PhoneJobStatus.DOWNLOADING).copy(isTransfer = true)).isEmpty())
+        assertTrue(sendTargetsFor(phoneJob(1, PhoneJobStatus.COMPLETED)).isEmpty())
+        assertTrue(sendTargetsFor(phoneJob(1, PhoneJobStatus.CANCELLED)).isEmpty())
+        assertTrue(sendTargetsFor(phoneJob(1, PhoneJobStatus.QUEUED, url = "sftp://host.example/f")).isEmpty())
+        assertTrue(sendTargetsFor(phoneJob(1, PhoneJobStatus.QUEUED, url = "torrent-file:a.torrent")).isEmpty())
     }
 }

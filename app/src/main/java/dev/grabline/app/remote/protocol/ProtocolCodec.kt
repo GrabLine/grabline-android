@@ -139,6 +139,11 @@ object ProtocolCodec {
 
     private inline fun <reified T : Request> enc(request: T): JsonObject = json.encodeToJsonElement(request) as JsonObject
 
+    /** Section 20 messages carry explicit nulls (`eta`, `error`, `message`), so they use a copy of [json] that writes them. */
+    private val jsonWithNulls: Json = Json(from = json) { explicitNulls = true }
+
+    private inline fun <reified T : Request> encNulls(request: T): JsonObject = jsonWithNulls.encodeToJsonElement(request) as JsonObject
+
     private fun encodeFields(request: Request): JsonObject = when (request) {
         is PairRequest -> enc(request)
         is AuthRequest -> enc(request)
@@ -163,6 +168,8 @@ object ProtocolCodec {
         is FileHashRequest -> enc(request)
         is OutboxRequest -> enc(request)
         is OutboxAckRequest -> enc(request)
+        is PhoneJobsRequest -> encNulls(request)
+        is PhoneCommandResultRequest -> encNulls(request)
     }
 
     // ----------------------------------------------------------------- decode (PC to phone)
@@ -231,6 +238,7 @@ object ProtocolCodec {
         "job.removed" -> dec(JobRemovedEvent.serializer(), text)
         "global.updated" -> dec(GlobalUpdatedEvent.serializer(), text)
         "outbox.added" -> dec(OutboxAddedEvent.serializer(), text)
+        "phone.command" -> dec(PhoneCommandEvent.serializer(), text)
         else -> UnknownEvent(name)
     }
 
@@ -346,6 +354,8 @@ object ProtocolCodec {
                 "fileHash" -> dec(FileHashRequest.serializer(), text)
                 "outbox" -> dec(OutboxRequest.serializer(), text)
                 "outboxAck" -> dec(OutboxAckRequest.serializer(), text)
+                "phoneJobs" -> dec(PhoneJobsRequest.serializer(), text)
+                "phoneCommandResult" -> dec(PhoneCommandResultRequest.serializer(), text)
                 else -> return RequestResult.Rejected(ErrorCode.UNSUPPORTED, "unknown type")
             }
         } catch (e: SerializationException) {
@@ -456,7 +466,39 @@ object ProtocolCodec {
                 r.itemIds.isEmpty() -> bad("itemIds")
                 else -> null
             }
+            is PhoneJobsRequest -> when {
+                r.jobs.size > PhoneJobLimits.MAX_JOBS -> bad("jobs")
+                !r.shared && r.jobs.isNotEmpty() -> bad("jobs")
+                r.jobs.map { it.id }.toSet().size != r.jobs.size -> bad("jobs")
+                r.jobs.any { phoneJobProblem(it) != null } -> bad("jobs")
+                else -> null
+            }
+            is PhoneCommandResultRequest -> when {
+                r.commandId !in 1..PhoneJobLimits.MAX_COMMAND_ID -> bad("commandId")
+                r.result !in PhoneCommandResults.all -> bad("result")
+                (r.message?.length ?: 0) > PhoneJobLimits.MAX_MESSAGE -> bad("message")
+                else -> null
+            }
         }
+    }
+
+    /** Null when [j] obeys the phone-job object rules of section 20 (the status and kind sets are open on the PC side, closed here). */
+    private val NUL: Char = 0.toChar()
+
+    private fun phoneJobProblem(j: PhoneJobInfo): String? = when {
+        j.id < 1 -> "id"
+        j.name.length !in 1..PhoneJobLimits.MAX_NAME || NUL in j.name -> "name"
+        NUL in j.url -> "url"
+        NUL in (j.error ?: "") -> "error"
+        j.url.length > PhoneJobLimits.MAX_URL -> "url"
+        j.status !in PhoneJobStatuses.all -> "status"
+        j.kind !in PhoneJobKinds.all -> "kind"
+        j.downloaded < 0 -> "downloaded"
+        j.total != null && j.total < 0 -> "total"
+        j.speed < 0 -> "speed"
+        j.eta != null && j.eta < 0 -> "eta"
+        (j.error?.length ?: 0) > PhoneJobLimits.MAX_ERROR -> "error"
+        else -> null
     }
 
     /** The `url` rule of PROTOCOL.md section 2: http(s) with a host, or `magnet:` with `xt=`; at most 8,192 characters. */

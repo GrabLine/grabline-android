@@ -68,6 +68,7 @@
     <string name="setting_paired_pcs">PC vinculados</string>
     <string name="pcs_none">Ninguno aún. Toca para vincular un PC.</string>
     <string name="setting_notify_pc">Avisarme de las descargas del PC</string>
+    <string name="setting_share_phone_jobs">Permitir que los PC vinculados vean y controlen las descargas de este teléfono</string>
     <string name="group_appearance">Apariencia</string>
     <string name="setting_theme">Tema</string>
     <string name="theme_system">Sistema</string>

@@ -68,6 +68,7 @@
     <string name="setting_paired_pcs">PC abbinati</string>
     <string name="pcs_none">Ancora nessuno. Tocca per abbinare un PC.</string>
     <string name="setting_notify_pc">Avvisami dei download sul PC</string>
+    <string name="setting_share_phone_jobs">Consenti ai PC abbinati di vedere e controllare i download su questo telefono</string>
     <string name="group_appearance">Aspetto</string>
     <string name="setting_theme">Tema</string>
     <string name="theme_system">Sistema</string>

@@ -108,6 +108,7 @@ object Feature {
     const val FILES = "files"
     const val FETCH = "fetch"
     const val OUTBOX = "outbox"
+    const val PHONE_JOBS = "phoneJobs"
 }
 
 object Qualities {
@@ -130,6 +131,45 @@ object Topics {
     const val JOBS = "jobs"
     const val GLOBAL = "global"
     const val OUTBOX = "outbox"
+    /** `phone.command` events (feature `phoneJobs`, PROTOCOL.md section 20). */
+    const val PHONE = "phone"
+}
+
+/** Section 20 vocabulary (feature `phoneJobs`). */
+object PhoneJobStatuses {
+    val all: Set<String> = setOf("queued", "downloading", "paused", "waiting", "completed", "failed", "cancelled")
+}
+
+object PhoneJobKinds {
+    val all: Set<String> = setOf("direct", "video", "torrent", "cloud", "transfer")
+}
+
+object PhoneCommandActions {
+    const val PAUSE = "pause"
+    const val RESUME = "resume"
+    const val CANCEL = "cancel"
+    const val RETRY = "retry"
+    const val REMOVE = "remove"
+    const val MOVE_TO_PC = "moveToPc"
+    val all: Set<String> = setOf(PAUSE, RESUME, CANCEL, RETRY, REMOVE, MOVE_TO_PC)
+}
+
+object PhoneCommandResults {
+    const val OK = "ok"
+    const val NOT_FOUND = "notFound"
+    const val REFUSED = "refused"
+    const val FAILED = "failed"
+    val all: Set<String> = setOf(OK, NOT_FOUND, REFUSED, FAILED)
+}
+
+/** Limits of section 20. */
+object PhoneJobLimits {
+    const val MAX_JOBS = 100
+    const val MAX_NAME = 256
+    const val MAX_URL = 2048
+    const val MAX_ERROR = 512
+    const val MAX_MESSAGE = 256
+    const val MAX_COMMAND_ID = 2_147_483_647L
 }
 
 // ---------------------------------------------------------------------------
@@ -304,6 +344,43 @@ data class OutboxRequest(override val id: String) : Request {
 @Serializable
 data class OutboxAckRequest(override val id: String, val itemIds: List<Long>) : Request {
     override val type: String get() = "outboxAck"
+}
+
+/** One phone download as the PC sees it (section 20 phone-job object). `total`, `eta` and `error` are sent even when null. */
+@Serializable
+data class PhoneJobInfo(
+    val id: Long,
+    val name: String,
+    val url: String,
+    val status: String,
+    val kind: String,
+    val downloaded: Long = 0,
+    val total: Long? = null,
+    val speed: Long = 0,
+    val eta: Long? = null,
+    val createdAt: Long = 0,
+    val error: String? = null,
+)
+
+/** `phoneJobs`: the phone's downloads, newest first (feature `phoneJobs`). [jobs] is empty when [shared] is false. */
+@Serializable
+data class PhoneJobsRequest(
+    override val id: String,
+    val shared: Boolean,
+    val jobs: List<PhoneJobInfo> = emptyList(),
+) : Request {
+    override val type: String get() = "phoneJobs"
+}
+
+/** `phoneCommandResult`: the answer to a `phone.command` event. [message] is sent even when null. */
+@Serializable
+data class PhoneCommandResultRequest(
+    override val id: String,
+    val commandId: Long,
+    val result: String,
+    val message: String? = null,
+) : Request {
+    override val type: String get() = "phoneCommandResult"
 }
 
 // ---------------------------------------------------------------------------
@@ -495,6 +572,16 @@ data class GlobalUpdatedEvent(val seq: Long, val ts: Long = 0, val state: Global
 
 @Serializable
 data class OutboxAddedEvent(val seq: Long, val ts: Long = 0, val count: Int = 0) : ServerEvent
+
+/** The PC user asked the phone to act on one of its downloads (feature `phoneJobs`, topic `phone`). */
+@Serializable
+data class PhoneCommandEvent(
+    val seq: Long = 0,
+    val ts: Long = 0,
+    val commandId: Long,
+    val action: String,
+    val jobId: Long,
+) : ServerEvent
 
 /** An event name this phone does not know (or a known one for a later version): ignore, never crash. */
 data class UnknownEvent(val name: String) : ServerEvent

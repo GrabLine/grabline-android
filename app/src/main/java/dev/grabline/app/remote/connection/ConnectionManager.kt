@@ -19,10 +19,13 @@ import dev.grabline.app.remote.protocol.JobRemovedEvent
 import dev.grabline.app.remote.protocol.JobUpdatedEvent
 import dev.grabline.app.remote.protocol.JobsReply
 import dev.grabline.app.remote.protocol.JobsRequest
+import dev.grabline.app.remote.protocol.PhoneCommandEvent
+import dev.grabline.app.remote.phone.PhoneShare
 import dev.grabline.app.remote.protocol.Request
 import dev.grabline.app.remote.protocol.ServerEvent
 import dev.grabline.app.remote.protocol.SubscribeRequest
 import dev.grabline.app.remote.protocol.SubscribedReply
+import dev.grabline.app.remote.protocol.Topics
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
@@ -85,6 +88,8 @@ class ConnectionManager(
     /** Called when a PC removed this phone: delete its key (remote/security). The row stays, marked removed. */
     private val onPairingRemoved: suspend (pc: PairedPc) -> Unit = {},
     private val clock: () -> Long = System::currentTimeMillis,
+    /** Reports the phone's downloads to PCs that serve feature `phoneJobs` and obeys their commands (PROTOCOL.md 20). */
+    private val phoneShare: PhoneShare? = null,
 ) {
     private val _states = MutableStateFlow<Map<String, PcLinkState>>(emptyMap())
     val states: StateFlow<Map<String, PcLinkState>> = _states.asStateFlow()
@@ -321,8 +326,13 @@ class ConnectionManager(
     private suspend fun runSession(pc: PairedPc, session: PcSession): SessionEnd = coroutineScope {
         val cache = ConcurrentHashMap<Long, PcJob>()
         var lastSeq = 0L
+        // Only a PC that lists `phoneJobs` gets anything from section 20; for any other the phone stays silent.
+        val features = (_states.value[pc.pcId] as? PcLinkState.Online)?.features.orEmpty()
+        val share = phoneShare?.takeIf { Feature.PHONE_JOBS in features }
+        val commands = if (share != null) PhoneShare.newCommandChannel() else null
         val collector = launch {
             session.events.collect { event ->
+                if (event is PhoneCommandEvent) commands?.trySend(event)
                 val seq = seqOf(event)
                 if (seq != null) {
                     if (lastSeq != 0L && seq != lastSeq + 1) launch { reload(pc.pcId, session, cache) }
@@ -332,9 +342,19 @@ class ConnectionManager(
                 _events.tryEmit(pc.pcId to event)
             }
         }
+        // The first connection of this phone to the PC is the one that reports and takes commands.
+        val phoneJob = if (share != null && commands != null) {
+            launch { share.run({ build -> session.request(build) }, commands, pc.pcId) }
+        } else {
+            null
+        }
         try {
-            val outbox = (_states.value[pc.pcId] as? PcLinkState.Online)?.features?.contains(Feature.OUTBOX) == true
-            val topics = if (outbox) listOf("jobs", "global", "outbox") else listOf("jobs", "global")
+            val outbox = Feature.OUTBOX in features
+            val topics = buildList {
+                add("jobs"); add("global")
+                if (outbox) add("outbox")
+                if (share != null) add(Topics.PHONE)
+            }
             val subscribed = session.request { id -> SubscribeRequest(id, topics) }
             (subscribed.message as? SubscribedReply)?.state?.let { state -> _global.update { it + (pc.pcId to state) } }
             reload(pc.pcId, session, cache)
@@ -343,6 +363,8 @@ class ConnectionManager(
         }
         val end = session.awaitEnd()
         collector.cancel()
+        phoneJob?.cancel()
+        commands?.close()
         pcs.touchSeen(pc.pcId, clock())
         end
     }
@@ -423,6 +445,7 @@ class ConnectionManager(
         is JobFailedEvent -> event.seq
         is JobRemovedEvent -> event.seq
         is GlobalUpdatedEvent -> event.seq
+        is PhoneCommandEvent -> event.seq
         else -> null
     }
 

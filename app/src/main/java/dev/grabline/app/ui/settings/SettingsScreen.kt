@@ -180,6 +180,7 @@ private fun SettingsMain(
     val seed by settings.state(AppSettings.SEED_AFTER_DOWNLOAD)
     val torrentData by settings.state(AppSettings.TORRENTS_ON_MOBILE_DATA)
     val notifyPc by settings.state(AppSettings.NOTIFY_PC_DOWNLOADS)
+    val sharePhoneJobs by settings.state(AppSettings.SHARE_PHONE_JOBS)
     val theme by settings.state(AppSettings.THEME)
     val colours by settings.state(AppSettings.COLOURS)
     val language by settings.state(AppSettings.LANGUAGE)
@@ -298,6 +299,7 @@ private fun SettingsMain(
                 else pcs.joinToString(", ") { it.name },
             )
             SwitchRow(stringResource(R.string.setting_notify_pc), notifyPc, { put(AppSettings.NOTIFY_PC_DOWNLOADS, it) })
+            SwitchRow(stringResource(R.string.setting_share_phone_jobs), sharePhoneJobs, { put(AppSettings.SHARE_PHONE_JOBS, it) })
         }
 
         SettingsGroup(stringResource(R.string.group_appearance)) {

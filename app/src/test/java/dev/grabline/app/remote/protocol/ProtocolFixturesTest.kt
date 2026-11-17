@@ -83,6 +83,7 @@ class ProtocolFixturesTest {
         "job.progress" to JobProgressEvent::class, "job.finished" to JobFinishedEvent::class,
         "job.failed" to JobFailedEvent::class, "job.removed" to JobRemovedEvent::class,
         "global.updated" to GlobalUpdatedEvent::class, "outbox.added" to OutboxAddedEvent::class,
+        "phone.command" to PhoneCommandEvent::class,
     )
 
     @Test

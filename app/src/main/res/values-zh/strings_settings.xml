@@ -66,6 +66,7 @@
     <string name="setting_paired_pcs">已配对的电脑</string>
     <string name="pcs_none">暂无。点按以配对电脑。</string>
     <string name="setting_notify_pc">通知我电脑上的下载</string>
+    <string name="setting_share_phone_jobs">允许已配对的电脑查看和控制此手机上的下载</string>
     <string name="group_appearance">外观</string>
     <string name="setting_theme">主题</string>
     <string name="theme_system">跟随系统</string>

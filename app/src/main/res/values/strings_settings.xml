@@ -73,6 +73,7 @@
     <string name="setting_paired_pcs">Paired PCs</string>
     <string name="pcs_none">None yet. Tap to pair a PC.</string>
     <string name="setting_notify_pc">Notify me about PC downloads</string>
+    <string name="setting_share_phone_jobs">Let paired PCs see and control downloads on this phone</string>
 
     <string name="group_appearance">Appearance</string>
     <string name="setting_theme">Theme</string>

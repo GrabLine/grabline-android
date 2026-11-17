@@ -67,6 +67,7 @@
     <string name="setting_paired_pcs">جڑے ہوئے پی سی</string>
     <string name="pcs_none">ابھی کوئی نہیں۔ پی سی جوڑنے کے لیے دبائیں۔</string>
     <string name="setting_notify_pc">پی سی ڈاؤن لوڈ کے بارے میں مطلع کریں</string>
+    <string name="setting_share_phone_jobs">جڑے ہوئے پی سی کو اس فون کے ڈاؤن لوڈز دیکھنے اور کنٹرول کرنے دیں</string>
     <string name="group_appearance">ظاہری شکل و صورت</string>
     <string name="setting_theme">تھیم</string>
     <string name="theme_system">سسٹم</string>

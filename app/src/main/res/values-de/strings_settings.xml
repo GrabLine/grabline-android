@@ -67,6 +67,7 @@
     <string name="setting_paired_pcs">Gekoppelte PCs</string>
     <string name="pcs_none">Noch keine. Tippe, um einen PC zu koppeln.</string>
     <string name="setting_notify_pc">Über PC-Downloads benachrichtigen</string>
+    <string name="setting_share_phone_jobs">Gekoppelten PCs erlauben, Downloads auf diesem Telefon zu sehen und zu steuern</string>
     <string name="group_appearance">Erscheinungsbild</string>
     <string name="setting_theme">Design</string>
     <string name="theme_system">System</string>

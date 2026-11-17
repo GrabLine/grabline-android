@@ -467,6 +467,7 @@ class DownloadEngine(
             etaSeconds = if (speed > 0 && remaining != null) (remaining / speed).coerceAtLeast(0) else null,
             connections = r.connections, notice = r.notice, error = r.error, fileUri = r.fileUri,
             createdAt = r.createdAt, finishedAt = r.finishedAt, isVideo = r.kind == PhoneJobRow.KIND_VIDEO, isTransfer = r.kind == PhoneJobRow.KIND_TRANSFER,
+            isCloud = r.kind == PhoneJobRow.KIND_CLOUD,
             startAt = r.startAt?.takeIf { r.status == S_QUEUED || r.status in WAITING_NAMES }, checksum = r.checksumState,
             torrent = if (r.kind != PhoneJobRow.KIND_TORRENT) null else {
                 val files = StoredFiles.decode(r.torrentFiles)

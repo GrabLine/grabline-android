@@ -66,6 +66,7 @@
     <string name="setting_paired_pcs">페어링된 PC</string>
     <string name="pcs_none">아직 없습니다. 눌러서 PC를 페어링하세요.</string>
     <string name="setting_notify_pc">PC 다운로드 알림 받기</string>
+    <string name="setting_share_phone_jobs">페어링된 PC가 이 휴대전화의 다운로드를 보고 제어하도록 허용</string>
     <string name="group_appearance">모양</string>
     <string name="setting_theme">테마</string>
     <string name="theme_system">시스템</string>

@@ -67,6 +67,7 @@
     <string name="setting_paired_pcs">पेयर किए गए पीसी</string>
     <string name="pcs_none">अभी कोई नहीं। पीसी पेयर करने के लिए दबाएँ।</string>
     <string name="setting_notify_pc">पीसी डाउनलोड के बारे में सूचित करें</string>
+    <string name="setting_share_phone_jobs">पेयर किए गए पीसी को इस फ़ोन के डाउनलोड देखने और नियंत्रित करने दें</string>
     <string name="group_appearance">दिखावट</string>
     <string name="setting_theme">थीम</string>
     <string name="theme_system">सिस्टम</string>

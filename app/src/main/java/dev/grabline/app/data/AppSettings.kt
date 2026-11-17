@@ -57,6 +57,8 @@ class AppSettings(private val store: DataStore<Preferences>) {
         val SEED_AFTER_DOWNLOAD = Setting(stringPreferencesKey("seed_after_download"), "off")
         val TORRENTS_ON_MOBILE_DATA = Setting(booleanPreferencesKey("torrents_on_mobile_data"), false)
         val NOTIFY_PC_DOWNLOADS = Setting(booleanPreferencesKey("notify_pc_downloads"), true)
+        /** Let paired PCs see and control the downloads on this phone (PROTOCOL.md section 20). */
+        val SHARE_PHONE_JOBS = Setting(booleanPreferencesKey("share_phone_jobs"), true)
         /** "system", "light", "dark". */
         val THEME = Setting(stringPreferencesKey("theme"), "system")
         /** "grabline" or "wallpaper". */
@@ -72,7 +74,7 @@ class AppSettings(private val store: DataStore<Preferences>) {
             listOf(
                 DEFAULT_DEVICE, RULES, SAVE_FOLDER, CONNECTIONS_PER_FILE, DOWNLOADS_AT_ONCE,
                 SPEED_LIMIT_KBPS, ONLY_WIFI, ONLY_CHARGING, AUTO_RETRY, VIDEO_QUALITY, AUDIO_FORMAT,
-                UPDATE_YTDLP, SEED_AFTER_DOWNLOAD, TORRENTS_ON_MOBILE_DATA, NOTIFY_PC_DOWNLOADS,
+                UPDATE_YTDLP, SEED_AFTER_DOWNLOAD, TORRENTS_ON_MOBILE_DATA, NOTIFY_PC_DOWNLOADS, SHARE_PHONE_JOBS,
                 THEME, COLOURS, LANGUAGE, OFFER_COPIED_LINKS, KEEP_HISTORY,
             )
         }

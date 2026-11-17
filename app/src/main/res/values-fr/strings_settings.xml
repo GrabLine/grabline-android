@@ -68,6 +68,7 @@
     <string name="setting_paired_pcs">PC associés</string>
     <string name="pcs_none">Aucun pour l\'instant. Touchez pour associer un PC.</string>
     <string name="setting_notify_pc">Me notifier des téléchargements du PC</string>
+    <string name="setting_share_phone_jobs">Autoriser les PC associés à voir et à contrôler les téléchargements de ce téléphone</string>
     <string name="group_appearance">Apparence</string>
     <string name="setting_theme">Thème</string>
     <string name="theme_system">Système</string>

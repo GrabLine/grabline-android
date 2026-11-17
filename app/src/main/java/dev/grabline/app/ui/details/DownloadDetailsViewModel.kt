@@ -106,6 +106,7 @@ class DownloadDetailsViewModel(
         }
         if (found != null) lastRow = found
         val phoneLive = row != null && row.isPhone && !row.isTransfer && !row.url.startsWith(TorrentRouting.FILE_PREFIX) &&
+            dev.grabline.app.remote.protocol.ProtocolCodec.isValidUrl(row.url) && // ftp, s3 and webdav links cannot go to a PC
             row.status in setOf(RowStatus.Queued, RowStatus.Downloading, RowStatus.Paused, RowStatus.WaitingNetwork, RowStatus.WaitingWifi, RowStatus.WaitingCharging, RowStatus.Failed)
         val pcRow = row != null && !row.isPhone && !row.offline && phone != null
         DetailsUiState(

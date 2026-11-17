@@ -106,6 +106,8 @@ data class PhoneJob(
     val isVideo: Boolean = false,
     /** A copy of a file from a PC (shown on the Transfers screen and its notification channel). */
     val isTransfer: Boolean = false,
+    /** An ftp, sftp, s3 or webdav link (reported to a PC as kind "cloud"). */
+    val isCloud: Boolean = false,
     /** Epoch millis the job is waiting for ("Start later"), or null. */
     val startAt: Long? = null,
     /** "verified", "mismatch" or null (no checksum asked for). Advisory: the file is kept either way. */
