@@ -1,4 +1,5 @@
 <resources>
     <color name="grabline_blue">#2563EB</color>
-    <color name="grabline_background">#07090E</color>
+    <!-- The window behind the app while it starts: the theme background, light here, dark in values-night. -->
+    <color name="grabline_background">#F3F5F9</color>
 </resources>

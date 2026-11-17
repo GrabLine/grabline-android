@@ -1,0 +1,5 @@
+GrabLine now looks like GrabLine everywhere.
+- The app icon is the GrabLine logo.
+- The same blue, type and button shapes as GrabLine on your PC and the website, in light and dark mode.
+- The app no longer flashes dark while starting in light mode.
+- Fix: when a PC unpairs this phone, the phone now always deletes its key for that PC.

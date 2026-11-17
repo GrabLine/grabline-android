@@ -18,6 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.unit.dp
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -28,46 +31,89 @@ import androidx.compose.ui.platform.LocalContext
 enum class ThemeMode { System, Light, Dark }
 
 /*
- * Dark: the brand blue #2563eb reaches only 3.8:1 as text on #07090e, and
- * white on any blue light enough to pass as text drops below 4.5:1. So text
- * buttons and links (M3 `primary`) use the lighter accent tint with dark text
- * on fills, and the brand blue stays as `primaryContainer` (the + button,
- * selected states) with white text (QA-44).
+ * Every Material role is set: an unset role falls back to Material's baseline purple, which showed in the
+ * bottom bar's active pill and selected rows. Text-sized accents (M3 `primary`: text buttons, links,
+ * switches) use the readable accent tint; the logo blue is `primaryContainer` (filled buttons, the +
+ * button) with white text (QA-44).
  */
 val GrabLineDarkScheme: ColorScheme = darkColorScheme(
     primary = GrabLineColors.DarkAccentText,
     onPrimary = GrabLineColors.DarkBackground,
     primaryContainer = GrabLineColors.DarkPrimary,
     onPrimaryContainer = GrabLineColors.DarkOnPrimary,
+    inversePrimary = GrabLineColors.Blue,
+    secondary = GrabLineColors.DarkAccentText,
+    onSecondary = GrabLineColors.DarkBackground,
+    secondaryContainer = GrabLineColors.DarkSelected,
+    onSecondaryContainer = GrabLineColors.DarkOnBackground,
+    tertiary = GrabLineColors.DarkAccentText,
+    onTertiary = GrabLineColors.DarkBackground,
+    tertiaryContainer = GrabLineColors.DarkSelected,
+    onTertiaryContainer = GrabLineColors.DarkOnBackground,
     background = GrabLineColors.DarkBackground,
     onBackground = GrabLineColors.DarkOnBackground,
     surface = GrabLineColors.DarkSurface,
     onSurface = GrabLineColors.DarkOnBackground,
     surfaceVariant = GrabLineColors.DarkSurface,
     onSurfaceVariant = GrabLineColors.DarkOnSurfaceVariant,
+    surfaceTint = GrabLineColors.Blue,
+    surfaceBright = GrabLineColors.DarkSurfaceHigh,
+    surfaceDim = GrabLineColors.DarkBackground,
+    surfaceContainerLowest = GrabLineColors.DarkBackground,
+    surfaceContainerLow = GrabLineColors.DarkSurfaceLow,
     surfaceContainer = GrabLineColors.DarkSurface,
     surfaceContainerHigh = GrabLineColors.DarkSurface,
+    surfaceContainerHighest = GrabLineColors.DarkSurfaceHigh,
+    inverseSurface = GrabLineColors.DarkOnBackground,
+    inverseOnSurface = GrabLineColors.DarkBackground,
     outline = GrabLineColors.DarkOutline,
     outlineVariant = GrabLineColors.DarkOutline,
 )
 
-/* Light: the desktop accent is 4.3:1 as text on the light background, so text
- * roles use the deeper accent tint; the desktop accent stays as the container. */
 val GrabLineLightScheme: ColorScheme = lightColorScheme(
     primary = GrabLineColors.LightAccentText,
     onPrimary = GrabLineColors.LightOnPrimary,
     primaryContainer = GrabLineColors.LightPrimary,
     onPrimaryContainer = GrabLineColors.LightOnPrimary,
+    inversePrimary = GrabLineColors.DarkAccentText,
+    secondary = GrabLineColors.LightAccentText,
+    onSecondary = GrabLineColors.LightOnPrimary,
+    secondaryContainer = GrabLineColors.LightSelected,
+    onSecondaryContainer = GrabLineColors.LightOnBackground,
+    tertiary = GrabLineColors.LightAccentText,
+    onTertiary = GrabLineColors.LightOnPrimary,
+    tertiaryContainer = GrabLineColors.LightSelected,
+    onTertiaryContainer = GrabLineColors.LightOnBackground,
     background = GrabLineColors.LightBackground,
     onBackground = GrabLineColors.LightOnBackground,
     surface = GrabLineColors.LightSurface,
     onSurface = GrabLineColors.LightOnBackground,
     surfaceVariant = GrabLineColors.LightSurface,
     onSurfaceVariant = GrabLineColors.LightOnSurfaceVariant,
+    surfaceTint = GrabLineColors.Blue,
+    surfaceBright = GrabLineColors.LightSurface,
+    surfaceDim = GrabLineColors.LightSurfaceHigh,
+    surfaceContainerLowest = GrabLineColors.LightSurface,
+    surfaceContainerLow = GrabLineColors.LightSurfaceLow,
     surfaceContainer = GrabLineColors.LightSurface,
     surfaceContainerHigh = GrabLineColors.LightSurface,
+    surfaceContainerHighest = GrabLineColors.LightSurfaceHigh,
+    inverseSurface = GrabLineColors.LightOnBackground,
+    inverseOnSurface = GrabLineColors.LightBackground,
     outline = GrabLineColors.LightOutline,
     outlineVariant = GrabLineColors.LightOutline,
+)
+
+/**
+ * The desktop app's corner scale (4/6/8 px) at phone size: controls 8dp, cards 12dp, dialogs and sheets
+ * 16-20dp, instead of Material's pill buttons and 28dp sheets.
+ */
+val GrabLineShapes = Shapes(
+    extraSmall = RoundedCornerShape(8.dp),
+    small = RoundedCornerShape(8.dp),
+    medium = RoundedCornerShape(12.dp),
+    large = RoundedCornerShape(16.dp),
+    extraLarge = RoundedCornerShape(20.dp),
 )
 
 @Composable
@@ -90,7 +136,7 @@ fun GrabLineTheme(
     }
     val reduced = rememberReducedMotion()
     CompositionLocalProvider(LocalReducedMotion provides reduced) {
-        MaterialTheme(colorScheme = scheme, typography = GrabLineTypography, content = content)
+        MaterialTheme(colorScheme = scheme, typography = GrabLineTypography, shapes = GrabLineShapes, content = content)
     }
 }
 
