@@ -20,6 +20,7 @@
     <string name="add_quality_description">Kalite %1$s</string>
     <string name="add_quality_description_size">Kalite %1$s, yaklaşık %2$s</string>
     <string name="add_analysing">Analiz ediliyor…</string>
+    <string name="add_checking_link">Bağlantı denetleniyor…</string>
     <string name="add_analyse_retry">Yeniden dene</string>
     <string name="add_analyse_failed_best">En iyi kalitede yine de indirebilirsin.</string>
     <string name="add_queue">Kuyruk</string>

@@ -20,6 +20,7 @@
     <string name="add_quality_description">معیار %1$s</string>
     <string name="add_quality_description_size">معیار %1$s، تقریباً %2$s</string>
     <string name="add_analysing">تجزیہ ہو رہا ہے…</string>
+    <string name="add_checking_link">لنک کی جانچ ہو رہی ہے…</string>
     <string name="add_analyse_retry">دوبارہ کوشش کریں</string>
     <string name="add_analyse_failed_best">آپ پھر بھی بہترین معیار میں ڈاؤن لوڈ کر سکتے ہیں۔</string>
     <string name="add_queue">قطار</string>

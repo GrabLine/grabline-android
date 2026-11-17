@@ -31,6 +31,7 @@
     <string name="pairing_close">बंद करें</string>
     <string name="manual_title">कोड हाथ से दर्ज करें</string>
     <string name="manual_intro">कैमरा उपलब्ध नहीं है। अपने पीसी पर GrabLine खोलें, फ़ोन पेज पर जाएँ और “हाथ से दर्ज करें” के नीचे दिखाया गया कोड टाइप करें।</string>
+    <string name="manual_intro_steps">अपने पीसी पर GrabLine खोलें, फ़ोन पेज पर जाएँ और “हाथ से दर्ज करें” के नीचे दिखाया गया कोड टाइप करें।</string>
     <string name="manual_address">पीसी का पता</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">पोर्ट (वैकल्पिक)</string>

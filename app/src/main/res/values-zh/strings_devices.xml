@@ -30,6 +30,7 @@
     <string name="pairing_close">关闭</string>
     <string name="manual_title">手动输入代码</string>
     <string name="manual_intro">相机不可用。请在电脑上打开 GrabLine，进入“手机”页面，输入“手动输入”下显示的内容。</string>
+    <string name="manual_intro_steps">请在电脑上打开 GrabLine，进入“手机”页面，输入“手动输入”下显示的内容。</string>
     <string name="manual_address">电脑地址</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">端口（可选）</string>

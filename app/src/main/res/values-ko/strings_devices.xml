@@ -30,6 +30,7 @@
     <string name="pairing_close">닫기</string>
     <string name="manual_title">코드 직접 입력</string>
     <string name="manual_intro">카메라를 사용할 수 없습니다. PC에서 GrabLine을 열고 휴대전화 페이지로 이동해 \"직접 입력\" 아래에 표시된 내용을 입력하세요.</string>
+    <string name="manual_intro_steps">PC에서 GrabLine을 열고 휴대전화 페이지로 이동해 \"직접 입력\" 아래에 표시된 내용을 입력하세요.</string>
     <string name="manual_address">PC 주소</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">포트(선택)</string>

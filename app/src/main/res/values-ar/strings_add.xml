@@ -20,6 +20,7 @@
     <string name="add_quality_description">الجودة %1$s</string>
     <string name="add_quality_description_size">الجودة %1$s، حوالي %2$s</string>
     <string name="add_analysing">جارٍ التحليل…</string>
+    <string name="add_checking_link">جارٍ فحص الرابط…</string>
     <string name="add_analyse_retry">إعادة المحاولة</string>
     <string name="add_analyse_failed_best">لا يزال بإمكانك التنزيل بأفضل جودة.</string>
     <string name="add_queue">قائمة الانتظار</string>

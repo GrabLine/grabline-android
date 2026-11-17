@@ -34,6 +34,7 @@
 
     <string name="manual_title">Enter the code by hand</string>
     <string name="manual_intro">The camera isn\'t available. On your PC, open GrabLine, go to the Phone page and type what it shows under \"Enter by hand\".</string>
+    <string name="manual_intro_steps">On your PC, open GrabLine, go to the Phone page and type what it shows under \"Enter by hand\".</string>
     <string name="manual_address">PC address</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">Port (optional)</string>

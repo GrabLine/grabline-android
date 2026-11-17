@@ -20,6 +20,7 @@
     <string name="add_quality_description">Calidad %1$s</string>
     <string name="add_quality_description_size">Calidad %1$s, unos %2$s</string>
     <string name="add_analysing">Analizando…</string>
+    <string name="add_checking_link">Comprobando el enlace…</string>
     <string name="add_analyse_retry">Reintentar</string>
     <string name="add_analyse_failed_best">Aun así puedes descargar la mejor calidad.</string>
     <string name="add_queue">Cola</string>

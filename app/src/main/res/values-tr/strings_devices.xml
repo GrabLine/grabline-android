@@ -31,6 +31,7 @@
     <string name="pairing_close">Kapat</string>
     <string name="manual_title">Kodu elle gir</string>
     <string name="manual_intro">Kamera kullanılamıyor. Bilgisayarında GrabLine\'ı aç, Telefon sayfasına git ve “Elle gir” altında gösterileni yaz.</string>
+    <string name="manual_intro_steps">Bilgisayarında GrabLine\'ı aç, Telefon sayfasına git ve “Elle gir” altında gösterileni yaz.</string>
     <string name="manual_address">Bilgisayar adresi</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">Bağlantı noktası (isteğe bağlı)</string>

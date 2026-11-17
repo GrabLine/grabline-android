@@ -31,6 +31,7 @@
     <string name="pairing_close">Schließen</string>
     <string name="manual_title">Code von Hand eingeben</string>
     <string name="manual_intro">Die Kamera ist nicht verfügbar. Öffne GrabLine auf deinem PC, gehe zur Seite Telefon und gib ein, was unter „Von Hand eingeben“ steht.</string>
+    <string name="manual_intro_steps">Öffne GrabLine auf deinem PC, gehe zur Seite Telefon und gib ein, was unter „Von Hand eingeben“ steht.</string>
     <string name="manual_address">PC-Adresse</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">Port (optional)</string>

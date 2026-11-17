@@ -20,6 +20,7 @@
     <string name="add_quality_description">Qualität %1$s</string>
     <string name="add_quality_description_size">Qualität %1$s, ca. %2$s</string>
     <string name="add_analysing">Analyse läuft…</string>
+    <string name="add_checking_link">Link wird geprüft…</string>
     <string name="add_analyse_retry">Erneut versuchen</string>
     <string name="add_analyse_failed_best">Du kannst trotzdem in bester Qualität herunterladen.</string>
     <string name="add_queue">Warteschlange</string>

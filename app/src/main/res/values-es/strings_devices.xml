@@ -32,6 +32,7 @@
     <string name="pairing_close">Cerrar</string>
     <string name="manual_title">Introduce el código a mano</string>
     <string name="manual_intro">La cámara no está disponible. En tu PC, abre GrabLine, ve a la página Teléfono y escribe lo que aparece en «Introducir a mano».</string>
+    <string name="manual_intro_steps">En tu PC, abre GrabLine, ve a la página Teléfono y escribe lo que aparece en «Introducir a mano».</string>
     <string name="manual_address">Dirección del PC</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">Puerto (opcional)</string>

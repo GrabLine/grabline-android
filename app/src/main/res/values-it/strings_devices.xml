@@ -32,6 +32,7 @@
     <string name="pairing_close">Chiudi</string>
     <string name="manual_title">Inserisci il codice a mano</string>
     <string name="manual_intro">La fotocamera non è disponibile. Sul PC apri GrabLine, vai alla pagina Telefono e digita quanto mostrato sotto «Inserisci a mano».</string>
+    <string name="manual_intro_steps">Sul PC apri GrabLine, vai alla pagina Telefono e digita quanto mostrato sotto «Inserisci a mano».</string>
     <string name="manual_address">Indirizzo del PC</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">Porta (facoltativa)</string>

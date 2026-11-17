@@ -31,6 +31,7 @@
     <string name="pairing_close">بند</string>
     <string name="manual_title">کوڈ ہاتھ سے درج کریں</string>
     <string name="manual_intro">کیمرا دستیاب نہیں ہے۔ اپنے پی سی پر GrabLine کھولیں، فون کے صفحے پر جائیں اور «ہاتھ سے درج کریں» کے نیچے دکھائی گئی چیز ٹائپ کریں۔</string>
+    <string name="manual_intro_steps">اپنے پی سی پر GrabLine کھولیں، فون کے صفحے پر جائیں اور «ہاتھ سے درج کریں» کے نیچے دکھائی گئی چیز ٹائپ کریں۔</string>
     <string name="manual_address">پی سی کا پتہ</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">پورٹ (اختیاری)</string>

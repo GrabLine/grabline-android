@@ -26,8 +26,10 @@ import dev.grabline.app.remote.protocol.FolderInfo
 import dev.grabline.app.remote.protocol.QueueInfo
 import dev.grabline.app.ui.downloads.PHONE_ID
 import dev.grabline.app.ui.entry.LinkKind
+import dev.grabline.app.ui.entry.LinkProbe
 import dev.grabline.app.ui.settings.RulesCodec
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -83,6 +85,8 @@ data class AddUiState(
     val queueId: Int? = null,
     val folderId: String? = null,
     val notDownloadable: Boolean = false,
+    /** Web-page-looking links are still being checked with the server: not yet known to be pages. */
+    val checking: Boolean = false,
     val canStart: Boolean = false,
     val sending: Boolean = false,
     val notice: Notice? = null,
@@ -128,6 +132,7 @@ class AddViewModel(
     private val settings: AppSettings,
     private val handle: SavedStateHandle,
     private val phone: PhoneEngine? = null,
+    private val linkProbe: LinkProbe = LinkProbe.None,
 ) : ViewModel() {
 
     private data class Prefs(
@@ -157,6 +162,8 @@ class AddViewModel(
         val sending: Boolean = false,
         val notice: Notice? = null,
         val sent: SentResult? = null,
+        /** Per link the server said: true when it serves a file although the link looks like a page. */
+        val probed: Map<String, Boolean> = emptyMap(),
     )
 
     private val transient = MutableStateFlow(Transient())
@@ -210,6 +217,24 @@ class AddViewModel(
         .stateIn(viewModelScope, SharingStarted.Eagerly, AddUiState())
 
     init {
+        viewModelScope.launch {
+            handle.getStateFlow<ArrayList<String>>(LINKS, arrayListOf()).map { l -> l.filter(::looksLikePage) }
+                .distinctUntilChanged().collectLatest { pages ->
+                    val todo = pages.filter { it !in transient.value.probed }.chunked(PROBES_AT_ONCE)
+                    for (batch in todo) coroutineScope {
+                        for (url in batch) launch {
+                            val file = try {
+                                linkProbe.isFile(url)
+                            } catch (e: CancellationException) {
+                                throw e
+                            } catch (e: Exception) {
+                                false
+                            }
+                            transient.update { it.copy(probed = it.probed + (url to file)) }
+                        }
+                    }
+                }
+        }
         viewModelScope.launch {
             state.map { it.analyzeTarget }.distinctUntilChanged().collectLatest { target ->
                 if (target == null) {
@@ -316,6 +341,19 @@ class AddViewModel(
     fun selectQueue(id: Int?) { handle[QUEUE] = id ?: -1 }
     fun selectFolder(id: String?) { handle[FOLDER] = id }
     fun toggleLinks() { handle[EXPANDED] = !(handle.get<Boolean>(EXPANDED) ?: false) }
+    /** A web link the extension rules call a page: the server decides whether it is really a file. */
+    private fun looksLikePage(link: String): Boolean {
+        val t = link.trim()
+        return (t.startsWith("http://", ignoreCase = true) || t.startsWith("https://", ignoreCase = true)) &&
+            LinkKind.classify(t) == LinkKind.PAGE
+    }
+
+    /** The link's kind, with a probed file counted as a file. */
+    private fun kindOf(link: String, probed: Map<String, Boolean>): LinkKind {
+        val kind = LinkKind.classify(link)
+        return if (kind == LinkKind.PAGE && probed[link] == true) LinkKind.FILE else kind
+    }
+
     fun retryAnalyze() = transient.update { it.copy(retry = it.retry + 1) }
     fun consumeSent() = transient.update { it.copy(sent = null) }
 
@@ -332,8 +370,9 @@ class AddViewModel(
             val single = s.links.size == 1
             val title = if (single) (handle.get<String?>(TITLE) ?: (s.analysis as? AnalysisUi.Ready)?.title) else null
             try {
+                val probed = transient.value.probed
                 for (link in s.links) {
-                    val kind = LinkKind.classify(link)
+                    val kind = kindOf(link, probed)
                     if (kind == LinkKind.PAGE) continue
                     // A .torrent file can only be downloaded on this phone; PCs get magnet and web links.
                     if (link.startsWith(TorrentRouting.FILE_PREFIX)) continue
@@ -387,8 +426,9 @@ class AddViewModel(
             val title = if (single) (handle.get<String?>(TITLE) ?: (s.analysis as? AnalysisUi.Ready)?.title) else null
             val folderUri = s.phoneFolder.takeIf { it.startsWith("content:") }
             try {
+                val probed = transient.value.probed
                 for (link in s.links) {
-                    val kind = LinkKind.classify(link)
+                    val kind = kindOf(link, probed)
                     if (kind == LinkKind.PAGE) continue
                     val video = kind == LinkKind.VIDEO
                     val quality = if (video) s.quality else null
@@ -471,8 +511,9 @@ class AddViewModel(
         val pcId = chosen.takeIf { !isPhone }
         val pc = pcs.firstOrNull { it.id == pcId }
         val online = pc?.online == true
-        val kinds = l.links.map { LinkKind.classify(it) }
-        val allPages = l.links.isNotEmpty() && kinds.all { it == LinkKind.PAGE }
+        val kinds = l.links.map { kindOf(it, t.probed) }
+        val checking = l.links.any { looksLikePage(it) && it !in t.probed }
+        val allPages = l.links.isNotEmpty() && !checking && kinds.all { it == LinkKind.PAGE }
         val hasVideo = kinds.any { it == LinkKind.VIDEO }
         val analysis = if (online || isPhone) t.analysis else AnalysisUi.Idle
         val blocked = if (isPhone) {
@@ -533,8 +574,10 @@ class AddViewModel(
             queueId = queueId,
             folderId = folderId,
             notDownloadable = notDownloadable,
-            canStart = if (isPhone) phoneAdds > 0 && !notDownloadable && (!phoneVideo || clipValid) && (!showChecksum || checksumValid)
-            else pc != null && !notDownloadable && l.links.any { !it.startsWith(TorrentRouting.FILE_PREFIX) && LinkKind.classify(it) != LinkKind.CLOUD },
+            checking = checking,
+            canStart = if (isPhone) phoneAdds > 0 && !checking && !notDownloadable && (!phoneVideo || clipValid) && (!showChecksum || checksumValid)
+            else pc != null && !checking && !notDownloadable &&
+                l.links.any { !it.startsWith(TorrentRouting.FILE_PREFIX) && kindOf(it, t.probed).let { k -> k != LinkKind.CLOUD && k != LinkKind.PAGE } },
             torrentFileNeedsPhone = !isPhone && hasTorrentFile,
             sending = t.sending,
             notice = t.notice,
@@ -570,6 +613,7 @@ class AddViewModel(
     }
 
     companion object {
+        private const val PROBES_AT_ONCE = 4
         const val LINKS = "add_links"
         const val TITLE = "add_title"
         const val PC = "add_pc"

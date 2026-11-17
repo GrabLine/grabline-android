@@ -20,6 +20,7 @@
     <string name="add_quality_description">Качество %1$s</string>
     <string name="add_quality_description_size">Качество %1$s, около %2$s</string>
     <string name="add_analysing">Анализ…</string>
+    <string name="add_checking_link">Проверка ссылки…</string>
     <string name="add_analyse_retry">Повторить</string>
     <string name="add_analyse_failed_best">Вы всё равно можете скачать в лучшем качестве.</string>
     <string name="add_queue">Очередь</string>

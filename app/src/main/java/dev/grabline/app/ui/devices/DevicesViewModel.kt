@@ -27,6 +27,8 @@ data class DevicesUiState(
     val rows: List<PcRowUi>? = null,
     val refreshing: Boolean = false,
     val manualOpen: Boolean = false,
+    /** The code form was opened because the camera was refused, not by choice. */
+    val cameraDenied: Boolean = false,
     val form: ManualForm = ManualForm(),
     val pairing: PairingProgress? = null,
 )
@@ -75,9 +77,9 @@ class DevicesViewModel(
         }
     }
 
-    fun onCameraDenied() = local.update { it.copy(manualOpen = true) }
-    fun openManual() = local.update { it.copy(manualOpen = true) }
-    fun closeManual() = local.update { it.copy(manualOpen = false, form = ManualForm()) }
+    fun onCameraDenied() = local.update { it.copy(manualOpen = true, cameraDenied = true) }
+    fun openManual() = local.update { it.copy(manualOpen = true, cameraDenied = false) }
+    fun closeManual() = local.update { it.copy(manualOpen = false, cameraDenied = false, form = ManualForm()) }
 
     fun onForm(form: ManualForm) = local.update { it.copy(form = form.copy(addressError = false, portError = false, codeError = false)) }
 

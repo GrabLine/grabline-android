@@ -33,6 +33,7 @@
     <string name="pairing_close">Закрыть</string>
     <string name="manual_title">Ввод кода вручную</string>
     <string name="manual_intro">Камера недоступна. На компьютере откройте GrabLine, перейдите на страницу «Телефон» и введите то, что показано под надписью «Ввести вручную».</string>
+    <string name="manual_intro_steps">На компьютере откройте GrabLine, перейдите на страницу «Телефон» и введите то, что показано под надписью «Ввести вручную».</string>
     <string name="manual_address">Адрес компьютера</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">Порт (необязательно)</string>

@@ -30,6 +30,7 @@
     <string name="pairing_close">閉じる</string>
     <string name="manual_title">コードを手入力</string>
     <string name="manual_intro">カメラを使用できません。PCで GrabLine を開き、「スマートフォン」ページの「手入力」の下に表示されている内容を入力してください。</string>
+    <string name="manual_intro_steps">PCで GrabLine を開き、「スマートフォン」ページの「手入力」の下に表示されている内容を入力してください。</string>
     <string name="manual_address">PCのアドレス</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">ポート（任意）</string>

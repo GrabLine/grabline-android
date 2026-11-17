@@ -67,7 +67,9 @@ import dev.grabline.app.ui.settings.folderLabel
 import dev.grabline.app.ui.settings.rememberFolderPicker
 import dev.grabline.app.remote.PcRemote
 import dev.grabline.app.ui.downloads.PHONE_ID
+import dev.grabline.app.ui.entry.HttpLinkProbe
 import dev.grabline.app.ui.entry.LinkKind
+import dev.grabline.app.ui.entry.LinkProbe
 import androidx.lifecycle.createSavedStateHandle
 
 /**
@@ -87,11 +89,12 @@ fun AddSheetRoute(
     onSent: (String) -> Unit = {},
     onPairClick: () -> Unit = {},
     phone: PhoneEngine? = null,
+    linkProbe: LinkProbe = remember { HttpLinkProbe() },
 ) {
     val vm: AddViewModel = viewModel(
         key = "add:" + initialLinks.joinToString("\n"),
         factory = viewModelFactory {
-            initializer { AddViewModel(remote, settings, createSavedStateHandle(), phone) }
+            initializer { AddViewModel(remote, settings, createSavedStateHandle(), phone, linkProbe) }
         },
     )
     LaunchedEffect(initialLinks, sourceTitle) { vm.init(initialLinks, sourceTitle, torrentFileUri) }
@@ -198,6 +201,11 @@ fun AddSheetContent(
 
         if (state.torrentFileNeedsPhone) {
             Text(stringResource(R.string.add_torrent_file_phone_only), style = MaterialTheme.typography.bodyMedium)
+        }
+        if (state.checking) {
+            Text(stringResource(R.string.add_checking_link), style = MaterialTheme.typography.bodyLarge)
+            LinearProgressIndicator(Modifier.fillMaxWidth())
+            return@Column
         }
         if (state.notDownloadable) {
             Text(state.blockedMessage ?: stringResource(R.string.add_not_downloadable), style = MaterialTheme.typography.bodyLarge)
@@ -347,7 +355,7 @@ private fun LinkSummary(state: AddUiState, onToggle: () -> Unit) {
                 }
             }
         }
-        state.kind?.let { kind ->
+        state.kind?.takeUnless { state.checking && it == LinkKind.PAGE }?.let { kind ->
             val label = stringResource(kindLabel(kind))
             val desc = stringResource(R.string.add_kind_description, label)
             Text(label, style = MaterialTheme.typography.labelLarge, modifier = Modifier.semantics { contentDescription = desc })

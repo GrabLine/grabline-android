@@ -78,9 +78,12 @@
             android:theme="@style/Theme.GrabLine.QuickAdd" />
         <!-- ZXing's scanner follows the phone's orientation instead of forcing landscape. -->
         <activity
-            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            android:name=".ui.devices.ScanActivity"
+            android:exported="false"
             android:screenOrientation="fullSensor"
-            tools:replace="screenOrientation" />
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <service
             android:name=".engine.work.DownloadJobService"

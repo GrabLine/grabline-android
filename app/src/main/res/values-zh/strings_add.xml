@@ -20,6 +20,7 @@
     <string name="add_quality_description">质量 %1$s</string>
     <string name="add_quality_description_size">质量 %1$s，约 %2$s</string>
     <string name="add_analysing">正在分析…</string>
+    <string name="add_checking_link">正在检查链接…</string>
     <string name="add_analyse_retry">重试</string>
     <string name="add_analyse_failed_best">你仍可以下载最佳质量。</string>
     <string name="add_queue">队列</string>

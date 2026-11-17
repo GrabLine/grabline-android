@@ -8,8 +8,11 @@ import dev.grabline.app.remote.PcRemote
 import dev.grabline.app.ui.downloads.FakePcRemote
 import dev.grabline.app.ui.downloads.FakePhoneEngine
 import dev.grabline.app.ui.downloads.PHONE_ID
+import dev.grabline.app.ui.entry.LinkKind
+import dev.grabline.app.ui.entry.LinkProbe
 import dev.grabline.app.ui.settings.RulesCodec
 import java.io.File
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -66,6 +69,9 @@ class AddPhoneTest {
 
     private fun vm(links: List<String>, pcs: List<PairedPc> = emptyList()) =
         AddViewModel(PcsRemote(pcs), settings, SavedStateHandle(), phone).also { it.init(links, null) }
+
+    private fun probedVm(link: String, probe: LinkProbe) =
+        AddViewModel(PcsRemote(emptyList()), settings, SavedStateHandle(), phone, probe).also { it.init(listOf(link), null) }
 
     private fun AddViewModel.await(cond: (AddUiState) -> Boolean = { true }): AddUiState =
         runBlocking { withTimeout(10_000) { state.first { it.ready && cond(it) } } }
@@ -139,5 +145,34 @@ class AddPhoneTest {
         assertEquals("Netflix protects its media with DRM. GrabLine can't download it", s.blockedMessage)
         assertTrue(s.notDownloadable)
         assertFalse(s.canStart)
+    }
+
+    @Test fun extensionlessLinkProbedAsFileCanStartOnThePhone() {
+        val link = "https://example.com/tool.bin"
+        val vm = probedVm(link, LinkProbe { true })
+        val s = vm.await { !it.checking }
+        assertFalse(s.notDownloadable)
+        assertEquals(LinkKind.FILE, s.kind)
+        assertTrue(s.canStart)
+        assertEquals(1, s.phoneAddCount)
+        vm.startNow()
+        vm.await { it.sent != null }
+        assertEquals(listOf(link), phone.added.map { it.url })
+    }
+
+    @Test fun linkProbedAsPageStaysANonDownloadablePage() {
+        val s = probedVm("https://example.com/blog/post", LinkProbe { false }).await { !it.checking }
+        assertTrue(s.notDownloadable)
+        assertFalse(s.canStart)
+    }
+
+    @Test fun pageIsNotClaimedWhileTheProbeIsPending() {
+        val gate = CompletableDeferred<Boolean>()
+        val vm = probedVm("https://example.com/get/12345", LinkProbe { gate.await() })
+        val s = vm.await()
+        assertTrue(s.checking)
+        assertFalse(s.notDownloadable || s.canStart)
+        gate.complete(true)
+        assertTrue(vm.await { !it.checking }.canStart)
     }
 }

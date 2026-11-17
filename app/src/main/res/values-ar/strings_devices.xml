@@ -35,6 +35,7 @@
     <string name="pairing_close">إغلاق</string>
     <string name="manual_title">أدخل الرمز يدويًا</string>
     <string name="manual_intro">الكاميرا غير متاحة. افتح GrabLine على حاسوبك، وانتقل إلى صفحة الهاتف، واكتب ما يظهر ضمن «الإدخال اليدوي».</string>
+    <string name="manual_intro_steps">افتح GrabLine على حاسوبك، وانتقل إلى صفحة الهاتف، واكتب ما يظهر ضمن «الإدخال اليدوي».</string>
     <string name="manual_address">عنوان الحاسوب</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">المنفذ (اختياري)</string>

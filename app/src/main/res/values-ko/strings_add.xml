@@ -20,6 +20,7 @@
     <string name="add_quality_description">화질 %1$s</string>
     <string name="add_quality_description_size">화질 %1$s, 약 %2$s</string>
     <string name="add_analysing">분석 중…</string>
+    <string name="add_checking_link">링크 확인 중…</string>
     <string name="add_analyse_retry">다시 시도</string>
     <string name="add_analyse_failed_best">최고 화질로 다운로드할 수는 있습니다.</string>
     <string name="add_queue">대기열</string>

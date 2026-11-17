@@ -20,6 +20,7 @@
     <string name="add_quality_description">画質 %1$s</string>
     <string name="add_quality_description_size">画質 %1$s、約 %2$s</string>
     <string name="add_analysing">解析中…</string>
+    <string name="add_checking_link">リンクを確認中…</string>
     <string name="add_analyse_retry">再試行</string>
     <string name="add_analyse_failed_best">最高画質でダウンロードすることはできます。</string>
     <string name="add_queue">キュー</string>

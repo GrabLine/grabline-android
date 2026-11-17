@@ -79,7 +79,8 @@ fun DevicesRoute(
         ScanOptions()
             .setDesiredBarcodeFormats(ScanOptions.QR_CODE)
             .setBeepEnabled(false)
-            .setOrientationLocked(true)
+            .setOrientationLocked(false)
+            .setCaptureActivity(ScanActivity::class.java)
             .setPrompt(prompt),
     )
     val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -93,6 +94,7 @@ fun DevicesRoute(
     DevicesScreen(
         state = state,
         onPair = onPair,
+        onManual = vm::openManual,
         onOpenPc = onOpenPc,
         onRefresh = vm::refresh,
         onForm = vm::onForm,
@@ -108,6 +110,7 @@ fun DevicesRoute(
 fun DevicesScreen(
     state: DevicesUiState,
     onPair: () -> Unit,
+    onManual: () -> Unit = {},
     onOpenPc: (String) -> Unit,
     onRefresh: () -> Unit,
     onForm: (ManualForm) -> Unit,
@@ -118,9 +121,9 @@ fun DevicesScreen(
     modifier: Modifier = Modifier,
 ) {
     if (state.manualOpen) {
-        ManualEntry(state.form, onForm, onSubmitManual, onCloseManual, modifier)
+        ManualEntry(state.form, state.cameraDenied, onForm, onSubmitManual, onCloseManual, modifier)
     } else {
-        DeviceList(state, onPair, onOpenPc, onRefresh, modifier)
+        DeviceList(state, onPair, onManual, onOpenPc, onRefresh, modifier)
     }
     state.pairing?.let { PairingDialog(it, onRetryPairing, onDismissPairing) }
 }
@@ -130,6 +133,7 @@ fun DevicesScreen(
 private fun DeviceList(
     state: DevicesUiState,
     onPair: () -> Unit,
+    onManual: () -> Unit,
     onOpenPc: (String) -> Unit,
     onRefresh: () -> Unit,
     modifier: Modifier,
@@ -151,6 +155,7 @@ private fun DeviceList(
                 Text(stringResource(R.string.devices_empty_body), style = MaterialTheme.typography.bodyLarge)
                 Spacer(Modifier.height(24.dp))
                 PairButton(onPair)
+                ManualButton(onManual)
             }
         } else {
             LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = 24.dp)) {
@@ -165,7 +170,12 @@ private fun DeviceList(
                     PcRow(row, onClick = { onOpenPc(row.pcId) })
                     HorizontalDivider()
                 }
-                item { PairButton(onPair, Modifier.padding(16.dp)) }
+                item {
+                    Column(Modifier.padding(16.dp)) {
+                        PairButton(onPair)
+                        ManualButton(onManual)
+                    }
+                }
             }
         }
     }
@@ -178,6 +188,14 @@ private fun PairButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
         onClick = onClick,
         modifier = modifier.heightIn(min = 48.dp).semantics { contentDescription = cd },
     ) { Text(stringResource(R.string.devices_pair_button)) }
+}
+
+/** For a PC whose QR code can't be scanned (glare, a broken camera): type what it shows instead. */
+@Composable
+private fun ManualButton(onClick: () -> Unit) {
+    TextButton(onClick = onClick, modifier = Modifier.heightIn(min = 48.dp)) {
+        Text(stringResource(R.string.manual_title))
+    }
 }
 
 @Composable
@@ -245,6 +263,7 @@ private fun PairingDialog(progress: PairingProgress, onRetry: () -> Unit, onDism
 @Composable
 private fun ManualEntry(
     form: ManualForm,
+    cameraDenied: Boolean,
     onForm: (ManualForm) -> Unit,
     onSubmit: () -> Unit,
     onBack: () -> Unit,
@@ -259,7 +278,7 @@ private fun ManualEntry(
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.semantics { heading() },
         )
-        Text(stringResource(R.string.manual_intro), style = MaterialTheme.typography.bodyMedium)
+        Text(stringResource(if (cameraDenied) R.string.manual_intro else R.string.manual_intro_steps), style = MaterialTheme.typography.bodyMedium)
         OutlinedTextField(
             value = form.address,
             onValueChange = { onForm(form.copy(address = it)) },

@@ -32,6 +32,7 @@
     <string name="pairing_close">Fechar</string>
     <string name="manual_title">Digite o código manualmente</string>
     <string name="manual_intro">A câmera não está disponível. No seu PC, abra o GrabLine, vá para a página Telefone e digite o que aparece em «Digitar manualmente».</string>
+    <string name="manual_intro_steps">No seu PC, abra o GrabLine, vá para a página Telefone e digite o que aparece em «Digitar manualmente».</string>
     <string name="manual_address">Endereço do PC</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">Porta (opcional)</string>

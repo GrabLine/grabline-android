@@ -32,6 +32,7 @@
     <string name="pairing_close">Fermer</string>
     <string name="manual_title">Saisir le code à la main</string>
     <string name="manual_intro">La caméra n\'est pas disponible. Sur votre PC, ouvrez GrabLine, allez sur la page Téléphone et saisissez ce qui s\'affiche sous « Saisie manuelle ».</string>
+    <string name="manual_intro_steps">Sur votre PC, ouvrez GrabLine, allez sur la page Téléphone et saisissez ce qui s\'affiche sous « Saisie manuelle ».</string>
     <string name="manual_address">Adresse du PC</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">Port (facultatif)</string>
