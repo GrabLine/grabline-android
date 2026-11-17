@@ -20,7 +20,7 @@ object SettingsTransfer {
 
     private val allowed: Map<String, Set<String>> = mapOf(
         AppSettings.THEME.key.name to setOf("system", "light", "dark"),
-        AppSettings.COLOURS.key.name to setOf("grabline", "wallpaper"),
+        AppSettings.COLOURS.key.name to setOf("grabline", "violet", "green", "orange", "rose", "teal", "wallpaper"),
         AppSettings.KEEP_HISTORY.key.name to setOf("forever", "30d", "7d"),
         AppSettings.VIDEO_QUALITY.key.name to setOf("ask", "best", "1080p", "720p", "audio"),
         AppSettings.AUDIO_FORMAT.key.name to setOf("mp3", "m4a", "flac"),

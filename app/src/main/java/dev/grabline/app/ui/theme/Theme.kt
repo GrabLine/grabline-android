@@ -119,7 +119,8 @@ val GrabLineShapes = Shapes(
 @Composable
 fun GrabLineTheme(
     themeMode: ThemeMode = ThemeMode.System,
-    useWallpaperColors: Boolean = false,
+    /** The `colours` setting: an [Accent] key, or "wallpaper" for the phone's own colours (Android 12+). */
+    colours: String = Accent.Blue.key,
     content: @Composable () -> Unit,
 ) {
     val dark = when (themeMode) {
@@ -129,10 +130,9 @@ fun GrabLineTheme(
     }
     val context = LocalContext.current
     val scheme = when {
-        useWallpaperColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
+        colours == "wallpaper" && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
             if (dark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        dark -> GrabLineDarkScheme
-        else -> GrabLineLightScheme
+        else -> brandScheme(dark, Accent.of(colours))
     }
     val reduced = rememberReducedMotion()
     CompositionLocalProvider(LocalReducedMotion provides reduced) {
@@ -169,6 +169,6 @@ private fun rememberReducedMotion(): Boolean {
     return reduced
 }
 
-/** Accent colour that is safe for small text (>= 4.5:1) on this scheme's background. */
+/** Accent colour that is safe for small text (>= 4.5:1) on this scheme's background: `primary` in every scheme. */
 val ColorScheme.accentText: Color
-    get() = if (background.luminance() < 0.5f) GrabLineColors.DarkAccentText else GrabLineColors.LightAccentText
+    get() = primary

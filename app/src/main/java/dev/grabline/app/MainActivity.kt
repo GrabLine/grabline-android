@@ -59,8 +59,10 @@ class MainActivity : ComponentActivity() {
                     "dark" -> ThemeMode.Dark
                     else -> ThemeMode.System
                 },
-                useWallpaperColors = colours == "wallpaper",
+                colours = colours,
             ) {
+                val appSnackbar = androidx.compose.runtime.remember { androidx.compose.material3.SnackbarHostState() }
+                androidx.compose.runtime.CompositionLocalProvider(dev.grabline.app.ui.common.LocalAppSnackbar provides appSnackbar) {
                 GrabLineAppShell(
                     remote = container.remote,
                     pairing = container.pairing,
@@ -81,6 +83,7 @@ class MainActivity : ComponentActivity() {
                         clipboardOffer.value = null
                     },
                 )
+                }
             }
         }
     }

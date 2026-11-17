@@ -28,7 +28,6 @@
     <string name="size_of">%1$s / %2$s</string>
     <string name="size_unknown">大小未知</string>
     <string name="downloads_empty">向 GrabLine 分享链接，或点按 +</string>
-    <string name="downloads_add_link">添加链接</string>
     <string name="downloads_no_match">没有符合这些筛选条件的下载</string>
     <string name="downloads_clear_filters">显示全部</string>
     <string name="outbox_waiting">电脑恢复在线后将发送</string>

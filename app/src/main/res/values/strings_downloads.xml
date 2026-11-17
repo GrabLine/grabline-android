@@ -32,7 +32,6 @@
     <string name="size_unknown">Size unknown</string>
 
     <string name="downloads_empty">Share a link to GrabLine, or tap +</string>
-    <string name="downloads_add_link">Add a link</string>
     <string name="downloads_no_match">No downloads match these filters</string>
     <string name="downloads_clear_filters">Show all</string>
 

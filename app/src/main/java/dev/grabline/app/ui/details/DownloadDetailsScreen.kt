@@ -163,7 +163,7 @@ fun DownloadDetailsScreen(
     onStopSeeding: () -> Unit = {},
 ) {
     val context = LocalContext.current
-    val host = remember { SnackbarHostState() }
+    val (host, sharedHost) = dev.grabline.app.ui.common.rememberAppSnackbar()
     val scope = rememberCoroutineScope()
     val undoLabel = stringResource(R.string.action_undo)
     val copied = stringResource(R.string.link_copied)
@@ -203,16 +203,7 @@ fun DownloadDetailsScreen(
 
     Box(modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize()) {
-            Row(Modifier.fillMaxWidth().heightIn(min = 56.dp), verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = onBack) {
-                    Icon(DownloadIcons.Back, contentDescription = stringResource(R.string.details_back))
-                }
-                Text(
-                    stringResource(R.string.details_title),
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.semantics { heading() },
-                )
-            }
+            dev.grabline.app.ui.common.BackTopBar(stringResource(R.string.details_title), stringResource(R.string.details_back), onBack)
             val row = state.row
             if (row == null) {
                 if (state.gone) {
@@ -234,7 +225,7 @@ fun DownloadDetailsScreen(
                 )
             }
         }
-        SnackbarHost(host, Modifier.align(Alignment.BottomCenter).padding(8.dp))
+        if (!sharedHost) SnackbarHost(host, Modifier.align(Alignment.BottomCenter).padding(8.dp))
     }
 }
 

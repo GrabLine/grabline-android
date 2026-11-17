@@ -79,6 +79,11 @@
     <string name="setting_colours">الألوان</string>
     <string name="colours_grabline">GrabLine</string>
     <string name="colours_wallpaper">الخلفية</string>
+    <string name="colours_violet">بنفسجي</string>
+    <string name="colours_green">أخضر</string>
+    <string name="colours_orange">برتقالي</string>
+    <string name="colours_rose">وردي</string>
+    <string name="colours_teal">أزرق مخضر</string>
     <string name="setting_language">اللغة</string>
     <string name="group_privacy">الخصوصية</string>
     <string name="setting_offer_copied">اقتراح إرسال الروابط المنسوخة</string>

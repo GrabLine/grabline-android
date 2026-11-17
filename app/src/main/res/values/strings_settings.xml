@@ -82,6 +82,11 @@
     <string name="setting_colours">Colours</string>
     <string name="colours_grabline">GrabLine</string>
     <string name="colours_wallpaper">Wallpaper</string>
+    <string name="colours_violet">Violet</string>
+    <string name="colours_green">Green</string>
+    <string name="colours_orange">Orange</string>
+    <string name="colours_rose">Rose</string>
+    <string name="colours_teal">Teal</string>
     <string name="setting_language">Language</string>
 
     <string name="group_privacy">Privacy</string>

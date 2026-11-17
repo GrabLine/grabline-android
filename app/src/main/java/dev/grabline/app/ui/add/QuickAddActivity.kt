@@ -38,12 +38,14 @@ class QuickAddActivity : ComponentActivity() {
         setContent {
             val settings = container.settings
             val theme by remember { settings.observe(AppSettings.THEME) }.collectAsState(AppSettings.THEME.default)
+            val colours by remember { settings.observe(AppSettings.COLOURS) }.collectAsState(AppSettings.COLOURS.default)
             GrabLineTheme(
                 themeMode = when (theme) {
                     "light" -> ThemeMode.Light
                     "dark" -> ThemeMode.Dark
                     else -> ThemeMode.System
                 },
+                colours = colours,
             ) {
                 links.value?.let { found ->
                     AddSheetRoute(

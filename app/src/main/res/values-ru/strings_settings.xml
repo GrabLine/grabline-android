@@ -77,6 +77,11 @@
     <string name="setting_colours">Цвета</string>
     <string name="colours_grabline">GrabLine</string>
     <string name="colours_wallpaper">Обои</string>
+    <string name="colours_violet">Фиолетовый</string>
+    <string name="colours_green">Зелёный</string>
+    <string name="colours_orange">Оранжевый</string>
+    <string name="colours_rose">Розовый</string>
+    <string name="colours_teal">Бирюзовый</string>
     <string name="setting_language">Язык</string>
     <string name="group_privacy">Конфиденциальность</string>
     <string name="setting_offer_copied">Предлагать отправить скопированные ссылки</string>

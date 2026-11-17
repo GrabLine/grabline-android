@@ -75,6 +75,11 @@
     <string name="setting_colours">Renkler</string>
     <string name="colours_grabline">GrabLine</string>
     <string name="colours_wallpaper">Duvar kâğıdı</string>
+    <string name="colours_violet">Mor</string>
+    <string name="colours_green">Yeşil</string>
+    <string name="colours_orange">Turuncu</string>
+    <string name="colours_rose">Gül</string>
+    <string name="colours_teal">Camgöbeği</string>
     <string name="setting_language">Dil</string>
     <string name="group_privacy">Gizlilik</string>
     <string name="setting_offer_copied">Kopyalanan bağlantıları göndermeyi öner</string>

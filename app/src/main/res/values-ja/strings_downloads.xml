@@ -28,7 +28,6 @@
     <string name="size_of">%1$s / %2$s</string>
     <string name="size_unknown">サイズ不明</string>
     <string name="downloads_empty">GrabLine にリンクを共有するか、+ をタップしてください</string>
-    <string name="downloads_add_link">リンクを追加</string>
     <string name="downloads_no_match">この条件に一致するダウンロードはありません</string>
     <string name="downloads_clear_filters">すべて表示</string>
     <string name="outbox_waiting">PCが戻ったら送信されます</string>

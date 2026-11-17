@@ -28,7 +28,6 @@
     <string name="size_of">%2$s میں سے %1$s</string>
     <string name="size_unknown">سائز نامعلوم</string>
     <string name="downloads_empty">GrabLine کو کوئی لنک شیئر کریں، یا + دبائیں</string>
-    <string name="downloads_add_link">لنک شامل کریں</string>
     <string name="downloads_no_match">ان فلٹرز سے کوئی ڈاؤن لوڈ میل نہیں کھاتا</string>
     <string name="downloads_clear_filters">سب دکھائیں۔</string>
     <string name="outbox_waiting">آپ کا پی سی واپس آنے پر بھیجا جائے گا</string>

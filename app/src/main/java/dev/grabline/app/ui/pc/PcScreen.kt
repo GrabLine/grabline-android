@@ -98,18 +98,13 @@ fun PcScreen(
 ) {
     val pc = state.pc
     Column(modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(bottom = 24.dp)) {
-        TextButton(onBack, Modifier.heightIn(min = 48.dp).padding(horizontal = 8.dp)) { Text(stringResource(R.string.pc_back)) }
+        dev.grabline.app.ui.common.BackTopBar(pc?.name.orEmpty(), stringResource(R.string.pc_back), onBack)
         if (pc == null) {
             if (state.loaded) {
                 Text(stringResource(R.string.pc_unknown), Modifier.padding(16.dp), style = MaterialTheme.typography.bodyLarge)
             }
             return@Column
         }
-        Text(
-            pc.name,
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(horizontal = 16.dp).semantics { heading() },
-        )
         Text(
             stringResource(state.status.labelRes()),
             style = MaterialTheme.typography.bodyLarge,

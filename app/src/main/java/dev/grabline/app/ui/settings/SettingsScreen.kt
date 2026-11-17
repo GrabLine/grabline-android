@@ -310,14 +310,7 @@ private fun SettingsMain(
                 ),
                 theme, { put(AppSettings.THEME, it) },
             )
-            ChoiceRow(
-                stringResource(R.string.setting_colours),
-                listOf(
-                    "grabline" to stringResource(R.string.colours_grabline),
-                    "wallpaper" to stringResource(R.string.colours_wallpaper),
-                ),
-                colours, { put(AppSettings.COLOURS, it) },
-            )
+            ColourRow(stringResource(R.string.setting_colours), colours) { put(AppSettings.COLOURS, it) }
             ChoiceRow(
                 stringResource(R.string.setting_language),
                 listOf("system" to stringResource(R.string.theme_system)) +
@@ -469,16 +462,7 @@ private fun RulesPage(settings: AppSettings, pcs: List<PairedPc>, onBack: () -> 
 /** A heading row with a Back button, shared by the Settings sub-pages. */
 @Composable
 fun BackRow(title: String, onBack: () -> Unit) {
-    Column(Modifier.fillMaxWidth().padding(top = 8.dp)) {
-        TextButton(onClick = onBack, modifier = Modifier.heightIn(min = 48.dp).padding(start = 8.dp)) {
-            Text(stringResource(R.string.settings_btn_back))
-        }
-        Text(
-            title,
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp).semantics { heading() },
-        )
-    }
+    dev.grabline.app.ui.common.BackTopBar(title, stringResource(R.string.settings_btn_back), onBack)
 }
 
 /** Reads settings and PCs itself so the shell only needs one line. */

@@ -74,6 +74,11 @@
     <string name="setting_colours">颜色</string>
     <string name="colours_grabline">GrabLine</string>
     <string name="colours_wallpaper">壁纸</string>
+    <string name="colours_violet">紫罗兰</string>
+    <string name="colours_green">绿色</string>
+    <string name="colours_orange">橙色</string>
+    <string name="colours_rose">玫瑰红</string>
+    <string name="colours_teal">青色</string>
     <string name="setting_language">语言</string>
     <string name="group_privacy">隐私</string>
     <string name="setting_offer_copied">提示发送已复制的链接</string>

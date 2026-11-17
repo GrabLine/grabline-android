@@ -28,7 +28,6 @@
     <string name="size_of">%1$s / %2$s</string>
     <string name="size_unknown">크기 알 수 없음</string>
     <string name="downloads_empty">GrabLine에 링크를 공유하거나 +를 누르세요</string>
-    <string name="downloads_add_link">링크 추가</string>
     <string name="downloads_no_match">이 필터와 일치하는 다운로드가 없습니다</string>
     <string name="downloads_clear_filters">모두 표시</string>
     <string name="outbox_waiting">PC가 다시 연결되면 전송됩니다</string>

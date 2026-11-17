@@ -75,6 +75,11 @@
     <string name="setting_colours">रंग</string>
     <string name="colours_grabline">GrabLine</string>
     <string name="colours_wallpaper">वॉलपेपर</string>
+    <string name="colours_violet">बैंगनी</string>
+    <string name="colours_green">हरा</string>
+    <string name="colours_orange">नारंगी</string>
+    <string name="colours_rose">गुलाबी</string>
+    <string name="colours_teal">हरा-नीला</string>
     <string name="setting_language">भाषा</string>
     <string name="group_privacy">गोपनीयता</string>
     <string name="setting_offer_copied">कॉपी किए गए लिंक भेजने का सुझाव दें</string>

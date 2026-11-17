@@ -28,7 +28,6 @@
     <string name="size_of">%1$s sur %2$s</string>
     <string name="size_unknown">Taille inconnue</string>
     <string name="downloads_empty">Partagez un lien vers GrabLine ou touchez +</string>
-    <string name="downloads_add_link">Ajouter un lien</string>
     <string name="downloads_no_match">Aucun téléchargement ne correspond à ces filtres</string>
     <string name="downloads_clear_filters">Tout afficher</string>
     <string name="outbox_waiting">Sera envoyé au retour de votre PC</string>

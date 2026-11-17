@@ -28,7 +28,6 @@
     <string name="size_of">%1$s / %2$s</string>
     <string name="size_unknown">Boyut bilinmiyor</string>
     <string name="downloads_empty">GrabLine\'a bir bağlantı paylaş veya + simgesine dokun</string>
-    <string name="downloads_add_link">Bağlantı ekle</string>
     <string name="downloads_no_match">Bu filtrelerle eşleşen indirme yok</string>
     <string name="downloads_clear_filters">Tümünü göster</string>
     <string name="outbox_waiting">Bilgisayarın geri geldiğinde gönderilecek</string>

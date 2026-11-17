@@ -54,7 +54,7 @@ fun TransfersRoute(phone: PhoneEngine?, modifier: Modifier = Modifier) {
 @Composable
 fun TransfersScreen(rows: List<DownloadRow>, onCancel: (Long) -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    val host = remember { SnackbarHostState() }
+    val (host, sharedHost) = dev.grabline.app.ui.common.rememberAppSnackbar()
     val scope = rememberCoroutineScope()
     val noApp = stringResource(R.string.file_no_app)
     val statuses = remember(context) { AndroidStatusStrings(context) }
@@ -104,6 +104,6 @@ fun TransfersScreen(rows: List<DownloadRow>, onCancel: (Long) -> Unit, modifier:
                 }
             }
         }
-        SnackbarHost(host, Modifier.padding(8.dp))
+        if (!sharedHost) SnackbarHost(host, Modifier.padding(8.dp))
     }
 }

@@ -74,6 +74,11 @@
     <string name="setting_colours">色</string>
     <string name="colours_grabline">GrabLine</string>
     <string name="colours_wallpaper">壁紙</string>
+    <string name="colours_violet">バイオレット</string>
+    <string name="colours_green">グリーン</string>
+    <string name="colours_orange">オレンジ</string>
+    <string name="colours_rose">ローズ</string>
+    <string name="colours_teal">ティール</string>
     <string name="setting_language">言語</string>
     <string name="group_privacy">プライバシー</string>
     <string name="setting_offer_copied">コピーしたリンクの送信を提案</string>

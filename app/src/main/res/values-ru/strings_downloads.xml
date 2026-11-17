@@ -28,7 +28,6 @@
     <string name="size_of">%1$s из %2$s</string>
     <string name="size_unknown">Размер неизвестен</string>
     <string name="downloads_empty">Поделитесь ссылкой с GrabLine или нажмите +</string>
-    <string name="downloads_add_link">Добавить ссылку</string>
     <string name="downloads_no_match">Нет загрузок, подходящих под эти фильтры</string>
     <string name="downloads_clear_filters">Показать все</string>
     <string name="outbox_waiting">Будет отправлено, когда компьютер появится в сети</string>

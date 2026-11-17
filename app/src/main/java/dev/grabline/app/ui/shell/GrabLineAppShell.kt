@@ -141,8 +141,10 @@ fun GrabLineAppShell(
     val navController = rememberNavController()
     val backStack by navController.currentBackStackEntryAsState()
     val destination = backStack?.destination
-    val onDownloads = destination?.hierarchy?.any { it.route == Routes.DOWNLOADS || it.route == Routes.DETAILS } == true
-    val snackbar = remember { SnackbarHostState() }
+    // The + button belongs to the list; on a full-screen details page it covered the page's last row.
+    val onDownloads = destination?.hierarchy?.any { it.route == Routes.DOWNLOADS } == true
+    // Shared with the screens (LocalAppSnackbar), so every message sits above the + button and the tab bar.
+    val snackbar = dev.grabline.app.ui.common.LocalAppSnackbar.current ?: remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     var pendingAdd by remember { mutableStateOf<PendingAdd?>(null) }
     var addOpen by rememberSaveable { mutableStateOf(false) }

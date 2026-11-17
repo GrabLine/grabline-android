@@ -75,6 +75,11 @@
     <string name="setting_colours">رنگ</string>
     <string name="colours_grabline">GrabLine</string>
     <string name="colours_wallpaper">وال پیپر</string>
+    <string name="colours_violet">بنفشی</string>
+    <string name="colours_green">سبز</string>
+    <string name="colours_orange">نارنجی</string>
+    <string name="colours_rose">گلابی</string>
+    <string name="colours_teal">نیلگوں سبز</string>
     <string name="setting_language">زبان</string>
     <string name="group_privacy">رازداری</string>
     <string name="setting_offer_copied">کاپی کیے گئے لنکس بھیجنے کی پیشکش کریں</string>

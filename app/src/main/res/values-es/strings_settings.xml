@@ -76,6 +76,11 @@
     <string name="setting_colours">Colores</string>
     <string name="colours_grabline">GrabLine</string>
     <string name="colours_wallpaper">Fondo de pantalla</string>
+    <string name="colours_violet">Violeta</string>
+    <string name="colours_green">Verde</string>
+    <string name="colours_orange">Naranja</string>
+    <string name="colours_rose">Rosa</string>
+    <string name="colours_teal">Verde azulado</string>
     <string name="setting_language">Idioma</string>
     <string name="group_privacy">Privacidad</string>
     <string name="setting_offer_copied">Ofrecer enviar enlaces copiados</string>

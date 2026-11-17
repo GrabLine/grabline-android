@@ -76,6 +76,11 @@
     <string name="setting_colours">Cores</string>
     <string name="colours_grabline">GrabLine</string>
     <string name="colours_wallpaper">Papel de parede</string>
+    <string name="colours_violet">Violeta</string>
+    <string name="colours_green">Verde</string>
+    <string name="colours_orange">Laranja</string>
+    <string name="colours_rose">Rosa</string>
+    <string name="colours_teal">Verde-azulado</string>
     <string name="setting_language">Idioma</string>
     <string name="group_privacy">Privacidade</string>
     <string name="setting_offer_copied">Oferecer o envio de links copiados</string>

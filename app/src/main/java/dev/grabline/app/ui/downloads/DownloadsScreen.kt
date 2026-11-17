@@ -63,6 +63,7 @@ import androidx.compose.ui.semantics.customActions
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -149,7 +150,7 @@ fun DownloadsScreen(
     selectedRowKey: String? = null,
 ) {
     val context = LocalContext.current
-    val host = androidx.compose.runtime.remember { SnackbarHostState() }
+    val (host, sharedHost) = dev.grabline.app.ui.common.rememberAppSnackbar()
     val scope = rememberCoroutineScope()
     val undoLabel = stringResource(R.string.action_undo)
     val currentActions by rememberUpdatedState(actions)
@@ -193,10 +194,9 @@ fun DownloadsScreen(
                 DownloadList(state, actions, selectedRowKey)
             }
         }
-        SnackbarHost(
-            host,
-            modifier = Modifier.align(Alignment.BottomCenter).padding(start = 8.dp, end = 80.dp, bottom = 8.dp),
-        )
+        if (!sharedHost) {
+            SnackbarHost(host, modifier = Modifier.align(Alignment.BottomCenter).padding(8.dp))
+        }
     }
 }
 
@@ -339,9 +339,6 @@ private fun EmptyState(actions: DownloadsActions) {
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        TextButton(onClick = actions.onAddClick, modifier = Modifier.heightIn(min = 48.dp)) {
-            Text(stringResource(R.string.downloads_add_link))
-        }
     }
 }
 
@@ -521,15 +518,23 @@ private fun RowBody(row: DownloadRow, selected: Boolean, onAction: ((RowAction) 
         }
         if (row.status == RowStatus.Downloading || row.status == RowStatus.Paused || row.status == RowStatus.Queued || row.waiting) {
             RowProgress(row, Modifier.fillMaxWidth())
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            // Size, speed and time left, separated by dots: with a plain gap they read as one run of numbers.
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 val counted = if (row.total != null && row.total > 0) {
                     context.getString(R.string.size_of, sizeText(context, row.downloaded), sizeText(context, row.total))
                 } else {
                     context.getString(R.string.bytes_counted, sizeText(context, row.downloaded))
                 }
+                val muted = MaterialTheme.colorScheme.onSurfaceVariant
+                val extras = listOfNotNull(
+                    if (row.status == RowStatus.Downloading && row.speed > 0) speedText(context, row.speed) else null,
+                    row.timeLeftSeconds?.let { timeLeftText(context, it) },
+                )
                 Text(counted, style = MonoNumbers)
-                if (row.status == RowStatus.Downloading && row.speed > 0) Text(speedText(context, row.speed), style = MonoNumbers)
-                row.timeLeftSeconds?.let { Text(timeLeftText(context, it), style = MonoNumbers) }
+                extras.forEach { part ->
+                    Text("·", style = MonoNumbers, color = muted, modifier = Modifier.clearAndSetSemantics { })
+                    Text(part, style = MonoNumbers, color = muted)
+                }
             }
         } else if (row.status == RowStatus.Done && row.total != null && row.total > 0) {
             Text(sizeText(context, row.total), style = MonoNumbers)

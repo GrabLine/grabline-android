@@ -74,6 +74,11 @@
     <string name="setting_colours">색상</string>
     <string name="colours_grabline">GrabLine</string>
     <string name="colours_wallpaper">배경화면</string>
+    <string name="colours_violet">보라</string>
+    <string name="colours_green">초록</string>
+    <string name="colours_orange">주황</string>
+    <string name="colours_rose">로즈</string>
+    <string name="colours_teal">청록</string>
     <string name="setting_language">언어</string>
     <string name="group_privacy">개인정보 보호</string>
     <string name="setting_offer_copied">복사한 링크 전송 제안</string>

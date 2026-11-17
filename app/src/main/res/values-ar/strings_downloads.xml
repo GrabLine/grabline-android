@@ -28,7 +28,6 @@
     <string name="size_of">%1$s من %2$s</string>
     <string name="size_unknown">الحجم غير معروف</string>
     <string name="downloads_empty">شارك رابطًا مع GrabLine أو اضغط +</string>
-    <string name="downloads_add_link">إضافة رابط</string>
     <string name="downloads_no_match">لا توجد تنزيلات تطابق هذه المرشحات</string>
     <string name="downloads_clear_filters">إظهار الكل</string>
     <string name="outbox_waiting">سيُرسل عند عودة حاسوبك</string>
