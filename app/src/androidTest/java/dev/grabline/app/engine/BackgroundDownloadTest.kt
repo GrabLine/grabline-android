@@ -45,5 +45,6 @@ class BackgroundDownloadTest {
         } finally {
             server.shutdown()
         }
+        Unit // JUnit needs a void test method; runBlocking would otherwise return the delete count
     }
 }

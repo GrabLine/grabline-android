@@ -172,7 +172,8 @@ fun SliderRow(
     Column(modifier.fillMaxWidth().then(RowPadding).alpha(if (enabled) 1f else 0.5f)) {
         Row(horizontalArrangement = Arrangement.spacedBy(16.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(title, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-            Text(dragging.roundToInt().toString(), style = MonoNumbers)
+            // Locale digits, like the sizes elsewhere (Arabic-Indic in Arabic).
+            Text(java.text.NumberFormat.getIntegerInstance().format(dragging.roundToInt()), style = MonoNumbers)
         }
         Slider(
             value = dragging,
@@ -183,7 +184,7 @@ fun SliderRow(
             enabled = enabled,
             modifier = Modifier
                 .heightIn(min = 48.dp)
-                .semantics { contentDescription = title; stateDescription = dragging.roundToInt().toString() },
+                .semantics { contentDescription = title; stateDescription = java.text.NumberFormat.getIntegerInstance().format(dragging.roundToInt()) },
         )
     }
 }

@@ -122,6 +122,22 @@ class TorrentEngineFlowTest {
         assertEquals(TorrentText.NOT_A_TORRENT, bad.error)
     }
 
+    @Test fun aTorrentLinkIsFetchedAndDownloads() = runBlocking { // QA-37: a .torrent file shorter than the size limit
+        val server = okhttp3.mockwebserver.MockWebServer()
+        val meta = "d4:infod4:name5:Movie6:lengthi4096eee"
+        server.enqueue(okhttp3.mockwebserver.MockResponse().setHeader("Content-Type", "application/x-bittorrent").setBody(meta))
+        server.start()
+        try {
+            val id = engine.add(PhoneAddRequest(server.url("/debian.iso.torrent").toString())).id
+            engine.runUntilIdle()
+            val j = job(id)
+            assertEquals(j.error, PhoneJobStatus.COMPLETED, j.status)
+            assertTrue(storage.published.containsKey("Movie.bin"))
+        } finally {
+            server.shutdown()
+        }
+    }
+
     @Test fun torrentsWaitForWifiOnMobileDataButWebFilesDoNot() = runBlocking { // QA-37
         engine.setNetworkState(wifi = false, metered = true, connected = true)
         val t = engine.add(PhoneAddRequest(magnet))

@@ -23,4 +23,7 @@
     <string name="battery_tip_text">Votre téléphone peut mettre les téléchargements en pause pour économiser la batterie. Laissez GrabLine fonctionner.</string>
     <string name="battery_tip_action">Paramètres de batterie</string>
     <string name="battery_tip_dismiss">Plus tard</string>
+    <string name="notify_off_title">Les notifications sont désactivées</string>
+    <string name="notify_off_text">Les téléchargements continuent, mais vous ne saurez pas quand l\'un d\'eux se termine ou échoue.</string>
+    <string name="notify_off_action">Activer</string>
 </resources>

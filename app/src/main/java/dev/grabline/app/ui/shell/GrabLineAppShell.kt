@@ -233,7 +233,7 @@ fun GrabLineAppShell(
                                 selected = destination?.hierarchy?.any { it.route == tab.route } == true,
                                 onClick = { select(tab.route) },
                                 icon = { Icon(painterResource(tab.iconRes), contentDescription = null) },
-                                label = { Text(label) },
+                                label = { TabLabel(label) },
                                 modifier = Modifier.semantics { contentDescription = label },
                             )
                         }
@@ -260,7 +260,7 @@ fun GrabLineAppShell(
                                 selected = destination?.hierarchy?.any { it.route == tab.route } == true,
                                 onClick = { select(tab.route) },
                                 icon = { Icon(painterResource(tab.iconRes), contentDescription = null) },
-                                label = { Text(label) },
+                                label = { TabLabel(label) },
                                 modifier = Modifier.semantics { contentDescription = label },
                             )
                         }
@@ -348,3 +348,21 @@ fun GrabLineAppShell(
         }
     }
 }
+
+/**
+ * A tab label that stays on one line. At the largest font sizes three labels cannot fit side by side
+ * ("Downloads" broke into "Downlo / ads"), so the label grows only to 1.3x; the full name is still the
+ * item's content description, read by TalkBack.
+ */
+@Composable
+private fun TabLabel(text: String) {
+    val density = androidx.compose.ui.platform.LocalDensity.current
+    androidx.compose.runtime.CompositionLocalProvider(
+        androidx.compose.ui.platform.LocalDensity provides
+            androidx.compose.ui.unit.Density(density.density, density.fontScale.coerceAtMost(MAX_TAB_FONT_SCALE)),
+    ) {
+        Text(text, maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+    }
+}
+
+private const val MAX_TAB_FONT_SCALE = 1.3f

@@ -145,6 +145,9 @@ object ErrorMessages {
     const val NOT_A_PAIRING_CODE = "This isn't a GrabLine pairing code"
     const val CODE_DOES_NOT_LOOK_RIGHT = "That code doesn't look right"
     const val UPDATE_PC_FOR_FEATURE = "Update GrabLine on your PC to use this"
+    const val PAIR_DROPPED = "The connection to your PC dropped. Try again"
+    const val NO_SECURE_KEY = "This phone couldn't create a secure key. Try again"
+    const val PC_NO_ANSWER = "Your PC didn't answer. Check it is on the same Wi-Fi and try again"
 
     fun forCode(code: ErrorCode): String = byCode.getValue(code)
 

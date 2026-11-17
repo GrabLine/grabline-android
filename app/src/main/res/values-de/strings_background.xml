@@ -22,4 +22,7 @@
     <string name="battery_tip_text">Dein Telefon pausiert Downloads möglicherweise, um Akku zu sparen. Lass GrabLine weiterlaufen.</string>
     <string name="battery_tip_action">Akkueinstellungen</string>
     <string name="battery_tip_dismiss">Nicht jetzt</string>
+    <string name="notify_off_title">Benachrichtigungen sind aus</string>
+    <string name="notify_off_text">Downloads laufen weiter, aber du erfährst nicht, wann einer fertig ist oder fehlschlägt.</string>
+    <string name="notify_off_action">Einschalten</string>
 </resources>

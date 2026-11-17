@@ -26,6 +26,34 @@ QA table of the spec, with what you saw.
 Phone and PC must be on the same Wi-Fi (not a guest network that isolates
 devices). The listener never accepts connections from public addresses.
 
+### Xiaomi, Redmi and POCO (HyperOS / MIUI)
+
+These phones add their own blocks on top of Android:
+
+- **Install via USB:** every `adb install` shows an "Install via USB" prompt on
+  the phone that must be accepted within a few seconds. Turn on **Developer
+  options, Install via USB** (it needs a Mi account), or tap **Install** each time.
+- **Instrumented tests stop with "activity not started":** HyperOS blocks apps
+  from opening screens in the background. Allow it for the app after each fresh
+  install: `adb shell appops set dev.grabline.app 10021 allow`. Gradle's
+  `connectedDebugAndroidTest` uninstalls the app first and loses this setting,
+  so install both APKs and run
+  `adb shell am instrument -w dev.grabline.app.test/androidx.test.runner.AndroidJUnitRunner`.
+- **The phone is not listed by `adb devices` on Windows:** start adb with the
+  libusb backend: `adb kill-server`, then `set ADB_LIBUSB=1` and `adb start-server`.
+- **USB keeps dropping:** switch to Wi-Fi debugging: `adb tcpip 5555`, then
+  `adb connect <phone-ip>:5555`.
+- **Airplane mode keeps Wi-Fi on** if Wi-Fi was on before, so it does not cut the
+  network for QA-19. Use `adb shell svc wifi disable` and `adb shell svc data disable`
+  over USB instead.
+
+### When the phone cannot reach the PC
+
+QA-12 and QA-13 need the phone to connect to the PC. If Windows treats the network
+as **Public**, its firewall blocks that. Either set the network to **Private** in
+Windows settings, or for a USB test run `adb reverse tcp:47831 tcp:47831` and pair
+with host `127.0.0.1` (`scripts/e2e/run_e2e.py --reverse`).
+
 ## Checklist
 
 | Case | How to run it | Pass when |

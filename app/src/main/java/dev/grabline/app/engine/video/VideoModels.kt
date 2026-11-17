@@ -212,7 +212,12 @@ object VideoArgs {
         if (singleVideoOfPlaylist(url)) add("--no-playlist")
     }
 
-    fun download(request: VideoDownload, audioBitrate: String = "192K"): List<String> {
+    /**
+     * [preferCodec] is the best video codec this phone decodes in hardware ("vp9", "h264"), or null
+     * for no limit. yt-dlp otherwise picks AV1 first, which a phone without an AV1 decoder plays in
+     * software and stutters on. Resolution still comes first, so 1440p and 2160p keep working.
+     */
+    fun download(request: VideoDownload, audioBitrate: String = "192K", preferCodec: String? = null): List<String> {
         val preset = VideoPresets.forWire(request.quality)
         val retries = if (request.retries < 0) "infinite" else request.retries.toString()
         return buildList {
@@ -232,6 +237,7 @@ object VideoArgs {
                 add("--audio-quality"); add(if (preset.audioFormat == "mp3") audioBitrate else "0")
             } else {
                 add("--merge-output-format"); add("mp4")
+                preferCodec?.let { add("-S"); add("res,fps,vcodec:$it") }
             }
             request.subtitleLang?.takeIf { it.isNotBlank() }?.let { lang ->
                 add("--write-subs"); add("--write-auto-subs"); add("--sub-langs"); add(lang); add("--embed-subs")

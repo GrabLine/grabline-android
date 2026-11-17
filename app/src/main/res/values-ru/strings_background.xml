@@ -24,4 +24,7 @@
     <string name="battery_tip_text">Телефон может приостанавливать загрузки, чтобы экономить заряд. Позвольте GrabLine работать в фоне.</string>
     <string name="battery_tip_action">Настройки батареи</string>
     <string name="battery_tip_dismiss">Не сейчас</string>
+    <string name="notify_off_title">Уведомления выключены</string>
+    <string name="notify_off_text">Загрузки продолжаются, но вы не узнаете, когда загрузка завершится или не удастся.</string>
+    <string name="notify_off_action">Включить</string>
 </resources>

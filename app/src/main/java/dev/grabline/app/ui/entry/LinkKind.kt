@@ -37,6 +37,8 @@ enum class LinkKind(val label: String) {
             "webm", "m4v", "wmv", "jpg", "jpeg", "png", "gif", "webp", "bmp", "svg", "ttf", "otf",
         )
 
+        private val streamExtensions = setOf("m3u8", "mpd")
+
         private val urlParts =
             Regex("""^https?://(?:[^/?#@]*@)?([^/?#:]+)(?::\d+)?([^?#]*)""", RegexOption.IGNORE_CASE)
 
@@ -50,6 +52,8 @@ enum class LinkKind(val label: String) {
             val path = m.groupValues[2]
             val ext = path.substringAfterLast('/').substringAfterLast('.', "").lowercase()
             if (ext == "torrent") return TORRENT
+            // HLS and DASH playlists are streams: yt-dlp fetches the parts and FFmpeg joins them (QA-35).
+            if (ext in streamExtensions) return VIDEO
             val isVideo = videoRules.any { r ->
                 (host == r.host || host.endsWith("." + r.host)) &&
                     (r.path == null || r.path.matches(path))

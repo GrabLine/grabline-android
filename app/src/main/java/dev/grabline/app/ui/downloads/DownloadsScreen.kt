@@ -2,7 +2,14 @@
 
 package dev.grabline.app.ui.downloads
 
+import android.content.Intent
+import android.provider.Settings
 import androidx.activity.compose.BackHandler
+import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +26,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -66,6 +74,8 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import dev.grabline.app.R
 import dev.grabline.app.data.OutboxItem
 import dev.grabline.app.engine.PhoneEngine
+import dev.grabline.app.ui.common.localizeEngineMessage
+import dev.grabline.app.ui.common.localizedEngineMessage
 import dev.grabline.app.remote.PcRemote
 import dev.grabline.app.ui.entry.PasteBox
 import dev.grabline.app.ui.theme.MonoNumbers
@@ -149,7 +159,7 @@ fun DownloadsScreen(
             scope.launch {
                 host.currentSnackbarData?.dismiss()
                 when (m) {
-                    is DownloadMessage.Error -> host.showSnackbar(m.text)
+                    is DownloadMessage.Error -> host.showSnackbar(localizeEngineMessage(context, m.text))
                     is DownloadMessage.Note -> Unit
                     is DownloadMessage.UndoOffer -> {
                         val res = context.resources
@@ -261,11 +271,34 @@ private fun Chip(label: String, selected: Boolean, onClick: () -> Unit) {
 
 @Composable
 private fun DownloadList(state: DownloadsUiState, actions: DownloadsActions, selectedRowKey: String?) {
+    val context = LocalContext.current
+    // Checked again on every resume, since the user may turn notifications on or off in system settings.
+    var notificationsOff by remember { mutableStateOf(false) }
+    LifecycleResumeEffect(Unit) {
+        notificationsOff = !NotificationManagerCompat.from(context).areNotificationsEnabled()
+        onPauseOrDispose { }
+    }
+    // A keyed list keeps the old first row in view, so a new download would land just above
+    // the screen. If the user was at the top, follow the new row there.
+    val listState = rememberLazyListState()
+    val firstKey = state.rows.firstOrNull()?.key
+    var shownFirstKey by remember { mutableStateOf<String?>(null) }
+    LaunchedEffect(firstKey) {
+        val before = shownFirstKey
+        shownFirstKey = firstKey
+        if (before != null && firstKey != null && firstKey != before && listState.firstVisibleItemIndex <= 2) {
+            listState.animateScrollToItem(0)
+        }
+    }
     LazyColumn(
+        state = listState,
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 96.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        if (notificationsOff && state.rows.any { it.status in RUNNING }) {
+            item(key = "notifyOff") { NotificationsOffBanner() }
+        }
         if (state.outboxPending > 0 || state.outboxFailed.isNotEmpty()) {
             item(key = "outbox") { OutboxBanner(state.outboxPending, state.outboxFailed, actions.onDismissFailed) }
         }
@@ -312,6 +345,36 @@ private fun EmptyState(actions: DownloadsActions) {
     }
 }
 
+private val RUNNING = setOf(
+    RowStatus.Queued, RowStatus.Downloading, RowStatus.Paused,
+    RowStatus.WaitingNetwork, RowStatus.WaitingWifi, RowStatus.WaitingCharging,
+)
+
+/** Downloads still run without notifications; this says what the user is missing and how to fix it. */
+@Composable
+private fun NotificationsOffBanner() {
+    val context = LocalContext.current
+    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
+        Column(Modifier.fillMaxWidth().padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                stringResource(R.string.notify_off_title),
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.semantics { heading() },
+            )
+            Text(stringResource(R.string.notify_off_text), style = MaterialTheme.typography.bodyMedium)
+            TextButton(
+                onClick = {
+                    val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+                        .putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    runCatching { context.startActivity(intent) }
+                },
+                modifier = Modifier.heightIn(min = 48.dp),
+            ) { Text(stringResource(R.string.notify_off_action)) }
+        }
+    }
+}
+
 @Composable
 private fun OutboxBanner(pending: Int, failed: List<OutboxItem>, onDismiss: (Long) -> Unit) {
     Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)) {
@@ -325,7 +388,8 @@ private fun OutboxBanner(pending: Int, failed: List<OutboxItem>, onDismiss: (Lon
                 Text(pluralStringResource(R.plurals.outbox_count, pending, pending), style = MaterialTheme.typography.bodyMedium)
             }
             failed.forEach { item ->
-                val reason = item.lastError?.takeIf { it.isNotBlank() } ?: stringResource(R.string.outbox_failed_generic)
+                val reason = item.lastError?.takeIf { it.isNotBlank() }?.let { localizedEngineMessage(it) }
+                    ?: stringResource(R.string.outbox_failed_generic)
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         stringResource(R.string.outbox_failed_item, item.title ?: item.url, reason),
@@ -471,7 +535,7 @@ private fun RowBody(row: DownloadRow, selected: Boolean, onAction: ((RowAction) 
             Text(sizeText(context, row.total), style = MonoNumbers)
         }
         row.notice?.let {
-            Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(localizedEngineMessage(it), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         if (row.status == RowStatus.WaitingWifi && onAction != null) {
             TextButton(onClick = { onAction(RowAction.AllowMobileData) }, modifier = Modifier.heightIn(min = 48.dp)) {

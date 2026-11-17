@@ -22,4 +22,7 @@
     <string name="battery_tip_text">Your phone may pause downloads to save battery. Let GrabLine keep running.</string>
     <string name="battery_tip_action">Battery settings</string>
     <string name="battery_tip_dismiss">Not now</string>
+    <string name="notify_off_title">Notifications are off</string>
+    <string name="notify_off_text">Downloads keep running, but you will not hear when one finishes or fails.</string>
+    <string name="notify_off_action">Turn on</string>
 </resources>

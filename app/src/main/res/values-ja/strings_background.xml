@@ -21,4 +21,7 @@
     <string name="battery_tip_text">バッテリーを節約するため、スマートフォンがダウンロードを一時停止することがあります。GrabLine を実行したままにしてください。</string>
     <string name="battery_tip_action">バッテリー設定</string>
     <string name="battery_tip_dismiss">今はしない</string>
+    <string name="notify_off_title">通知がオフです</string>
+    <string name="notify_off_text">ダウンロードは続きますが、完了や失敗をお知らせできません。</string>
+    <string name="notify_off_action">オンにする</string>
 </resources>

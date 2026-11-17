@@ -64,7 +64,10 @@ class AndroidYtDlpBackend(context: Context) : YtDlpBackend {
         FFmpeg.getInstance().init(app)
     }
 
-    override fun version(): String? =
+    // The library records names like "yt-dlp 2026.10.26"; the screen already says "yt-dlp".
+    override fun version(): String? = rawVersion()?.removePrefix("yt-dlp")?.trim()?.takeIf { it.isNotBlank() }
+
+    private fun rawVersion(): String? =
         ytdlp.versionName(app)?.takeIf { it.isNotBlank() }
             ?: ytdlp.version(app)?.takeIf { it.isNotBlank() }
             ?: runCatching {
@@ -96,8 +99,10 @@ class YoutubeDlVideoEngine(
     private val backend: YtDlpBackend,
     private val io: CoroutineDispatcher = Dispatchers.IO,
     private val analyzeTimeoutMs: Long = 120_000,
+    /** The best video codec the phone decodes in hardware; see VideoArgs.download. */
+    private val preferCodec: () -> String? = { null },
 ) : VideoEngine {
-    constructor(context: Context) : this(AndroidYtDlpBackend(context))
+    constructor(context: Context) : this(AndroidYtDlpBackend(context), preferCodec = { DeviceCodecs.preferred })
 
     private val initMutex = Mutex()
     @Volatile private var started = false
@@ -167,7 +172,7 @@ class YoutubeDlVideoEngine(
         val tracker = ProgressTracker()
         try {
             blocking(request.processId) {
-                backend.run(request.url.trim(), VideoArgs.download(request), request.processId) { pct, eta, line ->
+                backend.run(request.url.trim(), VideoArgs.download(request, preferCodec = preferCodec()), request.processId) { pct, eta, line ->
                     onProgress(tracker.update(pct, eta, line))
                 }
             }

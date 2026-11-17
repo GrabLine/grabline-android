@@ -22,4 +22,7 @@
     <string name="battery_tip_text">بیٹری بچانے کے لیے آپ کا فون ڈاؤن لوڈ روک سکتا ہے۔ GrabLine کو چلتا رہنے دیں۔</string>
     <string name="battery_tip_action">بیٹری کی ترتیبات</string>
     <string name="battery_tip_dismiss">ابھی نہیں</string>
+    <string name="notify_off_title">اطلاعات بند ہیں</string>
+    <string name="notify_off_text">ڈاؤن لوڈ جاری رہیں گے، لیکن کسی ڈاؤن لوڈ کے مکمل یا ناکام ہونے پر آپ کو اطلاع نہیں ملے گی۔</string>
+    <string name="notify_off_action">آن کریں</string>
 </resources>

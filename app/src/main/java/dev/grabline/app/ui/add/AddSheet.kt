@@ -27,6 +27,8 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
+import kotlinx.coroutines.delay
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SegmentedButton
@@ -113,9 +115,21 @@ fun AddSheetRoute(
         onDismiss()
     }
 
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    // The sheet's own open animation can be cut short when the screen behind it or the sheet's
+    // content changes size mid-way (seen on a Redmi 12: the sheet stayed a sliver at the bottom).
+    // Finish opening it if it came to rest anywhere but fully open.
+    LaunchedEffect(sheetState) {
+        repeat(4) {
+            delay(350)
+            if (!sheetState.isAnimationRunning && sheetState.currentValue != SheetValue.Expanded) {
+                runCatching { sheetState.show() }
+            }
+        }
+    }
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        sheetState = sheetState,
     ) {
         AddSheetContent(
             state = state,

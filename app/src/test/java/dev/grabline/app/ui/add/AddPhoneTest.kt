@@ -87,9 +87,10 @@ class AddPhoneTest {
             settings.set(AppSettings.RULES, RulesCodec.encode(mapOf("music" to "phone", "torrent" to "b")))
         }
         val pcs = listOf(pc("a"), pc("b"))
-        assertTrue(vm(listOf(song), pcs).await().deviceIsPhone)
-        assertEquals("b", vm(listOf("magnet:?xt=urn:btih:abc"), pcs).await().selectedPcId)
-        assertEquals("a", vm(listOf(file), pcs).await().selectedPcId)
+        // The saved rules can arrive a moment after the first state; wait for the settled choice.
+        assertTrue(vm(listOf(song), pcs).await { it.deviceIsPhone }.deviceIsPhone)
+        assertEquals("b", vm(listOf("magnet:?xt=urn:btih:abc"), pcs).await { it.selectedPcId == "b" }.selectedPcId)
+        assertEquals("a", vm(listOf(file), pcs).await { it.selectedPcId != null }.selectedPcId)
     }
 
     @Test fun manyLinksMakeManyAdds() {

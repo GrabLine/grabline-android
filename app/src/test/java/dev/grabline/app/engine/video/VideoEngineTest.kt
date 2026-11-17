@@ -42,6 +42,11 @@ class VideoEngineTest {
         assertTrue("--merge-output-format" in video && "-x" !in video)
         assertEquals("3", video[video.indexOf("--retries") + 1])
         assertTrue("--embed-metadata" in video && "--add-metadata" in video)
+        assertTrue("no codec limit unless asked", "-S" !in video)
+        val vp9 = VideoArgs.download(VideoDownload("https://v.example/x", "2160p", dir, "job-1", 3), preferCodec = "vp9")
+        assertEquals("res,fps,vcodec:vp9", vp9[vp9.indexOf("-S") + 1])
+        val mp3Sorted = VideoArgs.download(VideoDownload("https://v.example/x", "mp3", dir, "job-1", 3), preferCodec = "h264")
+        assertTrue("audio is not sorted by video codec", "-S" !in mp3Sorted)
 
         val mp3 = VideoArgs.download(VideoDownload("https://v.example/x", "mp3", dir, "job-1", -1))
         assertEquals("mp3", mp3[mp3.indexOf("--audio-format") + 1])

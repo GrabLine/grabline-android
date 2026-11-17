@@ -52,12 +52,19 @@ internal class TorrentRunner(
         } catch (e: NotATorrent) {
             fail(TorrentText.NOT_A_TORRENT)
         } catch (e: IOException) {
+            debugLog(e)
             fail(if (outOfSpace(e)) EngineText.OUT_OF_SPACE else e.message?.takeIf { it.startsWith("Needs ") } ?: EngineText.UNEXPECTED)
         } catch (e: Throwable) {
+            debugLog(e)
             fail(EngineText.UNEXPECTED)
         } finally {
             env.onSpeed(id, 0)
         }
+    }
+
+    // Debug builds only: the user sees a plain message, a developer needs the cause.
+    private fun debugLog(e: Throwable) {
+        if (dev.grabline.app.BuildConfig.DEBUG) android.util.Log.w("GrabLine", "torrent job failed", e)
     }
 
     private fun outOfSpace(e: IOException) = e.message.orEmpty().let { it.contains("ENOSPC") || it.contains("No space left", true) }
@@ -87,7 +94,11 @@ internal class TorrentRunner(
         env.client.newCall(request).execute().use { r ->
             if (!r.isSuccessful) throw IOException("HTTP ${r.code}")
             val body = r.body ?: throw NotATorrent()
-            val bytes = body.source().readByteArray(MAX_TORRENT_FILE + 1)
+            // Read at most one byte past the limit (readByteArray(n) would demand exactly n bytes).
+            val source = body.source()
+            val buffer = okio.Buffer()
+            while (buffer.size <= MAX_TORRENT_FILE && source.read(buffer, 8192) != -1L) Unit
+            val bytes = buffer.readByteArray()
             if (bytes.size > MAX_TORRENT_FILE || bytes.isEmpty() || bytes[0] != 'd'.code.toByte()) throw NotATorrent()
             bytes
         }

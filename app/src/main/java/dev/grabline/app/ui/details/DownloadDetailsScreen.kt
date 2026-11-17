@@ -21,6 +21,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import dev.grabline.app.ui.common.localizeEngineMessage
+import dev.grabline.app.ui.common.localizedEngineMessage
 import dev.grabline.app.ui.downloads.DetailsNote
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -142,7 +144,7 @@ private fun UpdateEnginePrompt(onRetry: () -> Unit) {
     ) {
         Text(stringResource(if (running) R.string.detail_update_engine_updating else R.string.detail_update_engine))
     }
-    (update as? EngineUpdateState.Failed)?.let { Text(it.message, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error) }
+    (update as? EngineUpdateState.Failed)?.let { Text(localizedEngineMessage(it.message), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error) }
 }
 
 @Composable
@@ -173,7 +175,7 @@ fun DownloadDetailsScreen(
             scope.launch {
                 host.currentSnackbarData?.dismiss()
                 when (m) {
-                    is DownloadMessage.Error -> host.showSnackbar(m.text)
+                    is DownloadMessage.Error -> host.showSnackbar(localizeEngineMessage(context, m.text))
                     is DownloadMessage.Note -> host.showSnackbar(
                         context.getString(
                             when (m.note) {
@@ -273,7 +275,7 @@ private fun DetailsBody(
             }
         }
         row.notice?.let { notice ->
-            Field(stringResource(R.string.detail_notice)) { Text(notice) }
+            Field(stringResource(R.string.detail_notice)) { Text(localizedEngineMessage(notice)) }
         }
         if (row.offline) {
             Text(lastSeenText(context, row), color = MaterialTheme.colorScheme.onSurfaceVariant)

@@ -31,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import dev.grabline.app.ui.common.localizedEngineMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import dev.grabline.app.R
@@ -97,7 +98,7 @@ private fun YtDlpSection() {
         }
         is EngineUpdateState.Failed -> {
             Text(
-                u.message,
+                localizedEngineMessage(u.message),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),

@@ -220,6 +220,32 @@ class DownloadEngineTest {
         assertEquals(EngineText.CONNECTION, job.error)
     }
 
+    @Test fun losingTheNetworkMidDownloadWaitsInsteadOfFailing() = rig(EngineConfig(connectionsPerFile = 4, autoRetry = 0)) { // QA-19
+        // On a real phone every connection drops at once, before Android reports the network gone;
+        // none of those drops may count against the retries.
+        val offline = java.util.concurrent.atomic.AtomicBoolean(false)
+        val tripped = java.util.concurrent.atomic.AtomicBoolean(false)
+        val big = content(3 * 1024 * 1024)
+        serve(Misbehaving { r ->
+            if (r.getHeader("Range") != "bytes=0-0" && !tripped.getAndSet(true)) {
+                offline.set(true)
+                // Android reports the loss a little after the connections have dropped.
+                Thread { Thread.sleep(300); engine.setNetworkState(wifi = true, metered = false, connected = false) }.start()
+            }
+            if (offline.get()) MockResponse().setSocketPolicy(okhttp3.mockwebserver.SocketPolicy.DISCONNECT_AFTER_REQUEST)
+            else ranged(r, big)
+        })
+        val id = engine.add(PhoneAddRequest(url())).id
+        engine.runUntilIdle()
+        awaitUntil("waiting for network") { job(id).status == PhoneJobStatus.WAITING_NETWORK }
+        assertNull(job(id).error)
+        offline.set(false)
+        engine.setNetworkState(wifi = true, metered = false, connected = true)
+        awaitUntil("queued") { job(id).status == PhoneJobStatus.QUEUED }
+        engine.runUntilIdle()
+        assertPublished(job(id), big)
+    }
+
     @Test fun pauseKeepsProgressAndResumeFinishesWithIfRange() = rig { // QA-24
         val big = content(3 * 1024 * 1024)
         val slow = java.util.concurrent.atomic.AtomicBoolean(true)

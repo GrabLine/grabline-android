@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import dev.grabline.app.R
 import dev.grabline.app.notify.AndroidAnnounceFormatter
 import dev.grabline.app.notify.ProgressAnnouncer
+import dev.grabline.app.ui.common.localizeEngineMessage
 import dev.grabline.app.ui.theme.LocalReducedMotion
 import kotlinx.coroutines.delay
 
@@ -42,7 +43,7 @@ class AndroidStatusStrings(private val context: Context) : StatusStrings {
     override fun waitingCharging() = s(R.string.status_waiting_charging)
     override fun done() = s(R.string.status_done)
     override fun failed(error: String?) =
-        if (error == null) s(R.string.status_failed_plain) else context.getString(R.string.status_failed, error)
+        if (error == null) s(R.string.status_failed_plain) else context.getString(R.string.status_failed, localizeEngineMessage(context, error))
     override fun cancelled() = s(R.string.status_cancelled)
     override fun unknown() = s(R.string.status_unknown)
 }
@@ -78,7 +79,7 @@ fun rowDescription(context: Context, row: DownloadRow): String = buildList {
     add(context.getString(R.string.badge_on_device, deviceName(context, row.device)))
     add(statusText(row, AndroidStatusStrings(context)))
     progressSpeech(context, row)?.let { add(it) }
-    row.notice?.let { add(it) }
+    row.notice?.let { add(localizeEngineMessage(context, it)) }
     if (row.offline) add(lastSeenText(context, row))
 }.joinToString(", ")
 

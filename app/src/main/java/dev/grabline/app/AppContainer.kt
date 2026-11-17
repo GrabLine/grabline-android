@@ -24,6 +24,7 @@ import dev.grabline.app.engine.work.DownloadScheduler
 import dev.grabline.app.engine.work.NetworkMonitor
 import dev.grabline.app.notify.PcActivityNotifier
 import dev.grabline.app.notify.PhoneJobNotifier
+import dev.grabline.app.ui.common.localizeEngineMessage
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
@@ -94,7 +95,7 @@ class AppContainer(context: Context) {
     val phone: DownloadEngine = DownloadEngine(
         db.phoneJobs(), engineClient, AndroidPhoneStorage(app), AppEngineSettings(settings), scope, video = video,
         transfers = FetchClient(TransferConnector { pcId -> connections.openTransfer(pcId) }),
-        torrents = TorrentEngine(),
+        torrents = TorrentEngine(addresses = { defaultNetworkAddresses(app) }),
         torrentFiles = { uri -> readTorrentFile(app, uri) },
         cloud = DefaultCloudBackend(cloudAccounts, RoomHostKeyStore(db.sshHostKeys()), engineClient),
     )
@@ -167,7 +168,7 @@ class AppContainer(context: Context) {
                 when (event) {
                     is JobFinishedEvent -> notifier.jobFinished(pcId, pc.name, event.job.id.toString(), event.job.name)
                     is JobFailedEvent -> notifier.jobFailed(
-                        pcId, pc.name, event.job.id.toString(), event.job.name, event.job.error ?: DEFAULT_FAILED,
+                        pcId, pc.name, event.job.id.toString(), event.job.name, localizeEngineMessage(app, event.job.error ?: DEFAULT_FAILED),
                     )
                     else -> Unit
                 }
@@ -285,3 +286,10 @@ private suspend fun readTorrentFile(context: Context, uri: String): ByteArray? =
         }
     }.getOrNull()
 }
+
+/** The phone's addresses on the network Android routes traffic over now (Wi-Fi or mobile data, not both). */
+private fun defaultNetworkAddresses(context: Context): List<java.net.InetAddress> = runCatching {
+    val cm = context.getSystemService(android.net.ConnectivityManager::class.java)
+    val network = cm?.activeNetwork ?: return@runCatching emptyList()
+    cm.getLinkProperties(network)?.linkAddresses?.map { it.address }.orEmpty()
+}.getOrDefault(emptyList())

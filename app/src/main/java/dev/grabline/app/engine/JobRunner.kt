@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -35,6 +36,10 @@ internal class Env(
     val minSegment: Long,
     val backoffBaseMs: Long,
     val random: Random,
+    /** False once the phone has no network; a runner then waits for it instead of failing. */
+    val online: () -> Boolean = { true },
+    /** How long a runner out of retries waits for Android to report the network gone. */
+    val networkGraceMs: Long = 3_000,
     val onSpeed: (Long, Long) -> Unit,
 )
 
@@ -42,6 +47,8 @@ private class Permanent(val text: String, val keepScratch: Boolean = false) : IO
 private class Changed : IOException("file changed")
 private class RangesIgnored : IOException("ranges ignored")
 private class Pushback(val code: Int, val retryAfterMs: Long?) : IOException("pushback $code")
+/** The phone lost its network: not the server's fault, so it does not use up the retries. */
+private class Offline : IOException("offline")
 
 internal class Probe(val size: Long?, val ranges: Boolean, val etag: String?, val lastModified: String?) {
     val validator: String? get() = etag ?: lastModified
@@ -127,6 +134,13 @@ internal class JobRunner(private val env: Env, private val id: Long, private val
         } catch (e: Permanent) {
             if (!e.keepScratch) env.storage.deleteScratch(id)
             fail(e.text)
+        } catch (e: Offline) {
+            // Keep the partial file and wait for the network. If it came back while this unwound,
+            // queue the job again straight away (the network monitor has already looked at it).
+            withContext(NonCancellable) {
+                dao.moveIf(id, listOf("DOWNLOADING"), "WAITING_NETWORK", null, null)
+                if (env.online()) dao.moveIf(id, listOf("WAITING_NETWORK"), "QUEUED", null, null)
+            }
         } catch (e: FolderUnavailableException) {
             // The download is intact; hold it until the user picks another folder.
             withContext(NonCancellable) { dao.moveIf(id, listOf("DOWNLOADING"), "PAUSED", EngineText.FOLDER, null) }
@@ -160,10 +174,20 @@ internal class JobRunner(private val env: Env, private val id: Long, private val
         return (base * (0.5 + env.random.nextDouble() * 0.5)).toLong().coerceAtLeast(1)
     }
 
-    /** Counts one failure with no progress; gives up when the budget is spent (rule 6). */
-    private fun countFailure(): Int {
+    /**
+     * Counts one failure with no progress; gives up when the budget is spent (rule 6).
+     * Losing the network is not counted: every connection fails at once then, well before
+     * Android reports the network gone, so the job is handed back to wait for it instead.
+     */
+    private suspend fun countFailure(): Int {
+        if (!env.online()) throw Offline()
         val n = state.failures.incrementAndGet()
-        if (n > budget) throw Permanent(EngineText.CONNECTION, keepScratch = true)
+        if (n > budget) {
+            // Android reports a lost network a moment after the connections drop; wait for it.
+            withTimeoutOrNull(env.networkGraceMs) { while (env.online()) delay(50) }
+            if (!env.online()) throw Offline()
+            throw Permanent(EngineText.CONNECTION, keepScratch = true)
+        }
         return n
     }
 
@@ -336,7 +360,7 @@ internal class JobRunner(private val env: Env, private val id: Long, private val
                 onPushback(e)
             } catch (e: IOException) {
                 coroutineContext.ensureActive()
-                if (e is Changed || e is RangesIgnored) throw e
+                if (e is Changed || e is RangesIgnored || e is Offline) throw e
                 if (isNoSpace(e)) throw Permanent(EngineText.OUT_OF_SPACE, keepScratch = true)
                 val n = countFailure()
                 if (!c.rangeMode) c.plan.restart(seg)

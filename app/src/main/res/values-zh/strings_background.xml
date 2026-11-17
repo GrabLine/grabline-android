@@ -21,4 +21,7 @@
     <string name="battery_tip_text">手机可能会暂停下载以节省电量。请让 GrabLine 保持运行。</string>
     <string name="battery_tip_action">电池设置</string>
     <string name="battery_tip_dismiss">以后再说</string>
+    <string name="notify_off_title">通知已关闭</string>
+    <string name="notify_off_text">下载会继续进行，但下载完成或失败时你不会收到提醒。</string>
+    <string name="notify_off_action">开启</string>
 </resources>

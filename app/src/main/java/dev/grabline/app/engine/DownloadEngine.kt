@@ -68,6 +68,7 @@ class DownloadEngine(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     minSegmentBytes: Long = 1L shl 20,
     backoffBaseMs: Long = 1000,
+    networkGraceMs: Long = 3_000,
     random: Random = Random.Default,
     override val video: VideoEngine? = null,
     /** Copies files from a PC for jobs of kind "transfer"; null where transfers are not wired. */
@@ -89,7 +90,7 @@ class DownloadEngine(
     private val addMutex = Mutex()
     private val runMutex = Mutex()
     private val evalMutex = Mutex()
-    private val env = Env(dao, client, storage, bucket, clock, ioDispatcher, minSegmentBytes, backoffBaseMs, random) { id, bps ->
+    private val env = Env(dao, client, storage, bucket, clock, ioDispatcher, minSegmentBytes, backoffBaseMs, random, online = { constraints.value.connected }, networkGraceMs = networkGraceMs) { id, bps ->
         speeds.update { if (bps <= 0) it - id else it + (id to bps) }
     }
 

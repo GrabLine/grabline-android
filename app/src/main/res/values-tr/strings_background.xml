@@ -22,4 +22,7 @@
     <string name="battery_tip_text">Telefonun pil tasarrufu için indirmeleri duraklatabilir. GrabLine\'ın çalışmaya devam etmesine izin ver.</string>
     <string name="battery_tip_action">Pil ayarları</string>
     <string name="battery_tip_dismiss">Şimdi değil</string>
+    <string name="notify_off_title">Bildirimler kapalı</string>
+    <string name="notify_off_text">İndirmeler devam eder, ancak biri bittiğinde veya başarısız olduğunda haberiniz olmaz.</string>
+    <string name="notify_off_action">Aç</string>
 </resources>

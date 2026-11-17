@@ -19,6 +19,8 @@ class LinkKindTest {
     @Test fun twitchChannelIsPage() = assertEquals(LinkKind.PAGE, k("https://www.twitch.tv/somechannel"))
     @Test fun fileZip() = assertEquals(LinkKind.FILE, k("https://example.com/files/a.ZIP?dl=1"))
     @Test fun plainPage() = assertEquals(LinkKind.PAGE, k("https://example.com/blog/post"))
+    @Test fun hlsPlaylistIsVideo() = assertEquals(LinkKind.VIDEO, k("https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"))
+    @Test fun dashManifestIsVideo() = assertEquals(LinkKind.VIDEO, k("https://cdn.example/live/stream.MPD?token=1"))
     @Test fun lookalikeHostIsNotVideo() = assertEquals(LinkKind.PAGE, k("https://notyoutube.com/x"))
     @Test fun labels() {
         assertEquals("Web page", LinkKind.PAGE.label)

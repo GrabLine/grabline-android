@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.core.app.NotificationCompat
 import dev.grabline.app.R
 import dev.grabline.app.engine.PhoneJob
+import dev.grabline.app.ui.common.localizeEngineMessage
 import dev.grabline.app.ui.details.FileActions
 
 /** Raises "Finished" (Open, Share) and "Failed" (Retry, Details) notifications as phone jobs change state. */
@@ -36,7 +37,7 @@ class PhoneJobNotifier(context: Context) {
     }
 
     private fun failed(job: PhoneJob) {
-        val reason = job.error ?: context.getString(R.string.notify_failed_default)
+        val reason = job.error?.let { localizeEngineMessage(context, it) } ?: context.getString(R.string.notify_failed_default)
         val b = NotificationCompat.Builder(context, NotificationChannels.FAILED)
             .setSmallIcon(R.drawable.ic_notify_failed)
             .setContentTitle(context.getString(R.string.notify_failed_title))

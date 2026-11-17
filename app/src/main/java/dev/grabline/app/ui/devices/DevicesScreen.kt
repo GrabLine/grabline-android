@@ -54,6 +54,7 @@ import com.journeyapps.barcodescanner.ScanOptions
 import dev.grabline.app.R
 import dev.grabline.app.remote.PcRemote
 import dev.grabline.app.remote.protocol.ErrorMessages
+import dev.grabline.app.ui.common.localizedEngineMessage
 
 @Composable
 fun DevicesRoute(
@@ -216,7 +217,7 @@ private fun PairingDialog(progress: PairingProgress, onRetry: () -> Unit, onDism
             title = stringResource(R.string.pairing_confirm_on_pc); body = stringResource(R.string.pairing_confirm_on_pc_body)
         }
         is PairingProgress.Paired -> { title = stringResource(R.string.pairing_success, progress.pcName); body = null }
-        is PairingProgress.Failed -> { title = stringResource(R.string.pairing_failed_title); body = progress.message }
+        is PairingProgress.Failed -> { title = stringResource(R.string.pairing_failed_title); body = localizedEngineMessage(progress.message) }
     }
     val busy = progress is PairingProgress.Connecting || progress is PairingProgress.ConfirmOnPc
     AlertDialog(

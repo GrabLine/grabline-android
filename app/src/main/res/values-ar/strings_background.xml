@@ -26,4 +26,7 @@
     <string name="battery_tip_text">قد يوقف هاتفك التنزيلات مؤقتًا لتوفير البطارية. اترك GrabLine يعمل.</string>
     <string name="battery_tip_action">إعدادات البطارية</string>
     <string name="battery_tip_dismiss">ليس الآن</string>
+    <string name="notify_off_title">الإشعارات متوقفة</string>
+    <string name="notify_off_text">تستمر التنزيلات في العمل، لكن لن يصلك تنبيه عند اكتمال تنزيل أو فشله.</string>
+    <string name="notify_off_action">تشغيل</string>
 </resources>

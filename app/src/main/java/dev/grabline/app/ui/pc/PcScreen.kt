@@ -40,6 +40,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import dev.grabline.app.R
 import dev.grabline.app.remote.PcRemote
+import dev.grabline.app.ui.common.localizedEngineMessage
 import dev.grabline.app.ui.devices.Formatting
 import dev.grabline.app.ui.devices.PcStatus
 import dev.grabline.app.ui.devices.SpeedUnit
@@ -115,7 +116,7 @@ fun PcScreen(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
         )
         state.message?.let {
-            Text(it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
+            Text(localizedEngineMessage(it), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
         }
 
         if (state.status.isOnline) {

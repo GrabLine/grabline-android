@@ -114,12 +114,12 @@ sealed interface PairResult {
 
     /** No reply in time (90 s for `pair`), or no `hello`. */
     data object TimedOut : PairResult {
-        override val userMessage: String get() = "Your PC took too long to answer. Try again"
+        override val userMessage: String get() = dev.grabline.app.remote.protocol.ErrorMessages.failedByReason.getValue("timeout")
     }
 
     /** The connection dropped mid-pairing. */
     data object ConnectionLost : PairResult {
-        override val userMessage: String get() = "The connection to your PC dropped. Try again"
+        override val userMessage: String get() = dev.grabline.app.remote.protocol.ErrorMessages.PAIR_DROPPED
     }
 
     /** Any other error reply (for example `conflict`: 8 devices already paired), or a malformed exchange (`internal`). */
@@ -129,7 +129,7 @@ sealed interface PairResult {
 
     /** This phone could not create its device key. */
     data object KeyUnavailable : PairResult {
-        override val userMessage: String get() = "This phone couldn't create a secure key. Try again"
+        override val userMessage: String get() = dev.grabline.app.remote.protocol.ErrorMessages.NO_SECURE_KEY
     }
 }
 

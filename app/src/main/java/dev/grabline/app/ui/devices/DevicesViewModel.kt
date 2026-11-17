@@ -104,7 +104,7 @@ class DevicesViewModel(
                 throw e
             } catch (_: Exception) {
                 local.update {
-                    it.copy(pairing = PairingProgress.Failed("Your PC didn't answer. Check it is on the same Wi-Fi and try again", true))
+                    it.copy(pairing = PairingProgress.Failed(dev.grabline.app.remote.protocol.ErrorMessages.PC_NO_ANSWER, true))
                 }
             }
         }
