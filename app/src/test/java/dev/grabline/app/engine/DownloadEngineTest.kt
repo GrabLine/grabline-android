@@ -140,6 +140,33 @@ class DownloadEngineTest {
         assertTrue("4 connections halved (got $cap)", cap!! in 1..2)
     }
 
+    /**
+     * Found on a real phone (proof.ovh.net): a server that rate-limits new requests answered most of the
+     * connections with 429 and no Retry-After, and the download failed as "The connection kept dropping".
+     * Here only one range request per 150 ms is let through; the rest get 429.
+     */
+    @Test fun aRateLimitingServerSlowsTheDownloadInsteadOfFailingIt() = rig(
+        EngineConfig(connectionsPerFile = 8, downloadsAtOnce = 3, onlyWifi = true, autoRetry = 5),
+    ) {
+        val last = java.util.concurrent.atomic.AtomicLong(0)
+        serve(Misbehaving { r ->
+            val now = System.currentTimeMillis()
+            val prev = last.get()
+            if (now - prev >= 150 && last.compareAndSet(prev, now)) ranged(r, body).throttleBody(256 * 1024, 50, java.util.concurrent.TimeUnit.MILLISECONDS)
+            else MockResponse().setResponseCode(429)
+        })
+        val job = download()
+        assertEquals(job.error, PhoneJobStatus.COMPLETED, job.status)
+        assertPublished(job, body)
+    }
+
+    @Test fun aServerThatNeverRelentsEndsWithThePushbackMessage() = rig {
+        serve(Misbehaving { r -> if (r.getHeader("Range") == "bytes=0-0") ranged(r, body) else MockResponse().setResponseCode(429) })
+        val job = download()
+        assertEquals(PhoneJobStatus.FAILED, job.status)
+        assertEquals(EngineText.PUSHBACK, job.error)
+    }
+
     @Test fun a403AfterDataHalvesInsteadOfGivingUp() = rig(EngineConfig(connectionsPerFile = 2, autoRetry = 5, onlyWifi = true)) { // rule 5
         val n = AtomicInteger()
         serve(Misbehaving { r ->

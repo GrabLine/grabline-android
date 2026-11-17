@@ -99,6 +99,10 @@ internal class SegmentPlan(initial: List<Seg>, private val minSeg: Long) {
 
 private class RunState(var cap: Int, var remembered: Int?) {
     val failures = AtomicInteger(0)
+    /** Times the server said "slow down" (429/503/403 after data) with no data since; its own, larger budget. */
+    val pushbacks = AtomicInteger(0)
+    /** Every pushback ever, to tell whether a round of workers was turned away. */
+    val pushbacksSeen = AtomicInteger(0)
     @Volatile var lastCheckpoint = 0L
     var lastHalved = 0L
     var lastSampleAt = 0L
@@ -110,6 +114,12 @@ private class RunState(var cap: Int, var remembered: Int?) {
 internal class JobRunner(private val env: Env, private val id: Long, private val cfg: EngineConfig) {
     private val dao get() = env.dao
     private val budget = if (cfg.autoRetry < 0) Int.MAX_VALUE else cfg.autoRetry
+    /**
+     * A server that rate-limits is not a broken connection: being turned away gets three times the retry
+     * budget and longer pauses, and any data that arrives starts it again (found on a real phone, where a
+     * rate-limiting mirror made downloads fail as "The connection kept dropping").
+     */
+    private val pushbackBudget = if (budget == Int.MAX_VALUE) Int.MAX_VALUE else maxOf(budget * 3, 6)
     private var forceSingle = false
     private val checkpointMutex = Mutex()
     private var state = RunState(1, null)
@@ -200,9 +210,7 @@ internal class JobRunner(private val env: Env, private val id: Long, private val
             } catch (e: Permanent) {
                 throw e
             } catch (e: Pushback) {
-                val n = state.failures.incrementAndGet()
-                if (n > budget) throw Permanent(EngineText.PUSHBACK, keepScratch = true)
-                delay(e.retryAfterMs ?: backoff(n))
+                pushbackPause(e.retryAfterMs)
             } catch (e: IOException) {
                 coroutineContext.ensureActive()
                 delay(backoff(countFailure()))
@@ -337,12 +345,28 @@ internal class JobRunner(private val env: Env, private val id: Long, private val
 
     private suspend fun runWorkers(c: Ctx) {
         while (true) {
+            val doneBefore = c.plan.totalDone()
+            val pushedBefore = state.pushbacksSeen.get()
             coroutineScope {
                 repeat(if (c.rangeMode) state.cap else 1) { i -> launch(env.io) { worker(c, i) } }
             }
             if (c.plan.isComplete()) return
-            delay(backoff(countFailure())) // ranges left over with nobody to take them
+            // Ranges left over with nobody to take them. Halving the connections ends workers while others
+            // still bring data: that is progress, not a failure. A round the server turned away is a pushback.
+            when {
+                c.plan.totalDone() > doneBefore -> continue
+                state.pushbacksSeen.get() > pushedBefore -> pushbackPause(null)
+                else -> delay(backoff(countFailure()))
+            }
         }
+    }
+
+    /** One "slow down" from the server: pause (as asked, or longer each time) or give up when it never relents. */
+    private suspend fun pushbackPause(retryAfterMs: Long?) {
+        state.pushbacksSeen.incrementAndGet()
+        val n = state.pushbacks.incrementAndGet()
+        if (n > pushbackBudget) throw Permanent(EngineText.PUSHBACK, keepScratch = true)
+        delay(retryAfterMs ?: (backoff(n) * 2))
     }
 
     private suspend fun worker(c: Ctx, index: Int) {
@@ -383,9 +407,12 @@ internal class JobRunner(private val env: Env, private val id: Long, private val
             }
             fresh || state.cap == 1
         }
-        val n = if (first) state.failures.incrementAndGet() else state.failures.get()
-        if (n > budget) throw Permanent(EngineText.PUSHBACK, keepScratch = true)
-        delay(e.retryAfterMs ?: backoff(maxOf(1, n)))
+        if (first) {
+            pushbackPause(e.retryAfterMs)
+        } else {
+            state.pushbacksSeen.incrementAndGet()
+            delay(e.retryAfterMs ?: backoff(maxOf(1, state.pushbacks.get())) * 2)
+        }
     }
 
     private suspend fun fetch(c: Ctx, seg: Seg, index: Int) {
@@ -456,6 +483,7 @@ internal class JobRunner(private val env: Env, private val id: Long, private val
             offset += a
             c.plan.wrote(seg, a)
             state.failures.set(0)
+            state.pushbacks.set(0)
             checkpoint(c.plan, force = false)
             if (a < n) return
         }
