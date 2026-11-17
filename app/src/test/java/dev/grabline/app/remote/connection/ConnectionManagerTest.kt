@@ -214,6 +214,24 @@ class ConnectionManagerTest {
         assertTrue(manager.states.value["pcA"] !is PcLinkState.IdentityChanged)
     }
 
+    /**
+     * The removal persists first, and that database change makes the loop watcher cancel this PC's loop, which is
+     * the coroutine still finishing the removal. The key deletion must not be cut off by that (it was, now and then,
+     * on slower CI machines; a slow key store makes it happen every time).
+     */
+    @Test fun aSlowKeyDeletionStillFinishesAfterThePairingIsRemoved() = runBlocking<Unit> {
+        val slowRemoved = CopyOnWriteArrayList<String>()
+        val slow = ConnectionManager(scope, db.pcs(), db.jobs(), fake, auth, onPairingRemoved = {
+            delay(300)
+            slowRemoved += it.pcId
+        })
+        db.pcs().upsert(pc(lastGood = "10.0.0.1"))
+        fake.authMode = FakePc.AuthMode.UNAUTHORIZED_REPLY
+        slow.setWanted(true)
+        eventually(what = "the slow key deletion") { slowRemoved.firstOrNull() }
+        assertEquals(PcLinkState.PairingRemoved, slow.states.value["pcA"])
+    }
+
     @Test fun unauthorizedDuringAuthIsPairingRemoved() = runBlocking<Unit> {
         db.pcs().upsert(pc(lastGood = "10.0.0.1"))
         fake.authMode = FakePc.AuthMode.UNAUTHORIZED_REPLY

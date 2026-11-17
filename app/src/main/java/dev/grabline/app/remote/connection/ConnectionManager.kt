@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.random.Random
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job as CoroutineJob
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.BufferOverflow
@@ -43,6 +44,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 
 /** What the app shows for one paired PC. */
@@ -429,9 +431,11 @@ class ConnectionManager(
      * marked removed so the state survives a restart. Ignored when a re-pair already replaced the pairing this
      * session was opened for (its old device record being revoked is expected).
      */
-    private suspend fun pairingRemoved(pc: PairedPc) {
-        val current = pcs.get(pc.pcId) ?: return
-        if (current.deviceId != pc.deviceId || current.keyAlias != pc.keyAlias) return
+    private suspend fun pairingRemoved(pc: PairedPc): Unit = withContext(NonCancellable) {
+        // Not cancellable: marking the row removed makes the loop watcher cancel this PC's loop, which is the
+        // coroutine running this, and the key deletion below must still happen.
+        val current = pcs.get(pc.pcId) ?: return@withContext
+        if (current.deviceId != pc.deviceId || current.keyAlias != pc.keyAlias) return@withContext
         // Persist first: if the process dies right after, the PC must not come back as merely "Offline"
         // with its stale jobs (seen on a real phone when the app was stopped just after a revoke).
         pcs.markRemoved(pc.pcId, clock())
