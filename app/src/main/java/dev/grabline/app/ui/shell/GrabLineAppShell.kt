@@ -26,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -169,6 +170,10 @@ fun GrabLineAppShell(
     val request by incoming.collectAsState()
     LaunchedEffect(request) {
         val r = request ?: return@LaunchedEffect
+        // Let the screens behind the sheet lay out first. Opened in the shell's very first frame
+        // (a share that arrives on first launch, right after the welcome screen) the sheet measured
+        // against a window that was still settling and stayed stuck at a sliver at the bottom.
+        repeat(2) { withFrameNanos { } }
         onIncomingHandled()
         if (r.links.isNotEmpty()) openAdd(r.links, r.sourceTitle)
         else if (r.torrentFile != null) {

@@ -1,6 +1,10 @@
-"""Run the phone <-> desktop end-to-end test (P1-A16) on a running emulator.
+"""Run the phone <-> desktop end-to-end test (P1-A16) on an emulator or a real phone.
 
     python scripts/e2e/run_e2e.py [--serial emulator-5554] [--desktop PATH] [--python PATH]
+    python scripts/e2e/run_e2e.py --serial <phone serial> --reverse   # real phone over USB
+
+With --reverse the listener port is tunnelled with `adb reverse`, and the phone
+dials 127.0.0.1 instead of the emulator's 10.0.2.2.
 
 Starts the desktop peer (scripts/e2e/phone_peer.py in the desktop repo) with a
 throwaway data dir, waits for its pairing code, runs PcEndToEndTest on the
@@ -28,6 +32,8 @@ def main() -> int:
     parser.add_argument("--desktop", default=str(ANDROID.parent / "GrabLine-phone-remote"))
     parser.add_argument("--python", default=str(ANDROID.parent / "GrabLine" / ".venv" / "Scripts" / "python.exe"))
     parser.add_argument("--port", default="47831")
+    parser.add_argument("--reverse", action="store_true", help="real phone: tunnel the port with adb reverse")
+    parser.add_argument("--adb", default=str(ANDROID.parent.parent / "android-sdk" / "platform-tools" / "adb.exe"))
     args = parser.parse_args()
 
     state = Path(tempfile.mkdtemp(prefix="grabline-e2e-state-")) / "state.json"
@@ -69,6 +75,9 @@ def main() -> int:
             f"{runner}e2ePort={info['port']}",
             f"{runner}e2eMedia={info['mediaBase']}",
         ]
+        if args.reverse:
+            subprocess.run([args.adb, "-s", args.serial, "reverse", f"tcp:{info['port']}", f"tcp:{info['port']}"], check=True)
+            cmd.append(f"{runner}e2eHost=127.0.0.1")
         result = subprocess.run(cmd, cwd=ANDROID, env=gradle_env, check=False)
         info = json.loads(state.read_text(encoding="utf-8"))
         print("PC events:")

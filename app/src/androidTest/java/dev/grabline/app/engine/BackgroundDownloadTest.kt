@@ -39,6 +39,9 @@ class BackgroundDownloadTest {
             assertEquals(body.size.toLong(), done.total)
             assertNotNull(done.fileUri)
             container.phone.remove(added.id)
+            // Removing the job keeps the file (by design); a test must not leave it in the user's Downloads.
+            ApplicationProvider.getApplicationContext<GrabLineApp>().contentResolver
+                .delete(android.net.Uri.parse(done.fileUri), null, null)
         } finally {
             server.shutdown()
         }

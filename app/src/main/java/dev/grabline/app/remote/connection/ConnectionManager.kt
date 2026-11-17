@@ -432,11 +432,13 @@ class ConnectionManager(
     private suspend fun pairingRemoved(pc: PairedPc) {
         val current = pcs.get(pc.pcId) ?: return
         if (current.deviceId != pc.deviceId || current.keyAlias != pc.keyAlias) return
+        // Persist first: if the process dies right after, the PC must not come back as merely "Offline"
+        // with its stale jobs (seen on a real phone when the app was stopped just after a revoke).
+        pcs.markRemoved(pc.pcId, clock())
+        jobs.deleteForPc(pc.pcId)
         setState(pc.pcId, PcLinkState.PairingRemoved)
         sessions.remove(pc.pcId)?.close()
         runCatching { onPairingRemoved(current) }
-        jobs.deleteForPc(pc.pcId)
-        pcs.markRemoved(pc.pcId, clock())
     }
 
     private fun setState(pcId: String, state: PcLinkState) {

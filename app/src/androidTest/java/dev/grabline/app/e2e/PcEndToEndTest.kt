@@ -28,6 +28,8 @@ class PcEndToEndTest {
     private val code: String? = args.getString("e2eCode")
     private val port: String? = args.getString("e2ePort")
     private val media: String? = args.getString("e2eMedia")
+    // 10.0.2.2 on the emulator; 127.0.0.1 on a real phone through `adb reverse`.
+    private val host: String = args.getString("e2eHost") ?: "10.0.2.2"
 
     private val container get() = ApplicationProvider.getApplicationContext<GrabLineApp>().container
 
@@ -37,12 +39,14 @@ class PcEndToEndTest {
         val remote = container.remote
         remote.setForeground(true)
 
+        val before = remote.pcs.first().map { it.pcId }.toSet()
         // QA-01: manual pairing (the emulator has no camera), approved on the PC.
-        val steps = container.pairing.pair(PairingEntry.Manual("10.0.2.2:$port\n$code"), "Emulator").toList()
+        val steps = container.pairing.pair(PairingEntry.Manual("$host:$port\n$code"), "E2E phone").toList()
         val last = steps.last()
         assertTrue("pairing ended with $last", last is PairingProgress.Paired)
         assertTrue("saw Confirm on your PC", steps.any { it is PairingProgress.ConfirmOnPc })
-        val pc = remote.pcs.first { it.isNotEmpty() }.first()
+        // The PC just paired, not whichever is listed first (an earlier run may have left another pairing).
+        val pc = remote.pcs.first { list -> list.any { it.pcId !in before } }.first { it.pcId !in before }
 
         withTimeout(20_000) { remote.linkStates.first { it[pc.pcId] is PcLinkState.Online } }
 

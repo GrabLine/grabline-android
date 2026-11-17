@@ -39,7 +39,9 @@ android {
         versionCode = 1
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        if (!splitAbis) ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64") }
+        // -Pgrabline.abi=arm64-v8a builds a debug APK for one ABI only (smaller to install on a test phone).
+        val onlyAbi = providers.gradleProperty("grabline.abi").orNull
+        if (!splitAbis) ndk { abiFilters += onlyAbi?.let { listOf(it) } ?: listOf("arm64-v8a", "armeabi-v7a", "x86_64") }
     }
 
     splits {
