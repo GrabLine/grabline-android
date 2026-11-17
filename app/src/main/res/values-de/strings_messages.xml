@@ -34,6 +34,7 @@
     <string name="msg_cloud_unreachable">Der Server ist nicht erreichbar. Prüfe die Adresse und dein Netzwerk</string>
     <string name="msg_cloud_tls">Dem Sicherheitszertifikat des Servers wird nicht vertraut, deshalb wurde der Download gestoppt</string>
     <string name="msg_cloud_empty_folder">In diesem Ordner sind keine Dateien</string>
+    <string name="msg_cloud_no_dav_folders">WebDAV-Ordnerlinks können noch nicht geladen werden. Füge die Dateien einzeln hinzu</string>
     <string name="msg_cloud_plain_http">Dieses Telefon erlaubt keine unverschlüsselten webdav://-Verbindungen. Verwende stattdessen webdavs://</string>
     <string name="msg_cloud_dropped">Der Server hat die Verbindung beendet, bevor die Datei vollständig war</string>
     <string name="msg_cloud_short">Der Server hat weniger als die ganze Datei gesendet, deshalb wurde sie nicht gespeichert. Versuche es erneut</string>

@@ -34,6 +34,7 @@
     <string name="msg_cloud_unreachable">Impossible de joindre le serveur. Vérifiez l\'adresse et votre réseau</string>
     <string name="msg_cloud_tls">Le certificat de sécurité du serveur n\'est pas approuvé, le téléchargement a donc été arrêté</string>
     <string name="msg_cloud_empty_folder">Il n\'y a aucun fichier dans ce dossier</string>
+    <string name="msg_cloud_no_dav_folders">Les liens vers des dossiers WebDAV ne peuvent pas encore être téléchargés. Ajoutez les fichiers un par un</string>
     <string name="msg_cloud_plain_http">Ce téléphone n\'autorise pas les connexions webdav:// non chiffrées. Utilisez webdavs:// à la place</string>
     <string name="msg_cloud_dropped">Le serveur a fermé la connexion avant que le fichier soit complet</string>
     <string name="msg_cloud_short">Le serveur a envoyé moins que le fichier complet, il n\'a donc pas été enregistré. Réessayez</string>

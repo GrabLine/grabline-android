@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Plain http:// is allowed: many download mirrors still use it, and a download manager that refuses
+  them fails real links ("connection kept dropping" on a Debian mirror, found on a Redmi 12). The PC
+  link does not depend on this: its client only allows TLS 1.2+ with the PC's pinned certificate.
+-->
 <network-security-config>
-    <base-config cleartextTrafficPermitted="false" />
+    <base-config cleartextTrafficPermitted="true" />
 </network-security-config>

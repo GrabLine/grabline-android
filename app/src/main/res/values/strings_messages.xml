@@ -34,6 +34,7 @@
     <string name="msg_cloud_unreachable">Couldn\'t reach the server. Check the address and your network</string>
     <string name="msg_cloud_tls">The server\'s security certificate isn\'t trusted, so the download was stopped</string>
     <string name="msg_cloud_empty_folder">There are no files in that folder</string>
+    <string name="msg_cloud_no_dav_folders">WebDAV folder links can\'t be downloaded yet. Add the files one at a time</string>
     <string name="msg_cloud_plain_http">This phone doesn\'t allow plain webdav:// connections. Use webdavs:// instead</string>
     <string name="msg_cloud_dropped">The server closed the connection before the file was complete</string>
     <string name="msg_cloud_short">The server sent less than the full file, so it wasn\'t saved. Try again</string>

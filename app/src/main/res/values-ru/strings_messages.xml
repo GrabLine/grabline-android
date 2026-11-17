@@ -34,6 +34,7 @@
     <string name="msg_cloud_unreachable">Не удалось связаться с сервером. Проверьте адрес и сеть</string>
     <string name="msg_cloud_tls">Сертификат безопасности сервера не является доверенным, поэтому загрузка остановлена</string>
     <string name="msg_cloud_empty_folder">В этой папке нет файлов</string>
+    <string name="msg_cloud_no_dav_folders">Ссылки на папки WebDAV пока нельзя скачать. Добавляйте файлы по одному</string>
     <string name="msg_cloud_plain_http">Этот телефон не разрешает обычные соединения webdav://. Используйте webdavs://</string>
     <string name="msg_cloud_dropped">Сервер закрыл соединение до того, как файл был получен полностью</string>
     <string name="msg_cloud_short">Сервер отправил файл не полностью, поэтому он не сохранён. Повторите попытку</string>

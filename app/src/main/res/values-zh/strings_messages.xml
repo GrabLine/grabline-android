@@ -34,6 +34,7 @@
     <string name="msg_cloud_unreachable">无法连接到服务器。请检查地址和网络</string>
     <string name="msg_cloud_tls">服务器的安全证书不受信任，因此已停止下载</string>
     <string name="msg_cloud_empty_folder">该文件夹中没有文件</string>
+    <string name="msg_cloud_no_dav_folders">暂时无法下载 WebDAV 文件夹链接。请逐个添加文件</string>
     <string name="msg_cloud_plain_http">这部手机不允许未加密的 webdav:// 连接。请改用 webdavs://</string>
     <string name="msg_cloud_dropped">文件尚未接收完整，服务器就关闭了连接</string>
     <string name="msg_cloud_short">服务器发送的内容不完整，因此未保存。请重试</string>

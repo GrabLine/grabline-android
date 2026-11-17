@@ -3,7 +3,11 @@ package dev.grabline.app.engine.cloud
 import java.io.FilterInputStream
 import java.io.IOException
 import java.io.InputStream
+import java.security.KeyStore
 import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.X509TrustManager
+import okhttp3.internal.tls.OkHostnameVerifier
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
 import org.apache.commons.net.ftp.FTPReply
@@ -16,7 +20,14 @@ class FtpConnection(
     sslContext: SSLContext? = null,
 ) : RemoteConnection {
     private val client: FTPClient = if (secure) {
-        if (sslContext != null) FTPSClient(false, sslContext) else FTPSClient("TLS", false)
+        (if (sslContext != null) FTPSClient(false, sslContext) else FTPSClient("TLS", false)).apply {
+            // Commons Net's default trust manager only checks the certificate's dates, so any self-made
+            // certificate passed and the password could go to an impostor. Use the phone's trusted CAs, and
+            // check that the certificate names the server we dialled.
+            if (sslContext == null) trustManager = systemTrustManager()
+            isEndpointCheckingEnabled = true
+            hostnameVerifier = OkHostnameVerifier
+        }
     } else {
         FTPClient()
     }
@@ -94,5 +105,12 @@ class FtpConnection(
     private companion object {
         const val CONNECT_MS = 20_000
         const val READ_MS = 30_000
+
+        /** The phone's trust store (with the app's network security config applied). */
+        fun systemTrustManager(): X509TrustManager {
+            val factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
+            factory.init(null as KeyStore?)
+            return factory.trustManagers.filterIsInstance<X509TrustManager>().first()
+        }
     }
 }

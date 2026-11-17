@@ -34,6 +34,7 @@
     <string name="msg_cloud_unreachable">सर्वर तक नहीं पहुँचा जा सका। पता और अपना नेटवर्क जाँचें</string>
     <string name="msg_cloud_tls">सर्वर का सुरक्षा प्रमाणपत्र भरोसेमंद नहीं है, इसलिए डाउनलोड रोक दिया गया</string>
     <string name="msg_cloud_empty_folder">उस फ़ोल्डर में कोई फ़ाइल नहीं है</string>
+    <string name="msg_cloud_no_dav_folders">WebDAV फ़ोल्डर लिंक अभी डाउनलोड नहीं हो सकते। फ़ाइलें एक-एक करके जोड़ें</string>
     <string name="msg_cloud_plain_http">यह फ़ोन सादे webdav:// कनेक्शन की अनुमति नहीं देता। इसके बजाय webdavs:// उपयोग करें</string>
     <string name="msg_cloud_dropped">फ़ाइल पूरी होने से पहले सर्वर ने कनेक्शन बंद कर दिया</string>
     <string name="msg_cloud_short">सर्वर ने पूरी फ़ाइल से कम भेजी, इसलिए इसे सहेजा नहीं गया। दोबारा कोशिश करें</string>

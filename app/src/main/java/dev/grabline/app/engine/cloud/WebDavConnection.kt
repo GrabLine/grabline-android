@@ -93,7 +93,7 @@ class WebDavConnection(private val c: CloudConnection, private val http: OkHttpC
         return RemoteStream(body.byteStream(), start, total, id)
     }
 
-    override fun list(): List<RemoteEntry> = throw CloudException("Folder download isn't supported for webdav:// yet")
+    override fun list(): List<RemoteEntry> = throw CloudException(CloudText.NO_DAV_FOLDERS)
 
     override fun close() {
         closed = true

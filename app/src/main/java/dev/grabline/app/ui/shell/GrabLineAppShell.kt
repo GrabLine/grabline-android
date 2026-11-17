@@ -221,6 +221,20 @@ fun GrabLineAppShell(
 
     BoxWithConstraints(modifier.fillMaxSize()) {
         val wide = maxWidth >= WideBreakpoint
+        // Unfolded (or rotated wide) while a full-screen details page is open: turn it into the
+        // two-pane selection instead of leaving a full-width details page without the list.
+        LaunchedEffect(wide, backStack) {
+            val entry = backStack ?: return@LaunchedEffect
+            if (wide && entry.destination.route == Routes.DETAILS) {
+                val pcId = entry.arguments?.getString("pcId").orEmpty()
+                val jobId = entry.arguments?.getLong("jobId") ?: return@LaunchedEffect
+                selectedJob = "$pcId:$jobId"
+                navController.navigate(Routes.DOWNLOADS) {
+                    popUpTo(Routes.DETAILS) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+        }
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             snackbarHost = { SnackbarHost(snackbar) },

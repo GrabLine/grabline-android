@@ -460,7 +460,7 @@ fun DownloadRowItem(
     ) {
         val container = when {
             selected -> MaterialTheme.colorScheme.secondaryContainer
-            highlighted -> MaterialTheme.colorScheme.surfaceVariant
+            highlighted -> MaterialTheme.colorScheme.secondaryContainer
             else -> MaterialTheme.colorScheme.surface
         }
         Card(

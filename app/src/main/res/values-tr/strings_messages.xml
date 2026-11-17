@@ -34,6 +34,7 @@
     <string name="msg_cloud_unreachable">Sunucuya ulaşılamadı. Adresi ve ağını kontrol et</string>
     <string name="msg_cloud_tls">Sunucunun güvenlik sertifikasına güvenilmiyor, bu yüzden indirme durduruldu</string>
     <string name="msg_cloud_empty_folder">Bu klasörde dosya yok</string>
+    <string name="msg_cloud_no_dav_folders">WebDAV klasör bağlantıları henüz indirilemiyor. Dosyaları tek tek ekle</string>
     <string name="msg_cloud_plain_http">Bu telefon düz webdav:// bağlantılarına izin vermiyor. Bunun yerine webdavs:// kullan</string>
     <string name="msg_cloud_dropped">Sunucu, dosya tamamlanmadan bağlantıyı kapattı</string>
     <string name="msg_cloud_short">Sunucu dosyanın tamamından azını gönderdi, bu yüzden kaydedilmedi. Tekrar dene</string>

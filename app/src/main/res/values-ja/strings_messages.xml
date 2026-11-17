@@ -34,6 +34,7 @@
     <string name="msg_cloud_unreachable">サーバーに接続できませんでした。アドレスとネットワークを確認してください</string>
     <string name="msg_cloud_tls">サーバーのセキュリティ証明書が信頼できないため、ダウンロードを停止しました</string>
     <string name="msg_cloud_empty_folder">そのフォルダーにファイルはありません</string>
+    <string name="msg_cloud_no_dav_folders">WebDAV のフォルダーリンクはまだダウンロードできません。ファイルを 1 つずつ追加してください</string>
     <string name="msg_cloud_plain_http">このスマートフォンでは暗号化されていない webdav:// 接続は使えません。代わりに webdavs:// を使ってください</string>
     <string name="msg_cloud_dropped">ファイルが完全に届く前に、サーバーが接続を閉じました</string>
     <string name="msg_cloud_short">サーバーが送ったのはファイルの一部だけだったため、保存されませんでした。もう一度お試しください</string>

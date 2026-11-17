@@ -34,6 +34,7 @@
     <string name="msg_cloud_unreachable">تعذّر الوصول إلى الخادم. تحقق من العنوان ومن شبكتك</string>
     <string name="msg_cloud_tls">شهادة الأمان الخاصة بالخادم غير موثوقة، لذلك أُوقف التنزيل</string>
     <string name="msg_cloud_empty_folder">لا توجد ملفات في هذا المجلد</string>
+    <string name="msg_cloud_no_dav_folders">لا يمكن تنزيل روابط مجلدات WebDAV بعد. أضف الملفات واحدًا تلو الآخر</string>
     <string name="msg_cloud_plain_http">لا يسمح هذا الهاتف باتصالات webdav://&#x200E; غير المشفرة. استخدم webdavs://&#x200E; بدلًا منها</string>
     <string name="msg_cloud_dropped">أغلق الخادم الاتصال قبل اكتمال الملف</string>
     <string name="msg_cloud_short">أرسل الخادم أقل من الملف الكامل، لذلك لم يُحفظ. حاول مرة أخرى</string>

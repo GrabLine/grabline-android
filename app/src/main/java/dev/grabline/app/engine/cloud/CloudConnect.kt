@@ -16,6 +16,7 @@ object CloudText {
     const val UNREACHABLE = "Couldn't reach the server. Check the address and your network"
     const val TLS = "The server's security certificate isn't trusted, so the download was stopped"
     const val EMPTY_FOLDER = "There are no files in that folder"
+    const val NO_DAV_FOLDERS = "WebDAV folder links can't be downloaded yet. Add the files one at a time"
     const val PLAIN_HTTP = "This phone doesn't allow plain webdav:// connections. Use webdavs:// instead"
     const val DROPPED = "The server closed the connection before the file was complete"
     const val SHORT = "The server sent less than the full file, so it wasn't saved. Try again"

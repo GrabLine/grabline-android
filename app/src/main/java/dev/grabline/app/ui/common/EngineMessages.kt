@@ -74,6 +74,7 @@ internal object EngineMessages {
         add(CloudText.UNREACHABLE, R.string.msg_cloud_unreachable)
         add(CloudText.TLS, R.string.msg_cloud_tls)
         add(CloudText.EMPTY_FOLDER, R.string.msg_cloud_empty_folder)
+        add(CloudText.NO_DAV_FOLDERS, R.string.msg_cloud_no_dav_folders)
         add(CloudText.PLAIN_HTTP, R.string.msg_cloud_plain_http)
         add(CloudText.DROPPED, R.string.msg_cloud_dropped)
         add(CloudText.SHORT, R.string.msg_cloud_short)

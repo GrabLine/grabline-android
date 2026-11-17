@@ -34,6 +34,7 @@
     <string name="msg_cloud_unreachable">No se pudo conectar con el servidor. Revisa la dirección y tu red</string>
     <string name="msg_cloud_tls">El certificado de seguridad del servidor no es de confianza, así que se detuvo la descarga</string>
     <string name="msg_cloud_empty_folder">No hay archivos en esa carpeta</string>
+    <string name="msg_cloud_no_dav_folders">Aún no se pueden descargar enlaces de carpetas WebDAV. Añade los archivos de uno en uno</string>
     <string name="msg_cloud_plain_http">Este teléfono no permite conexiones webdav:// sin cifrar. Usa webdavs:// en su lugar</string>
     <string name="msg_cloud_dropped">El servidor cerró la conexión antes de que el archivo estuviera completo</string>
     <string name="msg_cloud_short">El servidor envió menos del archivo completo, así que no se guardó. Inténtalo de nuevo</string>

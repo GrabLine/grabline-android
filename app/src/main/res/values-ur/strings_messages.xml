@@ -34,6 +34,7 @@
     <string name="msg_cloud_unreachable">سرور تک رسائی نہیں ہو سکی۔ پتہ اور اپنا نیٹ ورک چیک کریں</string>
     <string name="msg_cloud_tls">سرور کا سیکیورٹی سرٹیفکیٹ قابلِ اعتماد نہیں، اس لیے ڈاؤن لوڈ روک دیا گیا</string>
     <string name="msg_cloud_empty_folder">اس فولڈر میں کوئی فائل نہیں ہے</string>
+    <string name="msg_cloud_no_dav_folders">WebDAV فولڈر کے لنکس ابھی ڈاؤن لوڈ نہیں ہو سکتے۔ فائلیں ایک ایک کر کے شامل کریں</string>
     <string name="msg_cloud_plain_http">یہ فون سادہ webdav://&#x200E; کنکشنز کی اجازت نہیں دیتا۔ اس کی جگہ webdavs://&#x200E; استعمال کریں</string>
     <string name="msg_cloud_dropped">فائل مکمل ہونے سے پہلے سرور نے کنکشن بند کر دیا</string>
     <string name="msg_cloud_short">سرور نے مکمل فائل سے کم بھیجی، اس لیے وہ محفوظ نہیں ہوئی۔ دوبارہ کوشش کریں</string>
