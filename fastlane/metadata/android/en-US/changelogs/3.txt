@@ -1,0 +1,6 @@
+Colours and a smoother app.
+- Settings, Colours: pick the same accent colours as GrabLine on your PC (blue, violet, green, orange, rose, teal) or your wallpaper's.
+- Messages such as Removed / Undo no longer hide behind the + button.
+- One back arrow and title on every page you go back from.
+- Downloads list newest first across the phone and your PCs, with size, speed and time left easier to read.
+- Fix: a server that limits connections now slows the download down instead of failing it.

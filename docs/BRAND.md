@@ -22,6 +22,10 @@ One look across the Android app, the desktop app and the website. The logo
 - **Buttons:** filled buttons are the brand blue with white text. On the phone, use
   `ui/theme/BrandButtons.kt` (`Button`, `OutlinedButton`, `TextButton`), never the
   Material ones directly.
+- **Accent choice:** Settings, Colours offers the desktop's presets (blue, violet `#7C3AED`, green
+  `#059669`, orange `#EA580C`, rose `#E11D48`, teal `#0D9488`) plus wallpaper colours. On the phone,
+  green, orange and teal fills are one shade deeper (`#047857`, `#C2410C`, `#0F766E`) so white text
+  stays at 4.5:1; each preset has its own light and dark text tint (`ui/theme/Accent.kt`).
 - **Icon:** the launcher icon is the logo's white glyph on the brand blue; the
   monochrome (themed) icon is the same glyph.
 
