@@ -61,6 +61,19 @@ class DownloadsViewModelTest {
         assertEquals(listOf("Desk PC", "Laptop"), vm.state.value.pcChips.map { it.name })
     }
 
+    /** Found on a real phone: a new PC download sat below older phone downloads in All. */
+    @Test fun allIsNewestFirstAcrossPhoneAndPcs() = runTest(dispatcher) {
+        seed() // PC jobs 1-4 were added at 1-4 s (the PC sends Unix seconds)
+        val phoneRow = DownloadRow(
+            key = phoneRowKey(9), device = Device.Phone, jobId = 9, name = "phone.bin", url = "https://example.com/p",
+            status = RowStatus.Done, createdAtMs = 2_500,
+        )
+        val vm = DownloadsViewModel(remote, flushScope = backgroundScope, extraRows = kotlinx.coroutines.flow.flowOf(listOf(phoneRow)))
+        backgroundScope.launch { vm.state.collect {} }
+        runCurrent()
+        assertEquals(listOf(4L, 3L, 9L, 2L, 1L), vm.state.value.rows.map { it.jobId })
+    }
+
     @Test fun phoneChipHidesPcRows() = runTest(dispatcher) {
         seed()
         val vm = vm()

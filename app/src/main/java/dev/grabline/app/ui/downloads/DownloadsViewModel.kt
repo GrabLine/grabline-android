@@ -81,7 +81,9 @@ class DownloadsViewModel(
     ) { jobs, links, extra, pending ->
         val removed = pending.filter { it.action == RowAction.Remove }.flatMap { it.targets }.map { it.key }.toSet()
         val cancelled = pending.filter { it.action == RowAction.Cancel }.flatMap { it.targets }.map { it.key }.toSet()
+        // Newest first across the phone and every PC (each source is already newest first; the sort is stable).
         (extra + jobs.map { toRow(it, links[it.job.pcId]) })
+            .sortedByDescending { it.createdAtMs }
             .filter { it.key !in removed }
             .map { if (it.key in cancelled) it.copy(status = RowStatus.Cancelled, speed = 0, etaSeconds = null) else it }
     }
@@ -89,8 +91,9 @@ class DownloadsViewModel(
     private val pcChips: Flow<List<PcChip>> = combine(remote.pcs, allRows) { pcs, rows ->
         val fromPcs = pcs.map { PcChip(it.pcId, it.name) }
         val known = fromPcs.map { it.pcId }.toSet()
+        // PCs that only appear through their downloads, by name: the rows are sorted by time, so their order moves.
         fromPcs + rows.mapNotNull { (it.device as? Device.Pc) }.distinctBy { it.pcId }
-            .filter { it.pcId !in known }.map { PcChip(it.pcId, it.name) }
+            .filter { it.pcId !in known }.sortedBy { it.name.lowercase() }.map { PcChip(it.pcId, it.name) }
     }
 
     private data class Outbox(val pending: Int, val failed: List<OutboxItem>)

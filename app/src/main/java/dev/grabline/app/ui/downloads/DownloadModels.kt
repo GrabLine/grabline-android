@@ -53,6 +53,8 @@ data class DownloadRow(
     val isTransfer: Boolean = false,
     /** Phone torrent jobs: peers, ratio, files, sequential and seeding state. */
     val torrent: dev.grabline.app.engine.TorrentDetails? = null,
+    /** When the download was added (ms since 1970); the All list is newest first across devices. */
+    val createdAtMs: Long = 0,
 ) {
     val isPhone: Boolean get() = device is Device.Phone
     val waiting: Boolean
@@ -132,6 +134,7 @@ fun phoneRow(j: PhoneJob) = DownloadRow(
     fileUri = j.fileUri,
     isTransfer = j.isTransfer,
     torrent = j.torrent,
+    createdAtMs = j.createdAt,
 )
 
 fun statusOf(wire: String): RowStatus = when (JobStatus.fromWire(wire)) {
@@ -154,6 +157,7 @@ fun toRow(item: PcJobWithPc, link: PcLinkState?): DownloadRow {
     return DownloadRow(
         key = rowKey(j.pcId, j.jobId),
         device = Device.Pc(j.pcId, item.pcName),
+        createdAtMs = (j.createdAt ?: 0) * 1000, // the PC protocol sends Unix seconds
         jobId = j.jobId,
         name = j.name.ifBlank { j.url },
         url = j.url,
