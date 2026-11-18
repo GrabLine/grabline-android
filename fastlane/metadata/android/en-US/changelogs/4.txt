@@ -1,0 +1,4 @@
+Your PCs and phone now control each other.
+- A paired PC can see your phone's downloads and pause, resume, cancel or retry them, or take one over ("Download on this PC instead"). Turn it off in Settings, PCs.
+- Fix: a torrent that reached 100% but never finished (torrents with padding files, which qBittorrent makes by default) now finishes.
+- Send to PC is hidden for links a PC can't take.
