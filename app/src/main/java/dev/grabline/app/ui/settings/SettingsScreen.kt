@@ -318,8 +318,11 @@ private fun SettingsMain(
                 listOf("system" to stringResource(R.string.theme_system)) +
                     LanguageOptions.map { (tag, res) -> tag to stringResource(res) },
                 language, {
-                    put(AppSettings.LANGUAGE, it)
-                    onLanguageChange(it)
+                    // Save first: switching the language recreates this screen and would cancel an unfinished save.
+                    scope.launch {
+                        settings.set(AppSettings.LANGUAGE, it)
+                        onLanguageChange(it)
+                    }
                 },
             )
         }
