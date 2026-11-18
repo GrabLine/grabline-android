@@ -20,6 +20,7 @@
     <string name="msg_site_changed">यह साइट बदल गई है। वीडियो इंजन अपडेट करें?</string>
     <string name="msg_site_changed_manual">यह साइट बदल गई है। “बारे में” में वीडियो इंजन अपडेट करें, फिर दोबारा कोशिश करें</string>
     <string name="msg_video_not_found">साइट के अनुसार यह वीडियो अब वहाँ नहीं है</string>
+    <string name="msg_video_live">लाइव स्ट्रीम और प्रीमियर अभी सेव नहीं किए जा सकते। खत्म होने के बाद फिर कोशिश करें</string>
     <string name="msg_site_timeout">साइट ने जवाब देने में बहुत देर कर दी। दोबारा कोशिश करें</string>
     <string name="msg_video_unexpected">इस वीडियो के साथ कुछ गड़बड़ हो गई। दोबारा कोशिश करें</string>
     <string name="msg_engine_start">वीडियो इंजन शुरू नहीं हो सका। GrabLine को फिर से शुरू करें और दोबारा कोशिश करें</string>

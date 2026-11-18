@@ -56,6 +56,7 @@ internal object EngineMessages {
         add(VideoText.SITE_CHANGED_MANUAL, R.string.msg_site_changed_manual)
         add(VideoText.REFUSED, R.string.msg_site_refused)
         add(VideoText.NOT_FOUND, R.string.msg_video_not_found)
+        add(VideoText.LIVE, R.string.msg_video_live)
         add(VideoText.NO_SPACE, R.string.msg_no_space)
         add(VideoText.CONNECTION, R.string.msg_connection)
         add(VideoText.TIMEOUT, R.string.msg_site_timeout)
