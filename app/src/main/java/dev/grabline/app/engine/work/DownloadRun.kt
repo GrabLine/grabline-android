@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 internal object DownloadRun {
     suspend fun run(container: AppContainer, active: ActiveNotifications, publish: (Notification) -> Unit) {
         val engine = container.phone
+        RunState.engineActive = true
         try {
             coroutineScope {
                 val watcher = launch { engine.jobs.collect { active.update(it, publish) } }
@@ -23,7 +24,10 @@ internal object DownloadRun {
                 watcher.cancel()
             }
         } finally {
+            RunState.engineActive = false
             active.clear()
         }
+        // Work that arrived after the last check but before this run ended must not wait for the next app start.
+        if (engine.hasRunnableWork().first()) container.scheduler.ensureRunning()
     }
 }

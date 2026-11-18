@@ -50,7 +50,15 @@ private class Pushback(val code: Int, val retryAfterMs: Long?) : IOException("pu
 /** The phone lost its network: not the server's fault, so it does not use up the retries. */
 private class Offline : IOException("offline")
 
-internal class Probe(val size: Long?, val ranges: Boolean, val etag: String?, val lastModified: String?) {
+internal class Probe(
+    val size: Long?,
+    val ranges: Boolean,
+    val etag: String?,
+    val lastModified: String?,
+    val disposition: String? = null,
+    val contentType: String? = null,
+    val finalUrl: String? = null,
+) {
     val validator: String? get() = etag ?: lastModified
 }
 
@@ -255,11 +263,15 @@ internal class JobRunner(private val env: Env, private val id: Long, private val
                 206 -> {
                     val cr = parseContentRange(resp.header("Content-Range"))
                     if (cr == null || cr.start != 0L) throw Permanent(EngineText.WRONG_RANGE)
-                    Probe(cr.total, cr.total != null, strong(resp.header("ETag")), resp.header("Last-Modified"))
+                    Probe(
+                        cr.total, cr.total != null, strong(resp.header("ETag")), resp.header("Last-Modified"),
+                        resp.header("Content-Disposition"), resp.header("Content-Type"), resp.request.url.toString(),
+                    )
                 }
                 200 -> Probe(
                     resp.body?.contentLength()?.takeIf { it >= 0 },
                     false, strong(resp.header("ETag")), resp.header("Last-Modified"),
+                    resp.header("Content-Disposition"), resp.header("Content-Type"), resp.request.url.toString(),
                 )
                 416 -> if (resp.header("Content-Range")?.trim()?.matches(Regex("""bytes \*/0""", RegexOption.IGNORE_CASE)) == true) {
                     Probe(0, false, null, null)
@@ -279,10 +291,18 @@ internal class JobRunner(private val env: Env, private val id: Long, private val
         else -> false
     }
 
+    /** A name taken from the link is replaced by what the server says it is (Content-Disposition, redirect, type). */
+    private suspend fun nameFromServer(job: PhoneJobRow, probe: Probe) {
+        if (job.name != fileNameFor(null, job.url)) return // the person or a PC chose this name
+        val better = betterFileName(job.name, probe.disposition, probe.contentType, probe.finalUrl)
+        if (better != job.name) dao.rename(id, better)
+    }
+
     private suspend fun attempt() {
         val job0 = dao.get(id) ?: return
         state = RunState(1, job0.connectionCap)
         val probe = retrying { probe(job0.url) }
+        nameFromServer(job0, probe)
         val scratch = env.storage.scratchFile(id)
         var segRows = dao.segments(id)
         val hadProgress = (job0.downloaded > 0 || segRows.isNotEmpty()) && scratch.exists()

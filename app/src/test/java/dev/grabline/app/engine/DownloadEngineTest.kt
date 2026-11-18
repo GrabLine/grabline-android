@@ -362,4 +362,23 @@ class DownloadEngineTest {
         assertNull(job(failed.id).error)
         delay(1)
     }
+
+    @Test fun serverNamesTheFileThroughContentDisposition() = rig {
+        serve(Misbehaving { ranged(it, body).setHeader("Content-Disposition", "attachment; filename=\"real name.pdf\"") })
+        val job = download("/dl?id=12")
+        assertEquals("real name.pdf", job.name)
+        assertTrue(storage.published.containsKey("real name.pdf"))
+    }
+
+    @Test fun chosenNameIsNotReplacedByTheServer() = rig {
+        serve(Misbehaving { ranged(it, body).setHeader("Content-Disposition", "attachment; filename=\"other.pdf\"") })
+        val job = download("/dl?id=12", title = "mine.bin")
+        assertEquals("mine.bin", job.name)
+    }
+
+    @Test fun nameWithoutExtensionGetsOneFromTheContentType() = rig {
+        serve(Misbehaving { ranged(it, body).setHeader("Content-Type", "application/pdf") })
+        val job = download("/get")
+        assertEquals("get.pdf", job.name)
+    }
 }
