@@ -111,6 +111,12 @@ class DownloadEngine(
         scope.launch { reevaluate() }
     }
 
+    /** A setting the engine reads while running changed: apply it to downloads already in flight and wake the loop. */
+    fun settingsChanged() {
+        wake.trySend(Unit)
+        scope.launch { reevaluate() }
+    }
+
     fun setCharging(charging: Boolean) {
         constraints.update { it.copy(charging = charging) }
         scope.launch { reevaluate() }

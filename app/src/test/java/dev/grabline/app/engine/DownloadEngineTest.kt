@@ -381,4 +381,24 @@ class DownloadEngineTest {
         val job = download("/get")
         assertEquals("get.pdf", job.name)
     }
+
+    @Test fun aSettingChangedMidDownloadHoldsAndReleasesTheRunningJob() = rig {
+        val big = content(3 * 1024 * 1024)
+        serve(Misbehaving { r ->
+            val resp = ranged(r, big)
+            if (resp.status.contains("206") && r.getHeader("Range") != "bytes=0-0") resp.throttleBody(64 * 1024, 100, TimeUnit.MILLISECONDS) else resp
+        })
+        val id = engine.add(PhoneAddRequest(url())).id
+        val run = scope.async { engine.runUntilIdle() }
+        awaitUntil("some bytes") { (dao.get(id)?.downloaded ?: 0) > 0 }
+        settings.config = settings.config.copy(onlyCharging = true)
+        engine.settingsChanged()
+        awaitUntil("held for the charger") { job(id).status == PhoneJobStatus.WAITING_CHARGING }
+        run.await()
+        settings.config = settings.config.copy(onlyCharging = false)
+        engine.settingsChanged()
+        awaitUntil("queued again") { job(id).status == PhoneJobStatus.QUEUED }
+        engine.runUntilIdle()
+        assertPublished(job(id), big)
+    }
 }

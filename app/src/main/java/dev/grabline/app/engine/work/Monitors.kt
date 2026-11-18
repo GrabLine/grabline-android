@@ -44,7 +44,10 @@ class ChargingMonitor(context: Context, private val engine: DownloadEngine) {
 
     fun start() {
         val battery = app.getSystemService(BatteryManager::class.java)
-        engine.setCharging(battery?.isCharging == true)
+        // "Charging" means a charger is connected. isCharging alone says false on a weak USB port, so read the plug state too.
+        val sticky = app.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        val plugged = (sticky?.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) ?: 0) != 0
+        engine.setCharging(plugged || battery?.isCharging == true)
         app.registerReceiver(
             object : BroadcastReceiver() {
                 override fun onReceive(context: Context, intent: Intent) {
