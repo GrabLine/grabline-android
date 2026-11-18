@@ -12,6 +12,9 @@ import dev.grabline.app.engine.StartLater
 /** Process-wide flag the foreground service sets, so a second start is a no-op. */
 internal object RunState {
     @Volatile var serviceRunning = false
+
+    /** True while an engine loop (inside a job or the service) is running; false once it has finished. */
+    @Volatile var engineActive = false
 }
 
 /** Starts the engine inside visible background work. Safe to call repeatedly. */
@@ -31,7 +34,7 @@ class DownloadScheduler(context: Context, private val appVisible: () -> Boolean)
 
     private fun scheduleUserInitiated(): Boolean {
         if (Build.VERSION.SDK_INT < 34) return false
-        if (jobs.getPendingJob(JOB_USER) != null) return true
+        if (RunPolicy.alreadyCovered(jobs.getPendingJob(JOB_USER) != null, RunState.engineActive)) return true
         val info = JobInfo.Builder(JOB_USER, component())
             .setUserInitiated(true)
             .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
@@ -49,7 +52,9 @@ class DownloadScheduler(context: Context, private val appVisible: () -> Boolean)
     }
 
     private fun scheduleBackground() {
-        if (RunState.serviceRunning || jobs.getPendingJob(JOB_USER) != null || jobs.getPendingJob(JOB_BACKGROUND) != null) return
+        if (RunState.serviceRunning) return
+        val pending = jobs.getPendingJob(JOB_USER) != null || jobs.getPendingJob(JOB_BACKGROUND) != null
+        if (RunPolicy.alreadyCovered(pending, RunState.engineActive)) return
         val info = JobInfo.Builder(JOB_BACKGROUND, component())
             .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
             .setPersisted(true) // survives a reboot (RECEIVE_BOOT_COMPLETED)

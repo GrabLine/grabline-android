@@ -81,4 +81,36 @@ class EngineUnitTest {
         bucket.acquire(1_000_000)
         assertEquals(before, waited)
     }
+
+    @Test fun dispositionNamesAreReadAndMadeSafe() {
+        val note = String(Character.toChars(0x1F3B5))
+        assertEquals("report final.pdf", dispositionName("attachment; filename=\"report final.pdf\""))
+        assertEquals("plain.zip", dispositionName("attachment; filename=plain.zip"))
+        assertEquals("文件 été.txt", dispositionName("attachment; filename*=UTF-8''%E6%96%87%E4%BB%B6%20%C3%A9t%C3%A9.txt"))
+        assertEquals("real name.txt", dispositionName("attachment; filename=\"fallback.txt\"; filename*=UTF-8''real%20name.txt"))
+        assertEquals("evil.txt", dispositionName("attachment; filename=\"../../evil.txt\""))
+        assertEquals("evil.txt", dispositionName("attachment; filename=\"C:\\temp\\evil.txt\""))
+        assertEquals("hidden", dispositionName("attachment; filename=\".hidden\""))
+        assertEquals("a_b_c_d_e_f_g.txt", dispositionName("attachment; filename=\"a:b*c?d<e>f|g.txt\""))
+        assertEquals("README", dispositionName("attachment; filename=\"README\""))
+        assertEquals("inline name.png", dispositionName("inline; filename=\"inline name.png\""))
+        assertEquals("$note song.mp3", dispositionName("attachment; filename*=UTF-8''%F0%9F%8E%B5%20song.mp3"))
+        assertEquals("semi;colon.txt", dispositionName("attachment; filename=\"semi;colon.txt\"")?.replace('_', ';'))
+        assertEquals("café.txt", dispositionName("attachment; filename=\"=?UTF-8?B?Y2Fmw6kudHh0?=\""))
+        assertTrue(dispositionName("attachment; filename=\"" + "x".repeat(300) + ".txt\"")!!.let { it.length <= 120 && it.endsWith(".txt") })
+        assertNull(dispositionName("attachment; filename=\"...\""))
+        assertNull(dispositionName("attachment; filename=\"\""))
+        assertNull(dispositionName("attachment"))
+        assertNull(dispositionName("attachment; filename*=UTF-8''%E6%9"))
+        assertNull(dispositionName(null))
+    }
+
+    @Test fun betterNamesUseWhatTheServerSaid() {
+        assertEquals("a.pdf", betterFileName("get", "attachment; filename=\"a.pdf\"", "application/octet-stream", null))
+        assertEquals("get.pdf", betterFileName("get", null, "application/pdf; charset=binary", null))
+        assertEquals("file.zip", betterFileName("get", null, "application/octet-stream", "https://h/x/file.zip?t=1"))
+        assertEquals("keep.bin", betterFileName("keep.bin", null, "application/pdf", null))
+        assertEquals("get", betterFileName("get", null, "application/octet-stream", "https://h/get"))
+        assertEquals("get", betterFileName("get", null, null, null))
+    }
 }

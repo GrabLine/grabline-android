@@ -28,6 +28,14 @@ class WorkLogicTest {
         override fun queued(count: Int) = "$count waiting"
     }
 
+    // A listed job only covers new work while its engine loop is alive (the queue stalled until restart otherwise)
+    @Test fun aLiveJobCoversNewWork() = assertEquals(true, RunPolicy.alreadyCovered(pendingJob = true, engineActive = true))
+    @Test fun aFinishedLoopDoesNotCoverNewWork() = assertEquals(false, RunPolicy.alreadyCovered(pendingJob = true, engineActive = false))
+    @Test fun noJobCoversNothing() {
+        assertEquals(false, RunPolicy.alreadyCovered(pendingJob = false, engineActive = true))
+        assertEquals(false, RunPolicy.alreadyCovered(pendingJob = false, engineActive = false))
+    }
+
     // Constraint mapping
     @Test fun noInternetIsOffline() = assertEquals(NetworkState.Offline, NetworkState.fromCapabilities(false, true, true))
     @Test fun wifiUnmetered() = assertEquals(NetworkState(true, wifi = true, metered = false), NetworkState.fromCapabilities(true, true, true))

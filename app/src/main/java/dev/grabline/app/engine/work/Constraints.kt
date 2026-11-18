@@ -28,6 +28,13 @@ object RunPolicy {
         else -> RunMode.FOREGROUND_SERVICE
     }
 
+    /**
+     * Whether a request to run the engine can be ignored because a job already covers it. A job the scheduler still
+     * lists is not enough: one whose engine loop has already finished is only waiting to be stopped, and work that
+     * arrived meanwhile would never run. Only a pending job with a live engine loop covers new work.
+     */
+    fun alreadyCovered(pendingJob: Boolean, engineActive: Boolean): Boolean = pendingJob && engineActive
+
     /** Stop reasons that mean the system paused us for Doze, standby or a battery saver. */
     fun isBatteryPause(stopReason: Int): Boolean = when (stopReason) {
         JobParameters.STOP_REASON_DEVICE_STATE,
