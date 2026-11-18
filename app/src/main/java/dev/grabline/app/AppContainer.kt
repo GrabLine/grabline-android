@@ -28,6 +28,8 @@ import dev.grabline.app.ui.common.localizeEngineMessage
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
@@ -179,6 +181,16 @@ class AppContainer(context: Context) {
         // Phone downloads: constraints in, scheduling out, finished/failed notifications.
         NetworkMonitor(app, phone).start()
         ChargingMonitor(app, phone).start()
+        // Settings the engine reads while running: a change must reach downloads already in flight.
+        scope.launch {
+            val flows: List<Flow<Any?>> = listOf(
+                settings.observe(AppSettings.SPEED_LIMIT_KBPS), settings.observe(AppSettings.DOWNLOADS_AT_ONCE),
+                settings.observe(AppSettings.CONNECTIONS_PER_FILE), settings.observe(AppSettings.ONLY_WIFI),
+                settings.observe(AppSettings.ONLY_CHARGING), settings.observe(AppSettings.AUTO_RETRY),
+                settings.observe(AppSettings.TORRENTS_ON_MOBILE_DATA), settings.observe(AppSettings.SEED_AFTER_DOWNLOAD),
+            )
+            combine(flows) { it.toList() }.drop(1).collect { phone.settingsChanged() }
+        }
         scope.launch { phone.hasRunnableWork().collect { if (it) scheduler.ensureRunning() } }
         scope.launch { phone.jobs.collect { phoneNotifier.onJobs(it) } }
         // "Start later": wake the app when the earliest waiting job is due.
