@@ -80,7 +80,7 @@ data class VideoAnalysis(
 )
 
 /** Why a video job or analysis failed. */
-enum class VideoFailure { DRM, NO_MEDIA, SITE_CHANGED, REFUSED, NOT_FOUND, NO_SPACE, CONNECTION, TIMEOUT, UNEXPECTED }
+enum class VideoFailure { DRM, NO_MEDIA, SITE_CHANGED, REFUSED, NOT_FOUND, LIVE, NO_SPACE, CONNECTION, TIMEOUT, UNEXPECTED }
 
 class VideoException(val failure: VideoFailure, message: String, cause: Throwable? = null) : Exception(message, cause)
 
@@ -153,6 +153,7 @@ object VideoText {
     const val SITE_CHANGED_MANUAL = "This site changed. Update the video engine in About, then try again"
     const val REFUSED = "The site refused this download. Open it in your browser and try again from there"
     const val NOT_FOUND = "The site says this video isn't there any more"
+    const val LIVE = "Live streams and premieres can't be saved yet. Try again once it has ended"
     const val NO_SPACE = "There is no space left on this phone. Free some up and try again"
     const val CONNECTION = "The connection kept dropping. Check your network and try again"
     const val TIMEOUT = "The site took too long to answer. Try again"
@@ -166,6 +167,7 @@ object VideoText {
         VideoFailure.SITE_CHANGED -> SITE_CHANGED
         VideoFailure.REFUSED -> REFUSED
         VideoFailure.NOT_FOUND -> NOT_FOUND
+        VideoFailure.LIVE -> LIVE
         VideoFailure.NO_SPACE -> NO_SPACE
         VideoFailure.CONNECTION -> CONNECTION
         VideoFailure.TIMEOUT -> TIMEOUT
@@ -181,11 +183,18 @@ object VideoErrors {
             "drm" in t && ("protected" in t || "has drm" in t || "drm media" in t) -> VideoFailure.DRM
             "unsupported url" in t -> VideoFailure.NO_MEDIA
             "no space left" in t || "enospc" in t -> VideoFailure.NO_SPACE
-            "http error 404" in t || "http error 410" in t || "video unavailable" in t || "has been removed" in t ||
-                "does not exist" in t -> VideoFailure.NOT_FOUND
-            "http error 403" in t || "http error 401" in t || "sign in" in t || "log in" in t || "login required" in t ||
-                "private video" in t || "members-only" in t || "age-restricted" in t || "confirm your age" in t ->
+            // Live streams and premieres first: yt-dlp words these as "not available" too.
+            "live stream" in t || "live event" in t || "is live" in t || "premieres in" in t || "premiere" in t ->
+                VideoFailure.LIVE
+            // A country block is a refusal, not a missing video.
+            "in your country" in t || "your location" in t || "geo restrict" in t || "geo-restrict" in t ->
                 VideoFailure.REFUSED
+            "http error 404" in t || "http error 410" in t || "video unavailable" in t || "has been removed" in t ||
+                "does not exist" in t || "is unavailable" in t || "is not available" in t || "no longer available" in t ||
+                "account associated with this video has been terminated" in t -> VideoFailure.NOT_FOUND
+            "http error 403" in t || "http error 401" in t || "sign in" in t || "log in" in t || "login required" in t ||
+                "private video" in t || "members-only" in t || "members only" in t || "join this channel" in t ||
+                "premium" in t || "age-restricted" in t || "confirm your age" in t -> VideoFailure.REFUSED
             "unable to extract" in t || "failed to extract" in t || "nsig extraction failed" in t ||
                 "latest version" in t || "update yt-dlp" in t || "requested format is not available" in t ||
                 "unable to find" in t -> VideoFailure.SITE_CHANGED

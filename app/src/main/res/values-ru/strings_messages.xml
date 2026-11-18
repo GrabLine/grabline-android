@@ -20,6 +20,7 @@
     <string name="msg_site_changed">Сайт изменился. Обновить видеодвижок?</string>
     <string name="msg_site_changed_manual">Сайт изменился. Обновите видеодвижок в разделе «О программе» и повторите попытку</string>
     <string name="msg_video_not_found">Сайт сообщает, что этого видео больше нет</string>
+    <string name="msg_video_live">Прямые трансляции и премьеры пока нельзя сохранить. Повторите попытку после завершения</string>
     <string name="msg_site_timeout">Сайт слишком долго не отвечал. Повторите попытку</string>
     <string name="msg_video_unexpected">С этим видео что-то пошло не так. Повторите попытку</string>
     <string name="msg_engine_start">Не удалось запустить видеодвижок. Перезапустите GrabLine и повторите попытку</string>
