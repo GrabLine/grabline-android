@@ -374,7 +374,8 @@ class DownloadEngine(
         if (index !in files.indices || row.status == S_COMPLETED) return
         val wanted = StoredFiles.wanted(row.fileMask, files.size).toMutableList()
         wanted[index] = selected
-        if (wanted.none { it }) return // at least one file stays selected
+        // At least one real file stays selected (padding files stay selected but are not files the user gets).
+        if (wanted.indices.none { wanted[it] && !files[it].isPad }) return
         dao.setFileMask(jobId, StoredFiles.mask(wanted))
     }
 
@@ -475,7 +476,7 @@ class DownloadEngine(
                 TorrentDetails(
                     peers = r.peers, uploaded = r.uploaded, ratio = SeedRules.ratio(r.uploaded, r.total ?: files.sumOf { it.size }),
                     sequential = r.sequential, seeding = r.seeding,
-                    files = files.mapIndexed { i, f -> TorrentFileView(i, f.path, f.size, wanted[i]) },
+                    files = files.mapIndexedNotNull { i, f -> if (f.isPad) null else TorrentFileView(i, f.path, f.size, wanted[i]) },
                 )
             },
         )

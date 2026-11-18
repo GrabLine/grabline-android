@@ -6,7 +6,13 @@ data class TorrentFileInfo(
     /** Path inside the torrent, with its top folder for a multi-file torrent ("Show/ep1.mkv"). */
     val path: String,
     val size: Long,
-)
+) {
+    /**
+     * A padding file (BEP 47, `.pad/<size>`; BitComet's `_____padding_file_*`): it only keeps the next file aligned
+     * to a piece. The library lists it but never writes it to disk, so it is not a file the user gets.
+     */
+    val isPad: Boolean get() = path.split('/').any { it == ".pad" } || path.substringAfterLast('/').startsWith("_____padding_file")
+}
 
 /** What the session knows about one torrent right now. */
 data class TorrentSnapshot(

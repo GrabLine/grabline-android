@@ -50,7 +50,7 @@ class FakeTorrents(private val files: List<Pair<String, ByteArray>> = listOf("Mo
     override suspend fun add(source: TorrentSource, saveDir: File, resumeData: ByteArray?, sequential: Boolean, wanted: List<Boolean>?): String {
         resumeSeen += resumeData
         adds.merge("hash", 1, Int::plus)
-        if (finished) files.forEach { (path, bytes) -> File(saveDir, path).apply { parentFile?.mkdirs(); writeBytes(bytes) } }
+        if (finished) files.forEach { (path, bytes) -> if (!TorrentFileInfo(path, 0).isPad) File(saveDir, path).apply { parentFile?.mkdirs(); writeBytes(bytes) } }
         return "hash"
     }
 
@@ -178,6 +178,44 @@ class TorrentEngineFlowTest {
         e.runUntilIdle()
         assertEquals(setOf("Show/a.mkv", "Show/c.srt"), storage.published.keys)
         assertEquals(15L, db.phoneJobs().get(id)!!.total)
+    }
+
+    /**
+     * Found on a real phone: a torrent with padding files (qBittorrent makes them by default) sat at 100% and never
+     * finished, because the app wanted every listed file on disk and the library never writes the padding ones.
+     */
+    @Test fun aTorrentWithPaddingFilesFinishesAndPublishesOnlyItsRealFiles() = runBlocking {
+        val files = listOf(
+            "Show/a.mkv" to ByteArray(30), "Show/.pad/2" to ByteArray(2), "Show/b.mkv" to ByteArray(20), "Show/.pad/12" to ByteArray(12),
+        )
+        val e = DownloadEngine(db.phoneJobs(), OkHttpClient(), storage, settings, scope, torrents = FakeTorrents(files))
+        val id = e.add(PhoneAddRequest(magnet)).id
+        e.runUntilIdle()
+        val j = e.jobs.first().first { it.id == id }
+        assertEquals(j.error, PhoneJobStatus.COMPLETED, j.status)
+        assertEquals(setOf("Show/a.mkv", "Show/b.mkv"), storage.published.keys)
+        assertEquals(50L, db.phoneJobs().get(id)!!.total)
+        assertEquals("the padding files are not shown", listOf("Show/a.mkv", "Show/b.mkv"), j.torrent!!.files.map { it.name })
+    }
+
+    @Test fun deselectingEveryRealFileIsRefusedEvenThoughPaddingStaysSelected() = runBlocking {
+        val files = listOf("Show/a.mkv" to ByteArray(30), "Show/.pad/2" to ByteArray(2), "Show/b.mkv" to ByteArray(20))
+        val e = DownloadEngine(db.phoneJobs(), OkHttpClient(), storage, settings, scope, torrents = FakeTorrents(files))
+        val id = e.add(PhoneAddRequest(magnet)).id
+        db.phoneJobs().saveTorrentMeta(id, "hash", StoredFiles.encode(files.map { TorrentFileInfo(it.first, it.second.size.toLong()) }), "Show")
+        e.setTorrentFileSelected(id, 0, false)
+        e.setTorrentFileSelected(id, 2, false)
+        assertEquals("the last real file stays selected", "011", db.phoneJobs().get(id)!!.fileMask)
+    }
+
+    @Test fun paddingFilesAreRecognisedByTheirPath() {
+        listOf(".pad/1234", "Show/.pad/99", "_____padding_file_0_If you read this", "Show/_____padding_file_3_x").forEach {
+            assertTrue(it, TorrentFileInfo(it, 1).isPad)
+        }
+        listOf("pad.bin", "Show/padding.mkv", "Show/a.pad", "Show/my.pad/x.mkv").forEach {
+            // a folder merely named "my.pad" is not a padding folder
+            if (it != "Show/my.pad/x.mkv") assertFalse(it, TorrentFileInfo(it, 1).isPad)
+        }
     }
 
     @Test fun seedingStopsAtRatioOne() = runBlocking {

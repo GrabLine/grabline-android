@@ -192,15 +192,21 @@ internal class TorrentRunner(
         val snap = backend.snapshot(hash) ?: throw IOException("The torrent went away")
         val wanted = StoredFiles.wanted(job.fileMask, snap.files.size)
         val taken = env.storage.existingNames(job.folderUri).toMutableSet()
-        val single = snap.files.size == 1 && !snap.files[0].path.contains('/')
+        // Padding files are listed but never written: not part of what the user gets.
+        val real = snap.files.filter { !it.isPad }
+        val single = real.size == 1 && !real[0].path.contains('/')
         var singleName: String? = null
         var bestUri: String? = null
         var bestSize = -1L
         var total = 0L
         for ((i, f) in snap.files.withIndex()) {
-            if (!wanted[i]) continue
+            if (!wanted[i] || f.isPad) continue
             val file = File(data, f.path)
             if (!file.isFile) throw IOException(TorrentText.NO_PEERS_FILE)
+            // The library writes the last pieces a moment after it reports the torrent finished: never publish a short file.
+            var waits = 0
+            while (file.length() < f.size && waits++ < 50) delay(200)
+            if (file.length() < f.size) throw IOException(TorrentText.NO_PEERS_FILE)
             val uri = if (single) {
                 val name = uniqueName(fileNameFor(f.path, f.path), taken)
                 taken += name
