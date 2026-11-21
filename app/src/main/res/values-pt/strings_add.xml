@@ -28,6 +28,7 @@
     <string name="add_folder">Pasta</string>
     <string name="add_menu_description">%1$s: %2$s. Abre uma lista</string>
     <string name="add_not_downloadable">Isto é uma página da web, não um arquivo</string>
+    <string name="add_try_as_video">Tentar como vídeo</string>
     <string name="add_open_in_browser">Abrir no navegador</string>
     <string name="add_open_in_browser_description">Abrir este link no navegador</string>
     <string name="add_start_now">Iniciar agora</string>

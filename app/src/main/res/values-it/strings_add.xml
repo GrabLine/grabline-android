@@ -28,6 +28,7 @@
     <string name="add_folder">Cartella</string>
     <string name="add_menu_description">%1$s: %2$s. Apre un elenco</string>
     <string name="add_not_downloadable">Questa è una pagina web, non un file</string>
+    <string name="add_try_as_video">Prova come video</string>
     <string name="add_open_in_browser">Apri nel browser</string>
     <string name="add_open_in_browser_description">Apri questo link nel browser</string>
     <string name="add_start_now">Avvia ora</string>

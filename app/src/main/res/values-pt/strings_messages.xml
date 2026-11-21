@@ -21,6 +21,7 @@
     <string name="msg_site_changed_manual">Este site mudou. Atualize o mecanismo de vídeo em “Sobre” e tente novamente</string>
     <string name="msg_video_not_found">O site diz que este vídeo não existe mais</string>
     <string name="msg_video_live">Transmissões ao vivo e estreias ainda não podem ser salvas. Tente de novo quando terminarem</string>
+    <string name="msg_video_no_video">Não há vídeo neste link</string>
     <string name="msg_site_timeout">O site demorou demais para responder. Tente novamente</string>
     <string name="msg_video_unexpected">Algo deu errado com este vídeo. Tente novamente</string>
     <string name="msg_engine_start">O mecanismo de vídeo não conseguiu iniciar. Reinicie o GrabLine e tente novamente</string>

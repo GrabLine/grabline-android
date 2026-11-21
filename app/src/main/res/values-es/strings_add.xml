@@ -28,6 +28,7 @@
     <string name="add_folder">Carpeta</string>
     <string name="add_menu_description">%1$s: %2$s. Abre una lista</string>
     <string name="add_not_downloadable">Esto es una página web, no un archivo</string>
+    <string name="add_try_as_video">Probar como vídeo</string>
     <string name="add_open_in_browser">Abrir en el navegador</string>
     <string name="add_open_in_browser_description">Abrir este enlace en tu navegador</string>
     <string name="add_start_now">Empezar ahora</string>

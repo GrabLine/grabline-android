@@ -151,6 +151,7 @@ fun AddSheetRoute(
             onSelectFolder = vm::selectFolder,
             onToggleLinks = vm::toggleLinks,
             onRetry = vm::retryAnalyze,
+            onTryAsVideo = vm::tryAsVideo,
             onStart = vm::startNow,
             onPairClick = onPairClick,
         )
@@ -167,6 +168,7 @@ fun AddSheetContent(
     onSelectFolder: (String?) -> Unit,
     onToggleLinks: () -> Unit,
     onRetry: () -> Unit,
+    onTryAsVideo: () -> Unit,
     onStart: () -> Unit,
     onPairClick: () -> Unit,
     onSelectPhone: () -> Unit = {},
@@ -214,6 +216,11 @@ fun AddSheetContent(
                 onClick = { openInBrowser(context, state.links.firstOrNull()) },
                 modifier = Modifier.heightIn(min = 48.dp).semantics { contentDescription = openDesc },
             ) { Text(stringResource(R.string.add_open_in_browser)) }
+            if (state.canTryAsVideo) {
+                OutlinedButton(onClick = onTryAsVideo, modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.add_try_as_video))
+                }
+            }
             return@Column
         }
 

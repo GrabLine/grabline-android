@@ -28,6 +28,7 @@
     <string name="add_folder">Папка</string>
     <string name="add_menu_description">%1$s: %2$s. Открывает список</string>
     <string name="add_not_downloadable">Это веб-страница, а не файл</string>
+    <string name="add_try_as_video">Попробовать как видео</string>
     <string name="add_open_in_browser">Открыть в браузере</string>
     <string name="add_open_in_browser_description">Открыть эту ссылку в браузере</string>
     <string name="add_start_now">Начать сейчас</string>

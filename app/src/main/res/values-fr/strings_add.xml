@@ -28,6 +28,7 @@
     <string name="add_folder">Dossier</string>
     <string name="add_menu_description">%1$s : %2$s. Ouvre une liste</string>
     <string name="add_not_downloadable">C\'est une page web, pas un fichier</string>
+    <string name="add_try_as_video">Essayer comme vidéo</string>
     <string name="add_open_in_browser">Ouvrir dans le navigateur</string>
     <string name="add_open_in_browser_description">Ouvrir ce lien dans votre navigateur</string>
     <string name="add_start_now">Démarrer maintenant</string>

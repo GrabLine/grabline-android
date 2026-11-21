@@ -23,6 +23,7 @@ fun interface LinkProbe {
 /** Probes with HEAD, falling back to a one-byte ranged GET when the server refuses HEAD. */
 class HttpLinkProbe(client: OkHttpClient = OkHttpClient()) : LinkProbe {
     private val http = client.newBuilder()
+        .addInterceptor(dev.grabline.app.engine.BrowserUserAgent)
         .followRedirects(true)
         .followSslRedirects(true)
         .callTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)

@@ -52,6 +52,7 @@ internal object EngineMessages {
 
         add(VideoText.DRM, R.string.msg_video_drm)
         add(VideoText.NO_MEDIA, R.string.msg_no_media)
+        add(VideoText.NO_VIDEO, R.string.msg_video_no_video)
         add(VideoText.SITE_CHANGED, R.string.msg_site_changed)
         add(VideoText.SITE_CHANGED_MANUAL, R.string.msg_site_changed_manual)
         add(VideoText.REFUSED, R.string.msg_site_refused)
