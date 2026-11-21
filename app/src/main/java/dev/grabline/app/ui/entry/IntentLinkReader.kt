@@ -38,6 +38,9 @@ object IntentLinkReader {
                 val data = intent.data ?: return null
                 if (data.scheme.equals("magnet", ignoreCase = true)) {
                     IncomingRequest(IncomingLinks.extract(data.toString()), title)
+                } else if (data.scheme.equals("http", ignoreCase = true) || data.scheme.equals("https", ignoreCase = true)) {
+                    // "Open with GrabLine" on a link to a file (the manifest only offers file links).
+                    IncomingRequest(IncomingLinks.extract(data.toString()), title)
                 } else {
                     val ref = torrentRef(context, data)
                     if (ref != null) IncomingRequest(emptyList(), title, ref) else return null
