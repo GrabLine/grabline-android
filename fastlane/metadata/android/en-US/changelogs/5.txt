@@ -1,0 +1,6 @@
+Many more sites, plus fixes found on a real phone.
+- Videos and music from far more sites (X broadcasts, Facebook, Instagram stories, Twitch clips, Streamable...). A link the app doesn't know can be tried as a video.
+- Downloads use the file name the server gives; queued downloads no longer stall.
+- Settings now apply to downloads already running.
+- Clear reasons when a video can't be saved.
+- The Language setting works on Android 13+.
