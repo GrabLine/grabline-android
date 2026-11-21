@@ -318,6 +318,11 @@ object AnalysisParser {
 
     fun parse(text: String): VideoAnalysis {
         val root = json.parseToJsonElement(text).jsonObject
+        // A live stream or a premiere that has not started cannot be saved: say so now, before a download that never ends.
+        val liveStatus = root.str("live_status")
+        if (liveStatus == "is_live" || liveStatus == "is_upcoming" || (root["is_live"] as? JsonPrimitive)?.contentOrNull == "true") {
+            throw VideoException(VideoFailure.LIVE, VideoText.LIVE)
+        }
         val title = root.str("title")
         val duration = root.num("duration")?.toLong()
         val uploader = root.str("uploader") ?: root.str("channel")

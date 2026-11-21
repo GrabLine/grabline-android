@@ -213,4 +213,16 @@ class VideoEngineTest {
         override fun cancel(processId: String) {}
         override fun update() = false
     }
+
+    @Test fun aLiveStreamIsRefusedWhenAnalysed() {
+        for (status in listOf("is_live", "is_upcoming")) {
+            val e = runCatching { AnalysisParser.parse("""{"title":"Radio","live_status":"$status","formats":[]}""") }.exceptionOrNull()
+            assertTrue("$status gives a VideoException", e is VideoException)
+            assertEquals(VideoFailure.LIVE, (e as VideoException).failure)
+        }
+        val e2 = runCatching { AnalysisParser.parse("""{"title":"Radio","is_live":true,"formats":[]}""") }.exceptionOrNull()
+        assertEquals(VideoFailure.LIVE, (e2 as VideoException).failure)
+        // A finished stream is an ordinary video.
+        assertEquals("Radio", AnalysisParser.parse("""{"title":"Radio","live_status":"was_live","formats":[]}""").title)
+    }
 }

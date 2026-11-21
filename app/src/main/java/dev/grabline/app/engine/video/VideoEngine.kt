@@ -160,6 +160,8 @@ class YoutubeDlVideoEngine(
         }
         return try {
             AnalysisParser.parse(json)
+        } catch (e: VideoException) {
+            throw e
         } catch (e: Exception) {
             throw VideoException(VideoFailure.UNEXPECTED, VideoText.UNEXPECTED, e)
         }
