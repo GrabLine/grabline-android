@@ -28,6 +28,7 @@
     <string name="add_folder">المجلد</string>
     <string name="add_menu_description">%1$s: %2$s. يفتح قائمة</string>
     <string name="add_not_downloadable">هذه صفحة ويب وليست ملفًا</string>
+    <string name="add_try_as_video">جرّب كفيديو</string>
     <string name="add_open_in_browser">فتح في المتصفح</string>
     <string name="add_open_in_browser_description">افتح هذا الرابط في متصفحك</string>
     <string name="add_start_now">ابدأ الآن</string>

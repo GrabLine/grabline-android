@@ -28,6 +28,7 @@
     <string name="add_folder">फ़ोल्डर</string>
     <string name="add_menu_description">%1$s: %2$s। एक सूची खुलती है</string>
     <string name="add_not_downloadable">यह एक वेब पेज है, फ़ाइल नहीं</string>
+    <string name="add_try_as_video">वीडियो के रूप में आज़माएँ</string>
     <string name="add_open_in_browser">ब्राउज़र में खोलें</string>
     <string name="add_open_in_browser_description">इस लिंक को अपने ब्राउज़र में खोलें</string>
     <string name="add_start_now">अभी शुरू करें</string>

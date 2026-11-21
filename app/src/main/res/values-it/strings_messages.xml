@@ -21,6 +21,7 @@
     <string name="msg_site_changed_manual">Questo sito è cambiato. Aggiorna il motore video in “Informazioni”, poi riprova</string>
     <string name="msg_video_not_found">Il sito dice che questo video non c\'è più</string>
     <string name="msg_video_live">Le dirette e le première non si possono ancora salvare. Riprova quando sono finite</string>
+    <string name="msg_video_no_video">Non c\'è nessun video a questo link</string>
     <string name="msg_site_timeout">Il sito ha impiegato troppo tempo a rispondere. Riprova</string>
     <string name="msg_video_unexpected">Qualcosa è andato storto con questo video. Riprova</string>
     <string name="msg_engine_start">Il motore video non è riuscito ad avviarsi. Riavvia GrabLine e riprova</string>

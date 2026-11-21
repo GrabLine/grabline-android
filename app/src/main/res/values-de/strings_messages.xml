@@ -21,6 +21,7 @@
     <string name="msg_site_changed_manual">Diese Seite hat sich geändert. Aktualisiere die Video-Engine unter „Über“ und versuche es dann erneut</string>
     <string name="msg_video_not_found">Die Seite meldet, dass dieses Video nicht mehr vorhanden ist</string>
     <string name="msg_video_live">Livestreams und Premieren lassen sich noch nicht speichern. Versuche es erneut, wenn sie beendet sind</string>
+    <string name="msg_video_no_video">Unter diesem Link gibt es kein Video</string>
     <string name="msg_site_timeout">Die Seite hat zu lange nicht geantwortet. Versuche es erneut</string>
     <string name="msg_video_unexpected">Mit diesem Video ist etwas schiefgelaufen. Versuche es erneut</string>
     <string name="msg_engine_start">Die Video-Engine konnte nicht gestartet werden. Starte GrabLine neu und versuche es erneut</string>

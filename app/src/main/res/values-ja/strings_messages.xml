@@ -21,6 +21,7 @@
     <string name="msg_site_changed_manual">このサイトが変更されました。「情報」で動画エンジンを更新してから、もう一度お試しください</string>
     <string name="msg_video_not_found">サイトによると、この動画はもうありません</string>
     <string name="msg_video_live">ライブ配信とプレミア公開はまだ保存できません。終了してからもう一度お試しください</string>
+    <string name="msg_video_no_video">このリンクには動画がありません</string>
     <string name="msg_site_timeout">サイトの応答に時間がかかりすぎました。もう一度お試しください</string>
     <string name="msg_video_unexpected">この動画で問題が発生しました。もう一度お試しください</string>
     <string name="msg_engine_start">動画エンジンを起動できませんでした。GrabLine を再起動して、もう一度お試しください</string>

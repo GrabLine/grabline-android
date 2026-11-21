@@ -17,6 +17,8 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 /**
@@ -27,6 +29,9 @@ import kotlinx.coroutines.withContext
 class AndroidPhoneStorage(context: Context) : PhoneStorage {
     private val app = context.applicationContext
     private val scratchDir = File(app.noBackupFilesDir, "phone-downloads").apply { mkdirs() }
+
+    /** Saving is one at a time: two videos finishing together with the same title must not insert the same name at once. */
+    private val publishLock = Mutex()
 
     override fun scratchFile(jobId: Long) = File(scratchDir, "job-$jobId.part")
 
@@ -48,7 +53,7 @@ class AndroidPhoneStorage(context: Context) : PhoneStorage {
         }.getOrDefault(emptySet())
     }
 
-    override suspend fun publish(folderUri: String?, name: String, scratch: File): String = withContext(Dispatchers.IO) {
+    override suspend fun publish(folderUri: String?, name: String, scratch: File): String = withContext(Dispatchers.IO) { publishLock.withLock {
         try {
             when {
                 folderUri != null -> publishSaf(Uri.parse(folderUri), name, scratch)
@@ -60,10 +65,11 @@ class AndroidPhoneStorage(context: Context) : PhoneStorage {
         } catch (e: FileNotFoundException) {
             throw FolderUnavailableException(e)
         }
-    }
+    } }
 
     override suspend fun publishIn(folderUri: String?, subDir: String, name: String, scratch: File): String = withContext(Dispatchers.IO) {
         if (subDir.isEmpty()) return@withContext publish(folderUri, name, scratch)
+        publishLock.withLock {
         try {
             when {
                 folderUri != null -> publishSaf(Uri.parse(folderUri), name, scratch, subDir.split('/'))
@@ -74,6 +80,7 @@ class AndroidPhoneStorage(context: Context) : PhoneStorage {
             throw FolderUnavailableException(e)
         } catch (e: FileNotFoundException) {
             throw FolderUnavailableException(e)
+        }
         }
     }
 

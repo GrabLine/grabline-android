@@ -80,7 +80,7 @@ data class VideoAnalysis(
 )
 
 /** Why a video job or analysis failed. */
-enum class VideoFailure { DRM, NO_MEDIA, SITE_CHANGED, REFUSED, NOT_FOUND, LIVE, NO_SPACE, CONNECTION, TIMEOUT, UNEXPECTED }
+enum class VideoFailure { DRM, NO_MEDIA, NO_VIDEO, SITE_CHANGED, REFUSED, NOT_FOUND, LIVE, NO_SPACE, CONNECTION, TIMEOUT, UNEXPECTED }
 
 class VideoException(val failure: VideoFailure, message: String, cause: Throwable? = null) : Exception(message, cause)
 
@@ -149,6 +149,7 @@ object DrmGuard {
 object VideoText {
     const val DRM = "This video is protected by DRM. GrabLine can't download it"
     const val NO_MEDIA = "This is a web page, not a file"
+    const val NO_VIDEO = "There's no video at this link"
     const val SITE_CHANGED = "This site changed. Update the video engine?"
     const val SITE_CHANGED_MANUAL = "This site changed. Update the video engine in About, then try again"
     const val REFUSED = "The site refused this download. Open it in your browser and try again from there"
@@ -164,6 +165,7 @@ object VideoText {
     fun forFailure(f: VideoFailure) = when (f) {
         VideoFailure.DRM -> DRM
         VideoFailure.NO_MEDIA -> NO_MEDIA
+        VideoFailure.NO_VIDEO -> NO_VIDEO
         VideoFailure.SITE_CHANGED -> SITE_CHANGED
         VideoFailure.REFUSED -> REFUSED
         VideoFailure.NOT_FOUND -> NOT_FOUND
@@ -182,6 +184,8 @@ object VideoErrors {
         return when {
             "drm" in t && ("protected" in t || "has drm" in t || "drm media" in t) -> VideoFailure.DRM
             "unsupported url" in t -> VideoFailure.NO_MEDIA
+            "no video could be found" in t || "no video in this" in t || "no video formats found" in t || "there is no video" in t ||
+                "does not contain any video" in t || "no media found" in t -> VideoFailure.NO_VIDEO
             "no space left" in t || "enospc" in t -> VideoFailure.NO_SPACE
             // Live streams and premieres first: yt-dlp words these as "not available" too.
             "live stream" in t || "live event" in t || "is live" in t || "premieres in" in t || "premiere" in t ->
@@ -189,17 +193,21 @@ object VideoErrors {
             // A country block is a refusal, not a missing video.
             "in your country" in t || "your location" in t || "geo restrict" in t || "geo-restrict" in t ->
                 VideoFailure.REFUSED
+            // Needing a login beats "not available": Instagram says both in one sentence.
+            "http error 403" in t || "http error 401" in t || "sign in" in t || "log in" in t || "login required" in t ||
+                "private video" in t || "members-only" in t || "members only" in t || "join this channel" in t ||
+                "premium" in t || "age-restricted" in t || "confirm your age" in t || "authentication" in t || "--cookies" in t ||
+                "is protected" in t || "nsfw" in t ||
+                "impersonat" in t -> VideoFailure.REFUSED
             "http error 404" in t || "http error 410" in t || "video unavailable" in t || "has been removed" in t ||
                 "does not exist" in t || "is unavailable" in t || "is not available" in t || "no longer available" in t ||
                 "account associated with this video has been terminated" in t -> VideoFailure.NOT_FOUND
-            "http error 403" in t || "http error 401" in t || "sign in" in t || "log in" in t || "login required" in t ||
-                "private video" in t || "members-only" in t || "members only" in t || "join this channel" in t ||
-                "premium" in t || "age-restricted" in t || "confirm your age" in t -> VideoFailure.REFUSED
             "unable to extract" in t || "failed to extract" in t || "nsig extraction failed" in t ||
                 "latest version" in t || "update yt-dlp" in t || "requested format is not available" in t ||
                 "unable to find" in t -> VideoFailure.SITE_CHANGED
             "timed out" in t || "unable to download" in t || "connection" in t || "network is unreachable" in t ||
-                "temporary failure" in t || "name or service not known" in t || "incomplete read" in t ->
+                "temporary failure" in t || "name or service not known" in t || "incomplete read" in t ||
+                "no address associated" in t || "could not resolve" in t || "getaddrinfo" in t || "giving up after" in t ->
                 VideoFailure.CONNECTION
             else -> VideoFailure.UNEXPECTED
         }

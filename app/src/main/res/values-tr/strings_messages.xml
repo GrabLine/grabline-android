@@ -21,6 +21,7 @@
     <string name="msg_site_changed_manual">Bu site değişti. Video motorunu “Hakkında” bölümünden güncelle, sonra tekrar dene</string>
     <string name="msg_video_not_found">Site bu videonun artık orada olmadığını söylüyor</string>
     <string name="msg_video_live">Canlı yayınlar ve prömiyerler henüz kaydedilemiyor. Bittikten sonra tekrar dene</string>
+    <string name="msg_video_no_video">Bu bağlantıda video yok</string>
     <string name="msg_site_timeout">Site yanıt vermekte çok gecikti. Tekrar dene</string>
     <string name="msg_video_unexpected">Bu videoyla ilgili bir sorun oluştu. Tekrar dene</string>
     <string name="msg_engine_start">Video motoru başlatılamadı. GrabLine’ı yeniden başlat ve tekrar dene</string>

@@ -10,6 +10,7 @@ import dev.grabline.app.data.AppSettings
 import dev.grabline.app.data.PairedPc
 import dev.grabline.app.engine.AndroidPhoneStorage
 import dev.grabline.app.engine.AppEngineSettings
+import dev.grabline.app.engine.BrowserUserAgent
 import dev.grabline.app.engine.DownloadEngine
 import dev.grabline.app.engine.cloud.CredentialStore
 import dev.grabline.app.engine.cloud.DefaultCloudBackend
@@ -91,7 +92,7 @@ class AppContainer(context: Context) {
     private val baseClient = OkHttpClient.Builder().build()
     private val appVersion = BuildConfig.VERSION_NAME
     // Downloads read slowly from some servers: 60 s read timeout for the engine (the shared client keeps 10 s).
-    private val engineClient = baseClient.newBuilder().readTimeout(60, TimeUnit.SECONDS).build()
+    private val engineClient = baseClient.newBuilder().readTimeout(60, TimeUnit.SECONDS).addInterceptor(BrowserUserAgent).build()
     val video = YoutubeDlVideoEngine(app)
     /** Saved server logins; their secrets are sealed by an Android Keystore key. */
     val cloudAccounts = CredentialStore(db.cloudAccounts(), KeystoreSecretCipher.create())

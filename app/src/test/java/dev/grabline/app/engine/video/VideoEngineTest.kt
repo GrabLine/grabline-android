@@ -225,4 +225,16 @@ class VideoEngineTest {
         // A finished stream is an ordinary video.
         assertEquals("Radio", AnalysisParser.parse("""{"title":"Radio","live_status":"was_live","formats":[]}""").title)
     }
+
+    @Test fun socialSiteErrorsGetSpecificReasons() {
+        assertEquals(VideoFailure.NO_VIDEO, VideoErrors.classify("ERROR: [twitter] 1: No video could be found in this tweet"))
+        assertEquals(VideoFailure.NO_VIDEO, VideoErrors.classify("ERROR: [instagram] x: There is no video in this post"))
+        assertEquals(VideoFailure.REFUSED, VideoErrors.classify("ERROR: [Reddit] 6rrwyj: Account authentication is required. Use --cookies-from-browser or --cookies for the authentication."))
+        assertEquals(VideoFailure.REFUSED, VideoErrors.classify("ERROR: [Instagram] x: Requested content is not available, rate-limit reached or login required"))
+        assertEquals(VideoFailure.REFUSED, VideoErrors.classify("ERROR: [twitter] x: NSFW tweet requires authentication"))
+        assertEquals(VideoFailure.REFUSED, VideoErrors.classify("ERROR: [twitter] x: This Tweet is protected"))
+        assertEquals(VideoFailure.CONNECTION, VideoErrors.classify("ERROR: [download] Got error: [Errno 7] No address associated with hostname. Giving up after 3 retries"))
+        assertEquals(VideoFailure.REFUSED, VideoErrors.classify("WARNING: [kick:clip] The extractor is attempting impersonation, but no impersonate target is available."))
+        assertEquals("There's no video at this link", VideoText.forFailure(VideoFailure.NO_VIDEO))
+    }
 }

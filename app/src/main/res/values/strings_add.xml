@@ -28,6 +28,7 @@
     <string name="add_folder">Folder</string>
     <string name="add_menu_description">%1$s: %2$s. Opens a list</string>
     <string name="add_not_downloadable">This is a web page, not a file</string>
+    <string name="add_try_as_video">Try as a video</string>
     <string name="add_open_in_browser">Open in browser</string>
     <string name="add_open_in_browser_description">Open this link in your browser</string>
     <string name="add_start_now">Start now</string>

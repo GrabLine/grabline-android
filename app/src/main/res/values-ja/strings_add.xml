@@ -28,6 +28,7 @@
     <string name="add_folder">フォルダ</string>
     <string name="add_menu_description">%1$s：%2$s。リストが開きます</string>
     <string name="add_not_downloadable">これはWebページで、ファイルではありません</string>
+    <string name="add_try_as_video">動画として試す</string>
     <string name="add_open_in_browser">ブラウザで開く</string>
     <string name="add_open_in_browser_description">このリンクをブラウザで開きます</string>
     <string name="add_start_now">今すぐ開始</string>

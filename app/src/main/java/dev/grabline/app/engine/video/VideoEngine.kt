@@ -1,11 +1,14 @@
 package dev.grabline.app.engine.video
 
 import android.content.Context
+import java.io.File
+import android.util.Log
+import android.os.SystemClock
+import android.content.pm.ApplicationInfo
 import com.yausername.ffmpeg.FFmpeg
 import com.yausername.youtubedl_android.YoutubeDL
 import com.yausername.youtubedl_android.YoutubeDLException
 import com.yausername.youtubedl_android.YoutubeDLRequest
-import java.io.File
 import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -76,13 +79,18 @@ class AndroidYtDlpBackend(context: Context) : YtDlpBackend {
             }.getOrNull()
 
     override fun run(url: String, args: List<String>, processId: String?, onProgress: ((Float, Long, String) -> Unit)?): String {
+        val debuggable = (app.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
         val request = YoutubeDLRequest(url).addCommands(args)
+        val started = SystemClock.elapsedRealtime()
         try {
             val response = ytdlp.execute(request, processId) { percent, eta, line -> onProgress?.invoke(percent, eta, line) }
+            // Debug builds only: what yt-dlp really said and how long it took, to diagnose sites that misbehave.
+            if (debuggable) Log.d("GrabLineYt", "ok ${SystemClock.elapsedRealtime() - started}ms $url stderr=${response.err.take(700)}")
             return response.out
         } catch (e: YoutubeDL.CanceledException) {
             throw CancellationException("yt-dlp was cancelled")
         } catch (e: YoutubeDLException) {
+            if (debuggable) Log.d("GrabLineYt", "FAILED ${SystemClock.elapsedRealtime() - started}ms $url :: ${e.message.orEmpty().take(900)}")
             throw YtDlpFailed(e.message.orEmpty())
         }
     }

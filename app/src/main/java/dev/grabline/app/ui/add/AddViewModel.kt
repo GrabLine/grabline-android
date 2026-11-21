@@ -44,7 +44,8 @@ import kotlinx.coroutines.launch
 
 data class PcOption(val id: String, val name: String, val online: Boolean)
 
-enum class FailureReason { NO_MEDIA, DRM, SITE_CHANGED, OTHER }
+/** UNAVAILABLE: the site says there is nothing to save (a live stream, a removed video); starting would only fail. */
+enum class FailureReason { NO_MEDIA, DRM, SITE_CHANGED, UNAVAILABLE, OTHER }
 
 sealed interface AnalysisUi {
     data object Idle : AnalysisUi
@@ -85,6 +86,8 @@ data class AddUiState(
     val queueId: Int? = null,
     val folderId: String? = null,
     val notDownloadable: Boolean = false,
+    /** A web page the person can still hand to the video engine. */
+    val canTryAsVideo: Boolean = false,
     /** Web-page-looking links are still being checked with the server: not yet known to be pages. */
     val checking: Boolean = false,
     val canStart: Boolean = false,
@@ -164,6 +167,8 @@ class AddViewModel(
         val sent: SentResult? = null,
         /** Per link the server said: true when it serves a file although the link looks like a page. */
         val probed: Map<String, Boolean> = emptyMap(),
+        /** Page links the person asked to try as a video; the video engine knows more sites than the rules do. */
+        val asVideo: Set<String> = emptySet(),
     )
 
     private val transient = MutableStateFlow(Transient())
@@ -349,12 +354,14 @@ class AddViewModel(
     }
 
     /** The link's kind, with a probed file counted as a file. */
-    private fun kindOf(link: String, probed: Map<String, Boolean>): LinkKind {
+    private fun kindOf(link: String, probed: Map<String, Boolean>, asVideo: Set<String> = transient.value.asVideo): LinkKind {
         val kind = LinkKind.classify(link)
+        if (kind == LinkKind.PAGE && link in asVideo) return LinkKind.VIDEO
         return if (kind == LinkKind.PAGE && probed[link] == true) LinkKind.FILE else kind
     }
 
     fun retryAnalyze() = transient.update { it.copy(retry = it.retry + 1) }
+    fun tryAsVideo() = transient.update { it.copy(asVideo = it.asVideo + state.value.links) }
     fun consumeSent() = transient.update { it.copy(sent = null) }
 
     fun startNow() {
@@ -477,6 +484,7 @@ class AddViewModel(
         VideoFailure.NO_MEDIA -> FailureReason.NO_MEDIA
         VideoFailure.DRM -> FailureReason.DRM
         VideoFailure.SITE_CHANGED -> FailureReason.SITE_CHANGED
+        VideoFailure.LIVE, VideoFailure.NOT_FOUND, VideoFailure.NO_VIDEO -> FailureReason.UNAVAILABLE
         else -> FailureReason.OTHER
     }
 
@@ -518,7 +526,7 @@ class AddViewModel(
         val analysis = if (online || isPhone) t.analysis else AnalysisUi.Idle
         val blocked = if (isPhone) {
             l.links.firstNotNullOfOrNull { DrmGuard.refusal(it) }
-                ?: (analysis as? AnalysisUi.Failed)?.takeIf { it.reason == FailureReason.DRM }?.message
+                ?: (analysis as? AnalysisUi.Failed)?.takeIf { it.reason == FailureReason.DRM || it.reason == FailureReason.UNAVAILABLE }?.message
         } else {
             null
         }
@@ -574,6 +582,7 @@ class AddViewModel(
             queueId = queueId,
             folderId = folderId,
             notDownloadable = notDownloadable,
+            canTryAsVideo = allPages,
             checking = checking,
             canStart = if (isPhone) phoneAdds > 0 && !checking && !notDownloadable && (!phoneVideo || clipValid) && (!showChecksum || checksumValid)
             else pc != null && !checking && !notDownloadable &&

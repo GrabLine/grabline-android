@@ -28,6 +28,7 @@
     <string name="add_folder">Klasör</string>
     <string name="add_menu_description">%1$s: %2$s. Bir liste açar</string>
     <string name="add_not_downloadable">Bu bir web sayfası, dosya değil</string>
+    <string name="add_try_as_video">Video olarak dene</string>
     <string name="add_open_in_browser">Tarayıcıda aç</string>
     <string name="add_open_in_browser_description">Bu bağlantıyı tarayıcında aç</string>
     <string name="add_start_now">Şimdi başlat</string>

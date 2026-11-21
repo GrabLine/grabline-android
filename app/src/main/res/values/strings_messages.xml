@@ -21,6 +21,7 @@
     <string name="msg_site_changed_manual">This site changed. Update the video engine in About, then try again</string>
     <string name="msg_video_not_found">The site says this video isn\'t there any more</string>
     <string name="msg_video_live">Live streams and premieres can\'t be saved yet. Try again once it has ended</string>
+    <string name="msg_video_no_video">There\'s no video at this link</string>
     <string name="msg_site_timeout">The site took too long to answer. Try again</string>
     <string name="msg_video_unexpected">Something went wrong with this video. Try again</string>
     <string name="msg_engine_start">The video engine couldn\'t start. Restart GrabLine and try again</string>

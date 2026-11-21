@@ -28,4 +28,24 @@ class LinkKindTest {
         assertEquals("Video", LinkKind.VIDEO.label)
         assertEquals("File", LinkKind.FILE.label)
     }
+
+    @Test fun moreVideoAndAudioSitesAreRecognised() {
+        val videos = listOf(
+            "https://www.youtube.com/@NASA", "https://music.youtube.com/watch?v=abc", "https://youtu.be/abc",
+            "https://x.com/i/broadcasts/1ZkKzeyrPbaxv", "https://twitter.com/i/status/123", "https://twitter.com/NASA/status/123?s=20",
+            "https://www.instagram.com/reel/Chunk8-jurw/", "https://www.instagram.com/stories/user/123/", "https://www.instagram.com/someone/reel/abc/",
+            "https://www.facebook.com/video.php?v=274175099429670", "https://www.facebook.com/cnn/videos/10155529876156509/", "https://fb.watch/abc/",
+            "https://m.facebook.com/watch/?v=1", "https://www.facebook.com/share/v/abc/", "https://clips.twitch.tv/FaintLightGull",
+            "https://www.twitch.tv/xqc/clip/Cultured", "https://www.twitch.tv/videos/12345", "https://v.redd.it/abc", "https://www.reddit.com/r/x/comments/1/a/",
+            "https://streamable.com/moo", "https://rumble.com/v5abc-title.html", "https://odysee.com/@a:b/c:d", "https://artist.bandcamp.com/track/song",
+            "https://www.mixcloud.com/a/b/", "https://www.bilibili.com/video/BV1xx", "https://www.ted.com/talks/some_talk", "https://www.pinterest.com/pin/123/",
+            "https://kick.com/spreen/clips/clip_1", "https://bsky.app/profile/a.bsky.social/post/3l4", "https://www.threads.net/@user/post/abc",
+            "https://www.linkedin.com/posts/someone_activity-123", "https://soundcloud.com/a/b", "https://on.soundcloud.com/abc", "https://vm.tiktok.com/abc/",
+        )
+        for (u in videos) assertEquals(u, LinkKind.VIDEO, LinkKind.classify(u))
+        // Ordinary pages on the same sites stay pages, so they are checked instead of handed to the video engine.
+        for (u in listOf("https://x.com/home", "https://www.instagram.com/someone/", "https://www.facebook.com/", "https://bandcamp.com/", "https://www.linkedin.com/in/someone")) {
+            assertEquals(u, LinkKind.PAGE, LinkKind.classify(u))
+        }
+    }
 }
