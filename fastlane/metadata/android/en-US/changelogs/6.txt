@@ -1,0 +1,3 @@
+Open links to files with GrabLine.
+- Tap a link to a zip, video, audio, pdf, apk, torrent or other file in an app that offers Open with, and choose GrabLine to add it.
+- Works for links with dots in the path, such as v1.2/app.apk or file.tar.gz.

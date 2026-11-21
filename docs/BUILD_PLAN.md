@@ -22,6 +22,8 @@ Status: todo / doing / review / done. Repo: **D** = desktop worktree `GrabLine-p
 
 **v0.1.4 (2026-11-21):** real-phone QA of 49 file types, every setting, 14 languages and about 40 sites; fixes for file names, the stalled queue, live settings, charging detection, the Language setting and saving same-titled videos; about 45 more known sites and a Try as a video button. Unit tests and lint pass.
 
+**v0.1.5 (2026-11-22):** GrabLine is offered in Open with for links to files (25 extensions and file MIME types) without becoming a web browser; paths with up to five dots are matched. Unit tests and lint pass; the on-device resolver check waited for USB debugging to be re-authorised.
+
 **Next step:** owner runs the remaining real-phone checks in docs/PHONE_TESTING.md, creates the release key (scripts/make-release-key.ps1) and adds the four release secrets, gets native-speaker translation review, then tags v0.1.0.
 
 ## Phase 0 - Setup
