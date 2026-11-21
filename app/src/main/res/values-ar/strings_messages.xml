@@ -20,6 +20,7 @@
     <string name="msg_site_changed">تغيّر هذا الموقع. هل تريد تحديث محرك الفيديو؟</string>
     <string name="msg_site_changed_manual">تغيّر هذا الموقع. حدّث محرك الفيديو في «حول» ثم حاول مرة أخرى</string>
     <string name="msg_video_not_found">يفيد الموقع بأن هذا الفيديو لم يعد موجودًا</string>
+    <string name="msg_video_live">لا يمكن حفظ البث المباشر والعروض الأولى بعد. حاول مرة أخرى بعد انتهائه</string>
     <string name="msg_site_timeout">تأخر الموقع كثيرًا في الرد. حاول مرة أخرى</string>
     <string name="msg_video_unexpected">حدث خطأ في هذا الفيديو. حاول مرة أخرى</string>
     <string name="msg_engine_start">تعذّر بدء محرك الفيديو. أعد تشغيل GrabLine وحاول مرة أخرى</string>

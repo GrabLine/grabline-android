@@ -141,6 +141,14 @@ class VideoEngineTest {
         assertEquals(VideoFailure.CONNECTION, VideoErrors.classify("ERROR: Unable to download webpage: <urlopen error timed out>"))
         assertEquals(VideoFailure.NO_SPACE, VideoErrors.classify("OSError: [Errno 28] No space left on device"))
         assertEquals(VideoFailure.UNEXPECTED, VideoErrors.classify("something odd"))
+        // Real yt-dlp YouTube wording that used to fall through to "something went wrong".
+        assertEquals(VideoFailure.NOT_FOUND, VideoErrors.classify("ERROR: [youtube] aaaaaaaaaaa: This video is unavailable"))
+        assertEquals(VideoFailure.LIVE, VideoErrors.classify("ERROR: [youtube] x: This live stream recording is not available."))
+        assertEquals(VideoFailure.LIVE, VideoErrors.classify("ERROR: [youtube] x: This live event will begin in 3 hours."))
+        assertEquals(VideoFailure.LIVE, VideoErrors.classify("ERROR: [youtube] x: Premieres in 2 days"))
+        assertEquals(VideoFailure.REFUSED, VideoErrors.classify("ERROR: [youtube] x: Video unavailable. This video contains content from X, who has blocked it in your country"))
+        assertEquals(VideoFailure.REFUSED, VideoErrors.classify("ERROR: [youtube] x: Join this channel to get access to members-only content"))
+        assertEquals(VideoFailure.REFUSED, VideoErrors.classify("ERROR: [youtube] x: Sign in to confirm you're not a bot"))
         assertEquals("This site changed. Update the video engine?", VideoText.forFailure(VideoFailure.SITE_CHANGED))
     }
 
