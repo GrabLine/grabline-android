@@ -12,14 +12,16 @@ Free and open source. No accounts, ads or analytics.
 Share a link to GrabLine from any app, or paste it. Choose **Phone** or **PC**.
 Phone and PC downloads appear in one list, and you can control both.
 
-## Status
+## Download
 
-All six phases are built: PC remote, phone downloads, video, moving files
-between devices, torrents, and file servers (SFTP, FTP, WebDAV and S3). The app
-is **not released yet**, and no APK is published. Real-device testing
-([guide](docs/PHONE_TESTING.md)), native-speaker translation review and the
-release key come first ([releasing](docs/RELEASING.md)). See the
-[build plan](docs/BUILD_PLAN.md) for details.
+Get the APK from the [website][website], which picks the right file for your
+phone, or from the [latest release](https://github.com/GrabLine/grabline-android/releases/latest)
+with SHA-256 checksums. Android 8 or later. Every release is signed with the same
+key, so a new version installs over the old one. Not on F-Droid or Google Play yet.
+
+The app is in beta: all six phases are built (PC remote, phone downloads, video,
+moving files between devices, torrents and file servers), and the
+[build plan](docs/BUILD_PLAN.md) lists what is still being checked.
 
 ## Features
 
@@ -43,7 +45,8 @@ Read the [privacy policy](PRIVACY.md).
 
 ## How pairing works
 
-1. On the PC, open **Settings, Phone** in GrabLine. It shows a QR code.
+1. On the PC, open **Devices** in GrabLine and click **Pair a phone or PC**. It
+   shows a QR code.
 2. Scan it with the app. The code carries the PC's addresses, a one-time pairing
    code and the fingerprint of the PC's certificate.
 3. The phone checks that fingerprint on every connection and refuses any other
