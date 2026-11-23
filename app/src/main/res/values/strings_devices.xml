@@ -33,8 +33,8 @@
     <string name="pairing_close">Close</string>
 
     <string name="manual_title">Enter the code by hand</string>
-    <string name="manual_intro">The camera isn\'t available. On your PC, open GrabLine, go to the Phone page and type what it shows under \"Enter by hand\".</string>
-    <string name="manual_intro_steps">On your PC, open GrabLine, go to the Phone page and type what it shows under \"Enter by hand\".</string>
+    <string name="manual_intro">The camera isn\'t available. On your PC, open GrabLine, go to Devices, click \"Pair a phone or PC\" and type the address and code shown under the QR code.</string>
+    <string name="manual_intro_steps">On your PC, open GrabLine, go to Devices, click \"Pair a phone or PC\" and type the address and code shown under the QR code.</string>
     <string name="manual_address">PC address</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">Port (optional)</string>
@@ -91,7 +91,8 @@
     <string name="pc_tip_wifi">Your phone and PC are on the same Wi-Fi.</string>
     <string name="pc_tip_awake">Your PC is awake.</string>
     <string name="pc_tip_running">GrabLine is running on your PC.</string>
-    <string name="pc_tip_listener">The Phone page in GrabLine on your PC shows the listener is on.</string>
+    <string name="pc_tip_listener">In GrabLine on your PC, Devices has \"Allow phones and PCs to connect\" turned on.</string>
+    <string name="pc_tip_firewall">Windows Firewall lets GrabLine in on private networks (if Windows asked and you chose Cancel, allow GrabLine in Windows Security, Firewall, Allow an app).</string>
     <string name="pc_retry">Try again</string>
     <string name="pc_action_failed">Your PC didn\'t answer. Try again</string>
 </resources>

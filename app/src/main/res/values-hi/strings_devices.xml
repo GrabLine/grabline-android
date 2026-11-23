@@ -30,8 +30,8 @@
     <string name="pairing_retry">फिर कोशिश करें</string>
     <string name="pairing_close">बंद करें</string>
     <string name="manual_title">कोड हाथ से दर्ज करें</string>
-    <string name="manual_intro">कैमरा उपलब्ध नहीं है। अपने पीसी पर GrabLine खोलें, फ़ोन पेज पर जाएँ और “हाथ से दर्ज करें” के नीचे दिखाया गया कोड टाइप करें।</string>
-    <string name="manual_intro_steps">अपने पीसी पर GrabLine खोलें, फ़ोन पेज पर जाएँ और “हाथ से दर्ज करें” के नीचे दिखाया गया कोड टाइप करें।</string>
+    <string name="manual_intro">कैमरा उपलब्ध नहीं है। अपने पीसी पर GrabLine खोलें, “डिवाइस” पर जाएँ, “फ़ोन या पीसी पेयर करें” पर क्लिक करें और QR कोड के नीचे दिखाया गया पता और कोड टाइप करें।</string>
+    <string name="manual_intro_steps">अपने पीसी पर GrabLine खोलें, “डिवाइस” पर जाएँ, “फ़ोन या पीसी पेयर करें” पर क्लिक करें और QR कोड के नीचे दिखाया गया पता और कोड टाइप करें।</string>
     <string name="manual_address">पीसी का पता</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">पोर्ट (वैकल्पिक)</string>
@@ -87,7 +87,8 @@
     <string name="pc_tip_wifi">आपका फ़ोन और पीसी एक ही वाई-फ़ाई पर हैं।</string>
     <string name="pc_tip_awake">आपका पीसी चालू है।</string>
     <string name="pc_tip_running">आपके पीसी पर GrabLine चल रहा है।</string>
-    <string name="pc_tip_listener">आपके पीसी पर GrabLine के फ़ोन पेज में लिसनर चालू दिख रहा है।</string>
+    <string name="pc_tip_listener">आपके पीसी के GrabLine में “डिवाइस” में “फ़ोन और पीसी को कनेक्ट करने दें” चालू है।</string>
+    <string name="pc_tip_firewall">Windows फ़ायरवॉल निजी नेटवर्क पर GrabLine को अनुमति देता है (अगर Windows ने पूछा था और आपने रद्द करें चुना, तो Windows सुरक्षा, फ़ायरवॉल, किसी ऐप को अनुमति दें में GrabLine को अनुमति दें)।</string>
     <string name="pc_retry">फिर कोशिश करें</string>
     <string name="pc_action_failed">आपके पीसी ने जवाब नहीं दिया। फिर कोशिश करें</string>
 </resources>

@@ -29,8 +29,8 @@
     <string name="pairing_retry">다시 시도</string>
     <string name="pairing_close">닫기</string>
     <string name="manual_title">코드 직접 입력</string>
-    <string name="manual_intro">카메라를 사용할 수 없습니다. PC에서 GrabLine을 열고 휴대전화 페이지로 이동해 \"직접 입력\" 아래에 표시된 내용을 입력하세요.</string>
-    <string name="manual_intro_steps">PC에서 GrabLine을 열고 휴대전화 페이지로 이동해 \"직접 입력\" 아래에 표시된 내용을 입력하세요.</string>
+    <string name="manual_intro">카메라를 사용할 수 없습니다. PC에서 GrabLine을 열고 \"기기\"로 이동해 \"휴대폰 또는 PC 페어링\"을 클릭한 다음 QR 코드 아래에 표시된 주소와 코드를 입력하세요.</string>
+    <string name="manual_intro_steps">PC에서 GrabLine을 열고 \"기기\"로 이동해 \"휴대폰 또는 PC 페어링\"을 클릭한 다음 QR 코드 아래에 표시된 주소와 코드를 입력하세요.</string>
     <string name="manual_address">PC 주소</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">포트(선택)</string>
@@ -86,7 +86,8 @@
     <string name="pc_tip_wifi">휴대전화와 PC가 같은 Wi-Fi에 연결되어 있습니다.</string>
     <string name="pc_tip_awake">PC가 절전 상태가 아닙니다.</string>
     <string name="pc_tip_running">PC에서 GrabLine이 실행 중입니다.</string>
-    <string name="pc_tip_listener">PC의 GrabLine 휴대전화 페이지에서 수신이 켜져 있다고 표시됩니다.</string>
+    <string name="pc_tip_listener">PC의 GrabLine \"기기\"에서 \"휴대폰과 PC의 연결 허용\"이 켜져 있습니다.</string>
+    <string name="pc_tip_firewall">Windows 방화벽이 개인 네트워크에서 GrabLine을 허용합니다(Windows가 물었을 때 취소를 선택했다면 Windows 보안, 방화벽, 앱 허용에서 GrabLine을 허용하세요).</string>
     <string name="pc_retry">다시 시도</string>
     <string name="pc_action_failed">PC가 응답하지 않았습니다. 다시 시도하세요</string>
 </resources>

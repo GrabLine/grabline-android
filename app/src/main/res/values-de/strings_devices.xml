@@ -30,8 +30,8 @@
     <string name="pairing_retry">Erneut versuchen</string>
     <string name="pairing_close">Schließen</string>
     <string name="manual_title">Code von Hand eingeben</string>
-    <string name="manual_intro">Die Kamera ist nicht verfügbar. Öffne GrabLine auf deinem PC, gehe zur Seite Telefon und gib ein, was unter „Von Hand eingeben“ steht.</string>
-    <string name="manual_intro_steps">Öffne GrabLine auf deinem PC, gehe zur Seite Telefon und gib ein, was unter „Von Hand eingeben“ steht.</string>
+    <string name="manual_intro">Die Kamera ist nicht verfügbar. Öffne GrabLine auf deinem PC, gehe zu „Geräte“, klicke auf „Telefon oder PC koppeln“ und gib die Adresse und den Code ein, die unter dem QR-Code stehen.</string>
+    <string name="manual_intro_steps">Öffne GrabLine auf deinem PC, gehe zu „Geräte“, klicke auf „Telefon oder PC koppeln“ und gib die Adresse und den Code ein, die unter dem QR-Code stehen.</string>
     <string name="manual_address">PC-Adresse</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">Port (optional)</string>
@@ -87,7 +87,8 @@
     <string name="pc_tip_wifi">Telefon und PC sind im selben WLAN.</string>
     <string name="pc_tip_awake">Dein PC ist eingeschaltet.</string>
     <string name="pc_tip_running">GrabLine läuft auf deinem PC.</string>
-    <string name="pc_tip_listener">Auf der Seite Telefon in GrabLine auf deinem PC ist der Listener eingeschaltet.</string>
+    <string name="pc_tip_listener">In GrabLine auf deinem PC ist unter „Geräte“ die Option „Telefonen und PCs die Verbindung erlauben“ eingeschaltet.</string>
+    <string name="pc_tip_firewall">Die Windows-Firewall lässt GrabLine in privaten Netzwerken zu (wenn Windows gefragt hat und du „Abbrechen“ gewählt hast, erlaube GrabLine unter Windows-Sicherheit, Firewall, App durch die Firewall zulassen).</string>
     <string name="pc_retry">Erneut versuchen</string>
     <string name="pc_action_failed">Dein PC hat nicht geantwortet. Versuche es erneut</string>
 </resources>

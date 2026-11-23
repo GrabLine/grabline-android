@@ -34,8 +34,8 @@
     <string name="pairing_retry">إعادة المحاولة</string>
     <string name="pairing_close">إغلاق</string>
     <string name="manual_title">أدخل الرمز يدويًا</string>
-    <string name="manual_intro">الكاميرا غير متاحة. افتح GrabLine على حاسوبك، وانتقل إلى صفحة الهاتف، واكتب ما يظهر ضمن «الإدخال اليدوي».</string>
-    <string name="manual_intro_steps">افتح GrabLine على حاسوبك، وانتقل إلى صفحة الهاتف، واكتب ما يظهر ضمن «الإدخال اليدوي».</string>
+    <string name="manual_intro">الكاميرا غير متاحة. افتح GrabLine على حاسوبك، وانتقل إلى «الأجهزة»، وانقر «اقتران هاتف أو كمبيوتر»، ثم اكتب العنوان والرمز الظاهرين أسفل رمز QR.</string>
+    <string name="manual_intro_steps">افتح GrabLine على حاسوبك، وانتقل إلى «الأجهزة»، وانقر «اقتران هاتف أو كمبيوتر»، ثم اكتب العنوان والرمز الظاهرين أسفل رمز QR.</string>
     <string name="manual_address">عنوان الحاسوب</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">المنفذ (اختياري)</string>
@@ -91,7 +91,8 @@
     <string name="pc_tip_wifi">هاتفك وحاسوبك على شبكة Wi-Fi نفسها.</string>
     <string name="pc_tip_awake">حاسوبك في وضع التشغيل.</string>
     <string name="pc_tip_running">GrabLine يعمل على حاسوبك.</string>
-    <string name="pc_tip_listener">صفحة الهاتف في GrabLine على حاسوبك تُظهر أن المستمع قيد التشغيل.</string>
+    <string name="pc_tip_listener">في GrabLine على حاسوبك، خيار «السماح للهواتف والكمبيوترات بالاتصال» مفعّل في «الأجهزة».</string>
+    <string name="pc_tip_firewall">جدار حماية Windows يسمح لـ GrabLine على الشبكات الخاصة (إذا سألك Windows واخترت «إلغاء»، فاسمح لـ GrabLine من أمان Windows، جدار الحماية، السماح لتطبيق).</string>
     <string name="pc_retry">إعادة المحاولة</string>
     <string name="pc_action_failed">لم يستجب حاسوبك. حاول مرة أخرى</string>
 </resources>

@@ -29,8 +29,8 @@
     <string name="pairing_retry">再試行</string>
     <string name="pairing_close">閉じる</string>
     <string name="manual_title">コードを手入力</string>
-    <string name="manual_intro">カメラを使用できません。PCで GrabLine を開き、「スマートフォン」ページの「手入力」の下に表示されている内容を入力してください。</string>
-    <string name="manual_intro_steps">PCで GrabLine を開き、「スマートフォン」ページの「手入力」の下に表示されている内容を入力してください。</string>
+    <string name="manual_intro">カメラを使用できません。PCで GrabLine を開き、「デバイス」で「スマートフォンまたは PC をペアリング」をクリックし、QR コードの下に表示されているアドレスとコードを入力してください。</string>
+    <string name="manual_intro_steps">PCで GrabLine を開き、「デバイス」で「スマートフォンまたは PC をペアリング」をクリックし、QR コードの下に表示されているアドレスとコードを入力してください。</string>
     <string name="manual_address">PCのアドレス</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">ポート（任意）</string>
@@ -86,7 +86,8 @@
     <string name="pc_tip_wifi">スマートフォンとPCが同じWi-Fiに接続されている。</string>
     <string name="pc_tip_awake">PCがスリープしていない。</string>
     <string name="pc_tip_running">PCで GrabLine が起動している。</string>
-    <string name="pc_tip_listener">PCの GrabLine の「スマートフォン」ページで、リスナーがオンになっている。</string>
+    <string name="pc_tip_listener">PC の GrabLine の「デバイス」で「スマートフォンと PC の接続を許可」がオンになっている。</string>
+    <string name="pc_tip_firewall">Windows ファイアウォールがプライベート ネットワークで GrabLine を許可している（Windows に確認されてキャンセルを選んだ場合は、Windows セキュリティの「ファイアウォール」→「アプリを許可」で GrabLine を許可してください）。</string>
     <string name="pc_retry">再試行</string>
     <string name="pc_action_failed">PCが応答しませんでした。もう一度お試しください</string>
 </resources>
