@@ -31,8 +31,8 @@
     <string name="pairing_retry">Reintentar</string>
     <string name="pairing_close">Cerrar</string>
     <string name="manual_title">Introduce el código a mano</string>
-    <string name="manual_intro">La cámara no está disponible. En tu PC, abre GrabLine, ve a la página Teléfono y escribe lo que aparece en «Introducir a mano».</string>
-    <string name="manual_intro_steps">En tu PC, abre GrabLine, ve a la página Teléfono y escribe lo que aparece en «Introducir a mano».</string>
+    <string name="manual_intro">La cámara no está disponible. En tu PC, abre GrabLine, ve a «Dispositivos», haz clic en «Emparejar un teléfono o PC» y escribe la dirección y el código que aparecen bajo el código QR.</string>
+    <string name="manual_intro_steps">En tu PC, abre GrabLine, ve a «Dispositivos», haz clic en «Emparejar un teléfono o PC» y escribe la dirección y el código que aparecen bajo el código QR.</string>
     <string name="manual_address">Dirección del PC</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">Puerto (opcional)</string>
@@ -88,7 +88,8 @@
     <string name="pc_tip_wifi">Tu teléfono y tu PC están en la misma red Wi-Fi.</string>
     <string name="pc_tip_awake">Tu PC está encendido.</string>
     <string name="pc_tip_running">GrabLine se está ejecutando en tu PC.</string>
-    <string name="pc_tip_listener">La página Teléfono de GrabLine en tu PC muestra que el receptor está activado.</string>
+    <string name="pc_tip_listener">En GrabLine de tu PC, «Permitir que teléfonos y PC se conecten» está activado en «Dispositivos».</string>
+    <string name="pc_tip_firewall">El Firewall de Windows permite GrabLine en redes privadas (si Windows preguntó y elegiste Cancelar, permite GrabLine en Seguridad de Windows, Firewall, Permitir una aplicación).</string>
     <string name="pc_retry">Reintentar</string>
     <string name="pc_action_failed">Tu PC no respondió. Inténtalo de nuevo</string>
 </resources>

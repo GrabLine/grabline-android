@@ -29,8 +29,8 @@
     <string name="pairing_retry">重试</string>
     <string name="pairing_close">关闭</string>
     <string name="manual_title">手动输入代码</string>
-    <string name="manual_intro">相机不可用。请在电脑上打开 GrabLine，进入“手机”页面，输入“手动输入”下显示的内容。</string>
-    <string name="manual_intro_steps">请在电脑上打开 GrabLine，进入“手机”页面，输入“手动输入”下显示的内容。</string>
+    <string name="manual_intro">相机不可用。请在电脑上打开 GrabLine，进入“设备”，点击“配对手机或电脑”，然后输入二维码下方显示的地址和代码。</string>
+    <string name="manual_intro_steps">请在电脑上打开 GrabLine，进入“设备”，点击“配对手机或电脑”，然后输入二维码下方显示的地址和代码。</string>
     <string name="manual_address">电脑地址</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">端口（可选）</string>
@@ -86,7 +86,8 @@
     <string name="pc_tip_wifi">手机和电脑在同一 Wi-Fi 下。</string>
     <string name="pc_tip_awake">电脑处于唤醒状态。</string>
     <string name="pc_tip_running">电脑上的 GrabLine 正在运行。</string>
-    <string name="pc_tip_listener">电脑上 GrabLine 的“手机”页面显示监听已开启。</string>
+    <string name="pc_tip_listener">电脑上 GrabLine 的“设备”中已开启“允许手机和电脑连接”。</string>
+    <string name="pc_tip_firewall">Windows 防火墙允许 GrabLine 使用专用网络（如果 Windows 询问时你选了“取消”，请在 Windows 安全中心的“防火墙”→“允许应用”中允许 GrabLine）。</string>
     <string name="pc_retry">重试</string>
     <string name="pc_action_failed">电脑没有响应。请重试</string>
 </resources>

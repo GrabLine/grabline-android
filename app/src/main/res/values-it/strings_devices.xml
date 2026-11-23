@@ -31,8 +31,8 @@
     <string name="pairing_retry">Riprova</string>
     <string name="pairing_close">Chiudi</string>
     <string name="manual_title">Inserisci il codice a mano</string>
-    <string name="manual_intro">La fotocamera non è disponibile. Sul PC apri GrabLine, vai alla pagina Telefono e digita quanto mostrato sotto «Inserisci a mano».</string>
-    <string name="manual_intro_steps">Sul PC apri GrabLine, vai alla pagina Telefono e digita quanto mostrato sotto «Inserisci a mano».</string>
+    <string name="manual_intro">La fotocamera non è disponibile. Sul PC apri GrabLine, vai a «Dispositivi», fai clic su «Associa un telefono o PC» e digita l\'indirizzo e il codice mostrati sotto il codice QR.</string>
+    <string name="manual_intro_steps">Sul PC apri GrabLine, vai a «Dispositivi», fai clic su «Associa un telefono o PC» e digita l\'indirizzo e il codice mostrati sotto il codice QR.</string>
     <string name="manual_address">Indirizzo del PC</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">Porta (facoltativa)</string>
@@ -88,7 +88,8 @@
     <string name="pc_tip_wifi">Telefono e PC sono sulla stessa rete Wi-Fi.</string>
     <string name="pc_tip_awake">Il PC è acceso.</string>
     <string name="pc_tip_running">GrabLine è in esecuzione sul PC.</string>
-    <string name="pc_tip_listener">Nella pagina Telefono di GrabLine sul PC il listener risulta attivo.</string>
+    <string name="pc_tip_listener">In GrabLine sul PC, «Consenti la connessione di telefoni e PC» è attivo in «Dispositivi».</string>
+    <string name="pc_tip_firewall">Windows Firewall consente GrabLine sulle reti private (se Windows lo ha chiesto e hai scelto Annulla, consenti GrabLine in Sicurezza di Windows, Firewall, Consenti app).</string>
     <string name="pc_retry">Riprova</string>
     <string name="pc_action_failed">Il PC non ha risposto. Riprova</string>
 </resources>

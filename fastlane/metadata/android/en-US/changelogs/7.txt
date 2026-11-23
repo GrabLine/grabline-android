@@ -1,0 +1,3 @@
+Pairing help that matches GrabLine 1.33.1 on the PC.
+- The code screen says where to find the code on the PC: Devices, Pair a phone or PC.
+- The tips for a PC that can't be reached name the right switch and add Windows Firewall.

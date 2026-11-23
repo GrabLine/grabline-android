@@ -30,8 +30,8 @@
     <string name="pairing_retry">Yeniden dene</string>
     <string name="pairing_close">Kapat</string>
     <string name="manual_title">Kodu elle gir</string>
-    <string name="manual_intro">Kamera kullanılamıyor. Bilgisayarında GrabLine\'ı aç, Telefon sayfasına git ve “Elle gir” altında gösterileni yaz.</string>
-    <string name="manual_intro_steps">Bilgisayarında GrabLine\'ı aç, Telefon sayfasına git ve “Elle gir” altında gösterileni yaz.</string>
+    <string name="manual_intro">Kamera kullanılamıyor. Bilgisayarında GrabLine\'ı aç, “Cihazlar”a git, “Telefon veya bilgisayar eşleştir”e tıkla ve QR kodunun altında gösterilen adresi ve kodu yaz.</string>
+    <string name="manual_intro_steps">Bilgisayarında GrabLine\'ı aç, “Cihazlar”a git, “Telefon veya bilgisayar eşleştir”e tıkla ve QR kodunun altında gösterilen adresi ve kodu yaz.</string>
     <string name="manual_address">Bilgisayar adresi</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">Bağlantı noktası (isteğe bağlı)</string>
@@ -87,7 +87,8 @@
     <string name="pc_tip_wifi">Telefonun ve bilgisayarın aynı Wi-Fi ağında.</string>
     <string name="pc_tip_awake">Bilgisayarın uyanık.</string>
     <string name="pc_tip_running">GrabLine bilgisayarında çalışıyor.</string>
-    <string name="pc_tip_listener">Bilgisayarındaki GrabLine\'ın Telefon sayfası dinleyicinin açık olduğunu gösteriyor.</string>
+    <string name="pc_tip_listener">Bilgisayarındaki GrabLine\'da “Cihazlar” altında “Telefonların ve bilgisayarların bağlanmasına izin ver” açık.</string>
+    <string name="pc_tip_firewall">Windows Güvenlik Duvarı özel ağlarda GrabLine\'a izin veriyor (Windows sorduğunda İptal\'i seçtiysen GrabLine\'a Windows Güvenliği, Güvenlik duvarı, Uygulamaya izin ver bölümünden izin ver).</string>
     <string name="pc_retry">Yeniden dene</string>
     <string name="pc_action_failed">Bilgisayarın yanıt vermedi. Tekrar dene</string>
 </resources>

@@ -24,6 +24,8 @@ Status: todo / doing / review / done. Repo: **D** = desktop worktree `GrabLine-p
 
 **v0.1.5 (2026-11-22):** GrabLine is offered in Open with for links to files (25 extensions and file MIME types) without becoming a web browser; paths with up to five dots are matched. Unit tests and lint pass; the on-device resolver check waited for USB debugging to be re-authorised.
 
+**v0.1.6 (2026-11-24):** pairing help matches the PC (GrabLine 1.33.1): the code screen points to Devices, Pair a phone or PC; the unreachable-PC tips name "Allow phones and PCs to connect" and Windows Firewall. All 14 languages.
+
 **Next step:** owner runs the remaining real-phone checks in docs/PHONE_TESTING.md, creates the release key (scripts/make-release-key.ps1) and adds the four release secrets, gets native-speaker translation review, then tags v0.1.0.
 
 ## Phase 0 - Setup

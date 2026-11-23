@@ -30,8 +30,8 @@
     <string name="pairing_retry">دوبارہ کوشش کریں</string>
     <string name="pairing_close">بند</string>
     <string name="manual_title">کوڈ ہاتھ سے درج کریں</string>
-    <string name="manual_intro">کیمرا دستیاب نہیں ہے۔ اپنے پی سی پر GrabLine کھولیں، فون کے صفحے پر جائیں اور «ہاتھ سے درج کریں» کے نیچے دکھائی گئی چیز ٹائپ کریں۔</string>
-    <string name="manual_intro_steps">اپنے پی سی پر GrabLine کھولیں، فون کے صفحے پر جائیں اور «ہاتھ سے درج کریں» کے نیچے دکھائی گئی چیز ٹائپ کریں۔</string>
+    <string name="manual_intro">کیمرا دستیاب نہیں ہے۔ اپنے پی سی پر GrabLine کھولیں، «آلات» پر جائیں، «فون یا پی سی پیئر کریں» پر کلک کریں اور QR کوڈ کے نیچے دکھایا گیا پتہ اور کوڈ ٹائپ کریں۔</string>
+    <string name="manual_intro_steps">اپنے پی سی پر GrabLine کھولیں، «آلات» پر جائیں، «فون یا پی سی پیئر کریں» پر کلک کریں اور QR کوڈ کے نیچے دکھایا گیا پتہ اور کوڈ ٹائپ کریں۔</string>
     <string name="manual_address">پی سی کا پتہ</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">پورٹ (اختیاری)</string>
@@ -87,7 +87,8 @@
     <string name="pc_tip_wifi">آپ کا فون اور پی سی ایک ہی وائی فائی پر ہیں۔</string>
     <string name="pc_tip_awake">آپ کا پی سی بیدار ہے۔</string>
     <string name="pc_tip_running">GrabLine آپ کے پی سی پر چل رہا ہے۔</string>
-    <string name="pc_tip_listener">آپ کے پی سی پر GrabLine کے فون صفحے میں لسنر آن دکھائی دیتا ہے۔</string>
+    <string name="pc_tip_listener">آپ کے پی سی کے GrabLine میں «آلات» کے اندر «فونز اور پی سیز کو منسلک ہونے کی اجازت دیں» آن ہے۔</string>
+    <string name="pc_tip_firewall">Windows فائر وال نجی نیٹ ورکس پر GrabLine کو اجازت دیتا ہے (اگر Windows نے پوچھا اور آپ نے منسوخ چنا تو Windows سیکیورٹی، فائر وال، ایپ کو اجازت دیں میں GrabLine کو اجازت دیں)۔</string>
     <string name="pc_retry">دوبارہ کوشش کریں</string>
     <string name="pc_action_failed">آپ کے پی سی نے جواب نہیں دیا۔ دوبارہ کوشش کریں</string>
 </resources>

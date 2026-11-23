@@ -36,8 +36,8 @@ android {
         applicationId = "dev.grabline.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 6
-        versionName = "0.1.5"
+        versionCode = 7
+        versionName = "0.1.6"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // -Pgrabline.abi=arm64-v8a builds a debug APK for one ABI only (smaller to install on a test phone).
         val onlyAbi = providers.gradleProperty("grabline.abi").orNull

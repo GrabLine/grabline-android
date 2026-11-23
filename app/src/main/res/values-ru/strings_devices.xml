@@ -32,8 +32,8 @@
     <string name="pairing_retry">Повторить</string>
     <string name="pairing_close">Закрыть</string>
     <string name="manual_title">Ввод кода вручную</string>
-    <string name="manual_intro">Камера недоступна. На компьютере откройте GrabLine, перейдите на страницу «Телефон» и введите то, что показано под надписью «Ввести вручную».</string>
-    <string name="manual_intro_steps">На компьютере откройте GrabLine, перейдите на страницу «Телефон» и введите то, что показано под надписью «Ввести вручную».</string>
+    <string name="manual_intro">Камера недоступна. На компьютере откройте GrabLine, перейдите в «Устройства», нажмите «Связать телефон или ПК» и введите адрес и код, показанные под QR-кодом.</string>
+    <string name="manual_intro_steps">На компьютере откройте GrabLine, перейдите в «Устройства», нажмите «Связать телефон или ПК» и введите адрес и код, показанные под QR-кодом.</string>
     <string name="manual_address">Адрес компьютера</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">Порт (необязательно)</string>
@@ -89,7 +89,8 @@
     <string name="pc_tip_wifi">Телефон и компьютер в одной сети Wi-Fi.</string>
     <string name="pc_tip_awake">Компьютер не спит.</string>
     <string name="pc_tip_running">GrabLine запущен на компьютере.</string>
-    <string name="pc_tip_listener">На странице «Телефон» в GrabLine на компьютере приём подключений включён.</string>
+    <string name="pc_tip_listener">В GrabLine на компьютере в разделе «Устройства» включено «Разрешить подключение телефонов и ПК».</string>
+    <string name="pc_tip_firewall">Брандмауэр Windows разрешает GrabLine в частных сетях (если Windows спрашивала и вы выбрали «Отмена», разрешите GrabLine в Безопасности Windows: Брандмауэр, Разрешить работу с приложением).</string>
     <string name="pc_retry">Повторить</string>
     <string name="pc_action_failed">Компьютер не ответил. Повторите попытку</string>
 </resources>

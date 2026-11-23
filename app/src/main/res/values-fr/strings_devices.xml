@@ -31,8 +31,8 @@
     <string name="pairing_retry">Réessayer</string>
     <string name="pairing_close">Fermer</string>
     <string name="manual_title">Saisir le code à la main</string>
-    <string name="manual_intro">La caméra n\'est pas disponible. Sur votre PC, ouvrez GrabLine, allez sur la page Téléphone et saisissez ce qui s\'affiche sous « Saisie manuelle ».</string>
-    <string name="manual_intro_steps">Sur votre PC, ouvrez GrabLine, allez sur la page Téléphone et saisissez ce qui s\'affiche sous « Saisie manuelle ».</string>
+    <string name="manual_intro">La caméra n\'est pas disponible. Sur votre PC, ouvrez GrabLine, allez dans « Appareils », cliquez sur « Associer un téléphone ou un PC » et saisissez l\'adresse et le code affichés sous le code QR.</string>
+    <string name="manual_intro_steps">Sur votre PC, ouvrez GrabLine, allez dans « Appareils », cliquez sur « Associer un téléphone ou un PC » et saisissez l\'adresse et le code affichés sous le code QR.</string>
     <string name="manual_address">Adresse du PC</string>
     <string name="manual_address_hint">192.168.1.20</string>
     <string name="manual_port">Port (facultatif)</string>
@@ -88,7 +88,8 @@
     <string name="pc_tip_wifi">Votre téléphone et votre PC sont sur le même Wi-Fi.</string>
     <string name="pc_tip_awake">Votre PC est allumé.</string>
     <string name="pc_tip_running">GrabLine est lancé sur votre PC.</string>
-    <string name="pc_tip_listener">La page Téléphone de GrabLine sur votre PC indique que l\'écoute est activée.</string>
+    <string name="pc_tip_listener">Dans GrabLine sur votre PC, « Autoriser les téléphones et les PC à se connecter » est activé dans « Appareils ».</string>
+    <string name="pc_tip_firewall">Le pare-feu Windows autorise GrabLine sur les réseaux privés (si Windows a posé la question et que vous avez choisi Annuler, autorisez GrabLine dans Sécurité Windows, Pare-feu, Autoriser une application).</string>
     <string name="pc_retry">Réessayer</string>
     <string name="pc_action_failed">Votre PC n\'a pas répondu. Réessayez</string>
 </resources>

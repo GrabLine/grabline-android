@@ -229,6 +229,7 @@ private fun OfflineTips(onRetry: () -> Unit) {
         Text("• " + stringResource(R.string.pc_tip_awake))
         Text("• " + stringResource(R.string.pc_tip_running))
         Text("• " + stringResource(R.string.pc_tip_listener))
+        Text("• " + stringResource(R.string.pc_tip_firewall))
         OutlinedButton(onRetry, Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.pc_retry)) }
     }
 }
