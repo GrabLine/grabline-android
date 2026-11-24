@@ -1,16 +1,28 @@
+<div align="center">
+
+<img src="fastlane/metadata/android/en-US/images/icon.png" width="88" height="88" alt="GrabLine logo" />
+
 # GrabLine for Android
 
-**Download on your phone. Control GrabLine on your PC.**
+**Download on your phone. Send the big ones to your PC.**
 
 Free and open source. No accounts, ads or analytics.
 
+[![Release][release-badge]][releases]
 [![CI][ci-badge]][ci]
 [![License: AGPL-3.0][license-badge]][license]
 
-[Website][website] · [Desktop app][desktop] · [Spec](docs/SPEC.md) · [Protocol](docs/PROTOCOL.md) · [Report a bug][issues]
+**[Download][website] · [Desktop app][desktop] · [Spec](docs/SPEC.md) · [Protocol](docs/PROTOCOL.md) · [Report a bug][issues]**
 
-Share a link to GrabLine from any app, or paste it. Choose **Phone** or **PC**.
-Phone and PC downloads appear in one list, and you can control both.
+<img src="docs/screenshots/downloads.png" width="200" alt="Downloads on the phone" />&nbsp;
+<img src="docs/screenshots/share.png" width="200" alt="Sharing a link and choosing the PC" />&nbsp;
+<img src="docs/screenshots/pc.png" width="200" alt="The PC's downloads, live on the phone" />
+
+</div>
+
+Share a link to GrabLine from any app, paste it, or open a file link with it. Choose
+**this phone** or **your PC**. Phone and PC downloads appear in one list, and you can
+control both. Without a PC, it is a full download manager on its own.
 
 ## Download
 
@@ -27,14 +39,14 @@ moving files between devices, torrents and file servers), and the
 
 | Area | What you can do |
 | --- | --- |
-| Add a link | Use the share menu, paste, or open a magnet link. Two taps or fewer. |
+| Add a link | Use the share menu, paste, open a magnet link, or pick GrabLine in **Open with** for a link to a file. Two taps or fewer. |
 | PC remote | See the PC queue, add links, pause, resume, cancel and retry. |
 | Phone downloads | Download files directly. Resume is checked before it continues. Existing files are never overwritten. |
 | Video and audio | Pick a quality through yt-dlp and FFmpeg. yt-dlp updates inside the app. |
 | Between devices | Send a phone job to the PC, or copy a finished PC file to the phone with a SHA-256 check. |
 | Torrents | Magnets and `.torrent` files, file selection, seeding rules, Wi-Fi only on metered networks. |
 | File servers | SFTP, FTP, FTPS, WebDAV and S3, with saved accounts whose secrets stay in Android Keystore. |
-| Android extras | Home screen widget and Quick Settings tile. |
+| Android extras | Home screen widget, Quick Settings tile, start later at a chosen time, and 14 languages. |
 
 ## Privacy
 
@@ -98,4 +110,6 @@ Licensed under [AGPL-3.0][license].
 [license]: LICENSE
 [ci]: https://github.com/GrabLine/grabline-android/actions/workflows/android.yml
 [ci-badge]: https://img.shields.io/github/actions/workflow/status/GrabLine/grabline-android/android.yml?branch=main&label=CI
-[license-badge]: https://img.shields.io/badge/license-AGPL--3.0-blue
+[license-badge]: https://img.shields.io/badge/license-AGPL--3.0-2563EB
+[release-badge]: https://img.shields.io/github/v/release/GrabLine/grabline-android?label=download&color=2563EB
+[releases]: https://github.com/GrabLine/grabline-android/releases/latest
