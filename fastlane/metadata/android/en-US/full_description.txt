@@ -9,6 +9,7 @@
 <li><b>Between devices:</b> send a phone job to the PC, or copy a finished PC file to the phone with a SHA-256 check.</li>
 <li><b>Torrents:</b> magnets and .torrent files, file selection, seeding rules, Wi-Fi only on metered networks.</li>
 <li><b>Servers:</b> SFTP, FTP, FTPS, WebDAV and S3, with passwords and keys kept in Android Keystore.</li>
+<li>Open links to files from other apps with GrabLine.</li>
 <li>Home screen widget and Quick Settings tile. 14 languages.</li>
 </ul>
 
